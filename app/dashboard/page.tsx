@@ -57,21 +57,21 @@ export default function DashboardPage() {
   const todaysEarnings = 425
 
   return (
-    <div className="space-y-6 w-full">
+    <div className="space-y-8 w-full max-w-none">
       {/* Header Section */}
-      <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+      <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-8">
         {/* Welcome Message */}
-        <div className="flex-1">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3">
             Welcome back, {mockData.tutor.name}! 👋
           </h1>
-          <p className="text-slate-600 text-base">
+          <p className="text-slate-600 text-lg">
             Here's your tutoring overview for today
           </p>
         </div>
         
         {/* Gamification Section */}
-        <div className="lg:text-right bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50 shadow-sm lg:min-w-[320px]">
+        <div className="xl:text-right bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-white/50 shadow-sm xl:min-w-[360px] xl:flex-shrink-0">
           <div className="flex items-center gap-3 lg:justify-end mb-2">
             <div className="text-center lg:text-right">
               <div className="text-xl font-bold bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">
@@ -126,8 +126,8 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-xl p-4 hover:shadow-lg hover:bg-white/80 transition-all duration-200">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+        <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-xl p-6 hover:shadow-lg hover:bg-white/80 transition-all duration-200">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-xl bg-gradient-to-r from-yellow-400 to-pink-500 flex items-center justify-center shadow-lg">
               <Calendar className="w-5 h-5 text-white" />
@@ -139,7 +139,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-xl p-4 hover:shadow-lg hover:bg-white/80 transition-all duration-200">
+        <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-xl p-6 hover:shadow-lg hover:bg-white/80 transition-all duration-200">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-xl bg-gradient-to-r from-pink-500 to-cyan-500 flex items-center justify-center shadow-lg">
               <DollarSign className="w-5 h-5 text-white" />
@@ -151,7 +151,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-xl p-4 hover:shadow-lg hover:bg-white/80 transition-all duration-200">
+        <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-xl p-6 hover:shadow-lg hover:bg-white/80 transition-all duration-200">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center shadow-lg">
               <Users className="w-5 h-5 text-white" />
@@ -163,7 +163,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-xl p-4 hover:shadow-lg hover:bg-white/80 transition-all duration-200">
+        <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-xl p-6 hover:shadow-lg hover:bg-white/80 transition-all duration-200">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center shadow-lg">
               <TrendingUp className="w-5 h-5 text-white" />
@@ -177,12 +177,12 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
         {/* Left Column - Main Content */}
-        <div className="xl:col-span-2 space-y-6">
+        <div className="xl:col-span-3 space-y-8">
           {/* Next Session Card */}
-          <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-xl p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-xl p-6 shadow-sm">
+            <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
               <Clock className="w-5 h-5 text-cyan-500" />
               Next Session
             </h2>
@@ -218,12 +218,12 @@ export default function DashboardPage() {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-xl p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-xl p-6 shadow-sm">
+            <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
               <Target className="w-5 h-5 text-blue-500" />
               Quick Actions
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <button className="p-3 rounded-xl bg-gradient-to-r from-yellow-50 to-pink-50 border border-yellow-200 hover:from-yellow-100 hover:to-pink-100 transition-all duration-200 text-left">
                 <div className="font-semibold text-slate-900 mb-1">AI Lesson Builder</div>
                 <div className="text-sm text-slate-600">Create personalized lesson plans</div>
@@ -237,14 +237,14 @@ export default function DashboardPage() {
         </div>
 
         {/* Right Column - Sidebar Content */}
-        <div className="space-y-6">
+        <div className="xl:col-span-1 space-y-8">
           {/* Recent Activity */}
-          <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-xl p-5 shadow-sm">
-            <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-amber-500" />
+          <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-xl p-6 shadow-sm">
+            <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-amber-500" />
               Recent Activity
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="p-3 rounded-lg bg-green-50 border border-green-200">
                 <div className="text-sm font-medium text-green-800">Session completed with Sarah</div>
                 <div className="text-xs text-green-600 mt-1">+25 XP earned</div>
@@ -257,9 +257,9 @@ export default function DashboardPage() {
           </div>
 
           {/* Today's Schedule */}
-          <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-xl p-5 shadow-sm">
-            <h3 className="font-bold text-slate-900 mb-4">Today's Schedule</h3>
-            <div className="space-y-3">
+          <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-xl p-6 shadow-sm">
+            <h3 className="text-lg font-bold text-slate-900 mb-6">Today's Schedule</h3>
+            <div className="space-y-4">
               <div className="flex items-center gap-3 p-2.5 rounded-lg bg-slate-50 border border-slate-200">
                 <div className="w-1.5 h-6 bg-cyan-500 rounded-full"></div>
                 <div>

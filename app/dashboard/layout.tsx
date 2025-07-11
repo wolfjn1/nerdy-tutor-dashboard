@@ -140,9 +140,9 @@ export default function DashboardLayout({
         <motion.div
           initial={false}
           animate={{
-            x: sidebarOpen ? 0 : -192,
+            x: sidebarOpen ? 0 : -256,
           }}
-          className="fixed left-0 top-0 bottom-0 w-48 bg-gradient-nerdy shadow-xl z-50 lg:translate-x-0 lg:static lg:flex-shrink-0"
+          className="fixed left-0 top-0 bottom-0 w-64 bg-gradient-nerdy shadow-xl z-50 lg:translate-x-0 lg:static lg:flex-shrink-0"
         >
           <div className="flex flex-col h-full">
             {/* Logo and Close Button */}
@@ -225,7 +225,7 @@ export default function DashboardLayout({
         <div className="flex-1 flex flex-col min-w-0">
           {/* Header */}
           <header className="bg-white/80 backdrop-blur-sm border-b border-white/30 sticky top-0 z-30 shadow-sm">
-            <div className="flex items-center justify-between px-4 sm:px-6 py-3">
+            <div className="container mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 max-w-7xl">
               <div className="flex items-center gap-3">
                 {/* Mobile menu button */}
                 <button
@@ -276,7 +276,7 @@ export default function DashboardLayout({
 
           {/* Page Content with proper scrolling */}
           <main className="flex-1 overflow-auto">
-            <div className="p-4 sm:p-6">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
               {children}
             </div>
           </main>

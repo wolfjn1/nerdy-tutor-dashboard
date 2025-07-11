@@ -11,9 +11,11 @@ export default function DashboardPage() {
         <div className="flex items-center gap-6">
           {/* Tutor Image */}
           <div className="flex-shrink-0">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center ring-4 ring-blue-100">
-              <span className="text-2xl font-bold text-white">JD</span>
-            </div>
+            <img 
+              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+              alt="John Doe"
+              className="w-16 h-16 rounded-full object-cover ring-4 ring-pink-200 shadow-lg"
+            />
           </div>
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -27,18 +29,18 @@ export default function DashboardPage() {
       </div>
 
       {/* Prominent Gamification Section */}
-      <div className="bg-gradient-to-r from-blue-500 via-purple-600 to-cyan-500 rounded-2xl p-8 text-white shadow-xl">
+      <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-purple-700 rounded-2xl p-8 text-white shadow-xl">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
           <div className="flex items-center gap-8">
             <div className="text-center">
               <div className="text-4xl font-bold mb-1">Level 42</div>
-              <div className="text-blue-100">Expert</div>
+              <div className="text-purple-100">Expert</div>
             </div>
             <div className="flex items-center gap-3">
               <span className="text-4xl">🔥</span>
               <div className="text-center">
-                <div className="text-3xl font-bold text-orange-300">21</div>
-                <div className="text-blue-100 text-sm">day streak</div>
+                <div className="text-3xl font-bold text-pink-300">21</div>
+                <div className="text-purple-100 text-sm">day streak</div>
               </div>
             </div>
           </div>
@@ -52,7 +54,7 @@ export default function DashboardPage() {
               </div>
               <div className="w-full bg-white/20 rounded-full h-3">
                 <div 
-                  className="bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 h-3 rounded-full shadow-lg" 
+                  className="bg-gradient-to-r from-pink-400 via-purple-400 to-pink-500 h-3 rounded-full shadow-lg" 
                   style={{ width: '82%' }}
                 />
               </div>
@@ -76,10 +78,10 @@ export default function DashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-purple-200 p-6 shadow-sm">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+              <Calendar className="w-6 h-6 text-purple-600" />
             </div>
             <div>
               <div className="text-2xl font-bold text-gray-900">3</div>
@@ -88,10 +90,10 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-pink-200 p-6 shadow-sm">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-green-600" />
+            <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
+              <DollarSign className="w-6 h-6 text-pink-600" />
             </div>
             <div>
               <div className="text-2xl font-bold text-gray-900">$425</div>
@@ -100,7 +102,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-purple-200 p-6 shadow-sm">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
               <Users className="w-6 h-6 text-purple-600" />
@@ -112,10 +114,10 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-pink-200 p-6 shadow-sm">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-orange-600" />
+            <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
+              <TrendingUp className="w-6 h-6 text-pink-600" />
             </div>
             <div>
               <div className="text-2xl font-bold text-gray-900">94%</div>
@@ -132,7 +134,7 @@ export default function DashboardPage() {
           {/* Next Session Card */}
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-              <Clock className="w-5 h-5 text-blue-600" />
+              <Clock className="w-5 h-5 text-purple-600" />
               Next Session
             </h2>
             
@@ -156,7 +158,7 @@ export default function DashboardPage() {
                 <button className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
                   Reschedule
                 </button>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <button className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:from-pink-600 hover:to-purple-700 transition-all duration-200 shadow-lg">
                   Start Session
                 </button>
               </div>
@@ -206,15 +208,15 @@ export default function DashboardPage() {
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h3 className="font-semibold text-gray-900 mb-4">Today's Schedule</h3>
             <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <div className="w-2 h-8 bg-blue-500 rounded-full"></div>
+              <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg border border-purple-100">
+                <div className="w-2 h-8 bg-purple-500 rounded-full"></div>
                 <div>
                   <div className="text-sm font-medium text-gray-900">Sarah Chen</div>
                   <div className="text-xs text-gray-600">2:00 PM - AP Calculus</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <div className="w-2 h-8 bg-purple-500 rounded-full"></div>
+              <div className="flex items-center gap-3 p-3 bg-pink-50 rounded-lg border border-pink-100">
+                <div className="w-2 h-8 bg-pink-500 rounded-full"></div>
                 <div>
                   <div className="text-sm font-medium text-gray-900">Marcus Johnson</div>
                   <div className="text-xs text-gray-600">4:30 PM - SAT Math</div>

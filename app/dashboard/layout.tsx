@@ -121,7 +121,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-nerdy-bg-light w-full m-0 p-0 bg-pink-300">
+    <div className="min-h-screen bg-gradient-nerdy-bg-light">
       {/* Mobile sidebar backdrop */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -135,37 +135,37 @@ export default function DashboardLayout({
         )}
       </AnimatePresence>
 
-      <div className="flex h-screen w-full m-0 p-0 bg-cyan-300">
+      <div className="flex h-screen">
         {/* Sidebar */}
         <motion.div
           initial={false}
           animate={{
-            x: sidebarOpen ? 0 : -224,
+            x: sidebarOpen ? 0 : -192,
           }}
-          className="fixed left-0 top-0 bottom-0 w-44 bg-gradient-nerdy shadow-xl z-50 lg:translate-x-0 lg:static lg:flex-shrink-0 lg:w-44"
+          className="fixed left-0 top-0 bottom-0 w-48 bg-gradient-nerdy shadow-xl z-50 lg:translate-x-0 lg:static lg:flex-shrink-0"
         >
           <div className="flex flex-col h-full">
             {/* Logo and Close Button */}
-            <div className="flex items-center justify-between p-2.5 border-b border-white/20">
-              <div className="flex items-center gap-1.5">
-                <div className="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">N</span>
+            <div className="flex items-center justify-between p-4 border-b border-white/20">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+                  <span className="text-white font-bold">N</span>
                 </div>
                 <div>
-                  <div className="text-white font-bold text-sm">Nerdy</div>
+                  <div className="text-white font-bold">Nerdy</div>
                   <div className="text-white/80 text-xs">Live+AI™</div>
                 </div>
               </div>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="lg:hidden p-1.5 text-white/80 hover:text-white transition-colors"
+                className="lg:hidden p-2 text-white/80 hover:text-white transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-1.5 space-y-0.5">
+            <nav className="flex-1 p-3 space-y-1">
               {navigation.map((item) => {
                 const isActive = pathname === item.href
                 const Icon = item.icon
@@ -176,7 +176,7 @@ export default function DashboardLayout({
                     href={item.href}
                     onClick={() => setSidebarOpen(false)}
                     className={cn(
-                      'flex items-center gap-2 px-2 py-1.5 rounded-lg transition-all duration-200 group',
+                      'flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 group',
                       isActive 
                         ? 'bg-white/20 text-white shadow-lg' 
                         : 'text-white/80 hover:bg-white/10 hover:text-white'
@@ -184,11 +184,11 @@ export default function DashboardLayout({
                   >
                     <Icon className="w-4 h-4 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-xs">{item.label}</div>
-                      <div className="text-xs opacity-70 leading-tight truncate">{item.description}</div>
+                      <div className="font-medium text-sm">{item.label}</div>
+                      <div className="text-xs opacity-75 leading-tight truncate">{item.description}</div>
                     </div>
                     {item.badge && (
-                      <div className="bg-white/20 text-white px-1 py-0.5 rounded-full text-xs font-medium">
+                      <div className="bg-white/20 text-white px-2 py-0.5 rounded-full text-xs font-medium">
                         {item.badge}
                       </div>
                     )}
@@ -198,13 +198,13 @@ export default function DashboardLayout({
             </nav>
 
             {/* User Section */}
-            <div className="p-1.5 border-t border-white/20">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                  <span className="text-white font-medium text-xs">JD</span>
+            <div className="p-3 border-t border-white/20">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <span className="text-white font-medium text-sm">JD</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-white font-medium text-xs">John Doe</div>
+                  <div className="text-white font-medium text-sm">John Doe</div>
                   <div className="text-white/80 text-xs">Expert • Level 42</div>
                 </div>
               </div>
@@ -212,7 +212,7 @@ export default function DashboardLayout({
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full border-white/30 text-white hover:bg-white/10 text-xs py-1 px-2"
+                className="w-full border-white/30 text-white hover:bg-white/10 text-xs"
                 leftIcon={<Settings className="w-3 h-3" />}
               >
                 Settings
@@ -222,15 +222,15 @@ export default function DashboardLayout({
         </motion.div>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-w-0 lg:ml-0 bg-yellow-200">
+        <div className="flex-1 flex flex-col min-w-0">
           {/* Header */}
-          <header className="bg-white/80 backdrop-blur-sm border-b border-white/30 sticky top-0 z-30 shadow-sm bg-orange-200">
-            <div className="flex items-center justify-between px-3 sm:px-4 py-2.5">
+          <header className="bg-white/80 backdrop-blur-sm border-b border-white/30 sticky top-0 z-30 shadow-sm">
+            <div className="flex items-center justify-between px-4 sm:px-6 py-3">
               <div className="flex items-center gap-3">
                 {/* Mobile menu button */}
                 <button
                   onClick={() => setSidebarOpen(true)}
-                  className="lg:hidden p-1.5 text-gray-600 hover:text-gray-800 transition-colors rounded-lg hover:bg-gray-100"
+                  className="lg:hidden p-2 text-gray-600 hover:text-gray-800 transition-colors rounded-lg hover:bg-gray-100"
                 >
                   <Menu className="w-5 h-5" />
                 </button>
@@ -241,16 +241,15 @@ export default function DashboardLayout({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 {/* Quick Actions */}
-                <div className="hidden md:flex items-center gap-1.5">
+                <div className="hidden md:flex items-center gap-2">
                   <Button 
                     variant="gradient" 
                     gradientType="pink-cyan"
                     size="sm"
                     leftIcon={<Plus className="w-4 h-4" />}
                     xpReward={10}
-                    className="px-3 py-2"
                   >
                     New Session
                   </Button>
@@ -260,7 +259,6 @@ export default function DashboardLayout({
                     size="sm"
                     leftIcon={<Zap className="w-4 h-4" />}
                     xpReward={25}
-                    className="px-3 py-2"
                   >
                     AI Assistant
                   </Button>
@@ -278,10 +276,8 @@ export default function DashboardLayout({
 
           {/* Page Content with proper scrolling */}
           <main className="flex-1 overflow-auto">
-            <div className="p-0 w-full min-w-0">
-              <div className="w-full min-w-0">
-                {children}
-              </div>
+            <div className="p-4 sm:p-6">
+              {children}
             </div>
           </main>
         </div>

@@ -142,30 +142,30 @@ export default function DashboardLayout({
           animate={{
             x: sidebarOpen ? 0 : -320,
           }}
-          className="fixed left-0 top-0 bottom-0 w-72 bg-gradient-nerdy shadow-xl z-50 lg:translate-x-0 lg:static lg:flex-shrink-0"
+          className="fixed left-0 top-0 bottom-0 w-64 bg-gradient-nerdy shadow-xl z-50 lg:translate-x-0 lg:static lg:flex-shrink-0"
         >
           <div className="flex flex-col h-full">
             {/* Logo and Close Button */}
-            <div className="flex items-center justify-between p-6 border-b border-white/20">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">N</span>
+            <div className="flex items-center justify-between p-4 border-b border-white/20">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">N</span>
                 </div>
                 <div>
-                  <div className="text-white font-bold text-lg">Nerdy</div>
-                  <div className="text-white/80 text-sm">Live+AI™</div>
+                  <div className="text-white font-bold">Nerdy</div>
+                  <div className="text-white/80 text-xs">Live+AI™</div>
                 </div>
               </div>
               <button
                 onClick={() => setSidebarOpen(false)}
                 className="lg:hidden p-2 text-white/80 hover:text-white transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-4 space-y-2">
+            <nav className="flex-1 p-3 space-y-1">
               {navigation.map((item) => {
                 const isActive = pathname === item.href
                 const Icon = item.icon
@@ -176,19 +176,19 @@ export default function DashboardLayout({
                     href={item.href}
                     onClick={() => setSidebarOpen(false)}
                     className={cn(
-                      'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group',
+                      'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group',
                       isActive 
                         ? 'bg-white/20 text-white shadow-lg' 
                         : 'text-white/80 hover:bg-white/10 hover:text-white'
                     )}
                   >
-                    <Icon className="w-5 h-5 flex-shrink-0" />
+                    <Icon className="w-4 h-4 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-sm">{item.label}</div>
-                      <div className="text-xs opacity-80 leading-tight">{item.description}</div>
+                      <div className="text-xs opacity-80 leading-tight truncate">{item.description}</div>
                     </div>
                     {item.badge && (
-                      <div className="bg-white/20 text-white px-2 py-1 rounded-full text-xs font-medium">
+                      <div className="bg-white/20 text-white px-1.5 py-0.5 rounded-full text-xs font-medium">
                         {item.badge}
                       </div>
                     )}
@@ -198,22 +198,22 @@ export default function DashboardLayout({
             </nav>
 
             {/* User Section */}
-            <div className="p-4 border-t border-white/20">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                  <span className="text-white font-medium text-sm">JD</span>
+            <div className="p-3 border-t border-white/20">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <span className="text-white font-medium text-xs">JD</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-white font-medium text-sm">John Doe</div>
-                  <div className="text-white/80 text-xs">Expert Tutor • Level 42</div>
+                  <div className="text-white font-medium text-xs">John Doe</div>
+                  <div className="text-white/80 text-xs">Expert • Level 42</div>
                 </div>
               </div>
               
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full border-white/30 text-white hover:bg-white/10"
-                leftIcon={<Settings className="w-4 h-4" />}
+                className="w-full border-white/30 text-white hover:bg-white/10 text-xs"
+                leftIcon={<Settings className="w-3 h-3" />}
               >
                 Settings
               </Button>
@@ -222,11 +222,11 @@ export default function DashboardLayout({
         </motion.div>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-w-0 lg:ml-0">
+        <div className="flex-1 flex flex-col min-w-0">
           {/* Header */}
           <header className="bg-white/80 backdrop-blur-sm border-b border-white/30 sticky top-0 z-30 shadow-sm">
-            <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4">
-              <div className="flex items-center gap-4">
+            <div className="flex items-center justify-between px-4 sm:px-6 py-3">
+              <div className="flex items-center gap-3">
                 {/* Mobile menu button */}
                 <button
                   onClick={() => setSidebarOpen(true)}
@@ -276,7 +276,7 @@ export default function DashboardLayout({
 
           {/* Page Content with proper scrolling */}
           <main className="flex-1 overflow-auto">
-            <div className="p-4 sm:p-6 lg:p-8">
+            <div className="p-4 sm:p-6 max-w-full">
               {children}
             </div>
           </main>

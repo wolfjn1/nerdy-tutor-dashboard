@@ -1,0 +1,873 @@
+[
+  {
+    "id": "session-001",
+    "studentId": "student-001",
+    "tutorId": "tutor-001",
+    "subject": "Math",
+    "date": "2024-01-15T14:00:00Z",
+    "duration": 60,
+    "status": "scheduled",
+    "lessonPlan": {
+      "id": "lesson-001",
+      "title": "Advanced Algebra: Quadratic Equations",
+      "subject": "Math",
+      "grade": "9",
+      "duration": 60,
+      "objectives": [
+        "Solve quadratic equations using factoring",
+        "Apply quadratic formula in real-world problems",
+        "Graph quadratic functions"
+      ],
+      "activities": [
+        {
+          "id": "activity-001",
+          "title": "Review of Quadratic Forms",
+          "description": "Quick review of standard quadratic equation forms",
+          "duration": 15,
+          "type": "explanation",
+          "resources": ["whiteboard", "calculator"]
+        },
+        {
+          "id": "activity-002",
+          "title": "Solving Practice Problems",
+          "description": "Work through 5 quadratic equation problems together",
+          "duration": 30,
+          "type": "practice",
+          "resources": ["worksheet", "calculator"]
+        },
+        {
+          "id": "activity-003",
+          "title": "Application Problems",
+          "description": "Real-world scenarios using quadratic equations",
+          "duration": 15,
+          "type": "discussion",
+          "resources": ["word problems worksheet"]
+        }
+      ],
+      "materials": ["Graphing calculator", "Algebra workbook", "Graph paper"],
+      "assessments": [
+        {
+          "id": "assessment-001",
+          "title": "Quick Check Quiz",
+          "type": "quiz",
+          "points": 20,
+          "description": "5 problems covering today's material"
+        }
+      ],
+      "createdAt": "2024-01-10T09:00:00Z",
+      "isTemplate": false
+    },
+    "homework": [
+      {
+        "id": "homework-001",
+        "title": "Quadratic Equations Practice Set",
+        "description": "Complete problems 1-20 in chapter 5",
+        "subject": "Math",
+        "studentId": "student-001",
+        "sessionId": "session-001",
+        "dueDate": "2024-01-18T23:59:59Z",
+        "status": "assigned",
+        "attachments": ["math_practice_set.pdf"],
+        "submissions": [],
+        "createdAt": "2024-01-10T14:00:00Z"
+      }
+    ],
+    "notes": "Emma is doing well with basic algebra concepts. Focus on building confidence with more complex problems.",
+    "createdAt": "2024-01-10T09:00:00Z",
+    "updatedAt": "2024-01-10T09:00:00Z"
+  },
+  {
+    "id": "session-002",
+    "studentId": "student-002",
+    "tutorId": "tutor-001",
+    "subject": "Chemistry",
+    "date": "2024-01-16T16:00:00Z",
+    "duration": 90,
+    "status": "scheduled",
+    "lessonPlan": {
+      "id": "lesson-002",
+      "title": "Chemical Bonding and Molecular Structure",
+      "subject": "Chemistry",
+      "grade": "11",
+      "duration": 90,
+      "objectives": [
+        "Understand ionic and covalent bonding",
+        "Predict molecular shapes using VSEPR theory",
+        "Analyze bonding in real compounds"
+      ],
+      "activities": [
+        {
+          "id": "activity-004",
+          "title": "Bonding Theory Review",
+          "description": "Review ionic vs covalent bonding concepts",
+          "duration": 20,
+          "type": "explanation",
+          "resources": ["periodic table", "molecular models"]
+        },
+        {
+          "id": "activity-005",
+          "title": "VSEPR Theory Practice",
+          "description": "Build molecular models and predict shapes",
+          "duration": 40,
+          "type": "practice",
+          "resources": ["molecular model kit", "VSEPR chart"]
+        },
+        {
+          "id": "activity-006",
+          "title": "Real-World Applications",
+          "description": "Discuss how molecular shape affects properties",
+          "duration": 30,
+          "type": "discussion",
+          "resources": ["examples handout"]
+        }
+      ],
+      "materials": ["Molecular model kit", "Periodic table", "VSEPR reference chart"],
+      "assessments": [
+        {
+          "id": "assessment-002",
+          "title": "Molecular Geometry Practice",
+          "type": "worksheet",
+          "points": 25,
+          "description": "Draw and predict shapes for given molecules"
+        }
+      ],
+      "createdAt": "2024-01-11T10:00:00Z",
+      "isTemplate": false
+    },
+    "notes": "Alex needs more hands-on practice with molecular models to visualize concepts better.",
+    "createdAt": "2024-01-11T10:00:00Z",
+    "updatedAt": "2024-01-11T10:00:00Z"
+  },
+  {
+    "id": "session-003",
+    "studentId": "student-003",
+    "tutorId": "tutor-001",
+    "subject": "English",
+    "date": "2024-01-17T13:00:00Z",
+    "duration": 60,
+    "status": "scheduled",
+    "lessonPlan": {
+      "id": "lesson-003",
+      "title": "Essay Structure and Organization",
+      "subject": "English",
+      "grade": "8",
+      "duration": 60,
+      "objectives": [
+        "Master five-paragraph essay structure",
+        "Develop strong thesis statements",
+        "Practice transition sentences"
+      ],
+      "activities": [
+        {
+          "id": "activity-007",
+          "title": "Essay Structure Overview",
+          "description": "Break down the components of a well-structured essay",
+          "duration": 15,
+          "type": "explanation",
+          "resources": ["essay outline template"]
+        },
+        {
+          "id": "activity-008",
+          "title": "Thesis Statement Workshop",
+          "description": "Practice writing clear, arguable thesis statements",
+          "duration": 25,
+          "type": "practice",
+          "resources": ["thesis examples", "practice prompts"]
+        },
+        {
+          "id": "activity-009",
+          "title": "Outline Creation",
+          "description": "Create outline for upcoming essay assignment",
+          "duration": 20,
+          "type": "practice",
+          "resources": ["outline template", "assignment prompt"]
+        }
+      ],
+      "materials": ["Essay outline templates", "Example essays", "Writing prompt"],
+      "assessments": [
+        {
+          "id": "assessment-003",
+          "title": "Essay Outline",
+          "type": "project",
+          "points": 15,
+          "description": "Complete outline for next essay assignment"
+        }
+      ],
+      "createdAt": "2024-01-12T11:00:00Z",
+      "isTemplate": false
+    },
+    "notes": "Sophia has great ideas but needs structure. Focus on organization and flow.",
+    "createdAt": "2024-01-12T11:00:00Z",
+    "updatedAt": "2024-01-12T11:00:00Z"
+  },
+  {
+    "id": "session-004",
+    "studentId": "student-004",
+    "tutorId": "tutor-001",
+    "subject": "Computer Science",
+    "date": "2024-01-18T15:00:00Z",
+    "duration": 90,
+    "status": "scheduled",
+    "lessonPlan": {
+      "id": "lesson-004",
+      "title": "Object-Oriented Programming Basics",
+      "subject": "Computer Science",
+      "grade": "10",
+      "duration": 90,
+      "objectives": [
+        "Understand classes and objects",
+        "Implement basic inheritance",
+        "Practice encapsulation principles"
+      ],
+      "activities": [
+        {
+          "id": "activity-010",
+          "title": "OOP Concepts Introduction",
+          "description": "Explain classes, objects, and basic OOP principles",
+          "duration": 25,
+          "type": "explanation",
+          "resources": ["code examples", "whiteboard"]
+        },
+        {
+          "id": "activity-011",
+          "title": "Class Creation Exercise",
+          "description": "Write simple classes with attributes and methods",
+          "duration": 40,
+          "type": "practice",
+          "resources": ["IDE", "practice problems"]
+        },
+        {
+          "id": "activity-012",
+          "title": "Inheritance Example",
+          "description": "Create parent and child classes",
+          "duration": 25,
+          "type": "practice",
+          "resources": ["IDE", "inheritance examples"]
+        }
+      ],
+      "materials": ["Computer with IDE", "Code examples", "Practice problems"],
+      "assessments": [
+        {
+          "id": "assessment-004",
+          "title": "Class Design Project",
+          "type": "project",
+          "points": 30,
+          "description": "Create a simple class hierarchy for a given scenario"
+        }
+      ],
+      "createdAt": "2024-01-13T12:00:00Z",
+      "isTemplate": false
+    },
+    "notes": "Marcus is technically skilled but needs to work on focus and following instructions step-by-step.",
+    "createdAt": "2024-01-13T12:00:00Z",
+    "updatedAt": "2024-01-13T12:00:00Z"
+  },
+  {
+    "id": "session-005",
+    "studentId": "student-005",
+    "tutorId": "tutor-001",
+    "subject": "Biology",
+    "date": "2024-01-19T10:00:00Z",
+    "duration": 60,
+    "status": "scheduled",
+    "lessonPlan": {
+      "id": "lesson-005",
+      "title": "Cellular Respiration Process",
+      "subject": "Biology",
+      "grade": "12",
+      "duration": 60,
+      "objectives": [
+        "Understand the stages of cellular respiration",
+        "Compare aerobic and anaerobic respiration",
+        "Analyze energy production in cells"
+      ],
+      "activities": [
+        {
+          "id": "activity-013",
+          "title": "Cellular Respiration Overview",
+          "description": "Review the overall process and importance",
+          "duration": 15,
+          "type": "explanation",
+          "resources": ["cellular respiration diagram"]
+        },
+        {
+          "id": "activity-014",
+          "title": "Stage-by-Stage Analysis",
+          "description": "Break down glycolysis, Krebs cycle, and electron transport",
+          "duration": 30,
+          "type": "explanation",
+          "resources": ["detailed diagrams", "ATP tracking sheet"]
+        },
+        {
+          "id": "activity-015",
+          "title": "Practice Problems",
+          "description": "Calculate ATP yield and analyze different scenarios",
+          "duration": 15,
+          "type": "practice",
+          "resources": ["calculation worksheet"]
+        }
+      ],
+      "materials": ["Cellular respiration diagrams", "ATP calculation worksheet", "Colored pencils"],
+      "assessments": [
+        {
+          "id": "assessment-005",
+          "title": "Cellular Respiration Quiz",
+          "type": "quiz",
+          "points": 25,
+          "description": "Test understanding of respiration stages and ATP production"
+        }
+      ],
+      "createdAt": "2024-01-14T13:00:00Z",
+      "isTemplate": false
+    },
+    "notes": "Olivia is well-prepared for college. Focus on AP-level depth and test-taking strategies.",
+    "createdAt": "2024-01-14T13:00:00Z",
+    "updatedAt": "2024-01-14T13:00:00Z"
+  },
+  {
+    "id": "session-006",
+    "studentId": "student-001",
+    "tutorId": "tutor-001",
+    "subject": "Math",
+    "date": "2024-01-12T14:00:00Z",
+    "duration": 60,
+    "status": "completed",
+    "notes": "Emma did great with linear equations. Ready to move to quadratics.",
+    "rating": 5,
+    "earnings": 75,
+    "createdAt": "2024-01-08T09:00:00Z",
+    "updatedAt": "2024-01-12T15:00:00Z"
+  },
+  {
+    "id": "session-007",
+    "studentId": "student-002",
+    "tutorId": "tutor-001",
+    "subject": "Chemistry",
+    "date": "2024-01-10T16:00:00Z",
+    "duration": 90,
+    "status": "completed",
+    "notes": "Good progress on stoichiometry. Still needs practice with limiting reagents.",
+    "rating": 4,
+    "earnings": 112.50,
+    "createdAt": "2024-01-05T10:00:00Z",
+    "updatedAt": "2024-01-10T17:30:00Z"
+  },
+  {
+    "id": "session-008",
+    "studentId": "student-003",
+    "tutorId": "tutor-001",
+    "subject": "English",
+    "date": "2024-01-08T13:00:00Z",
+    "duration": 60,
+    "status": "completed",
+    "notes": "Sophia's creative writing is improving. Worked on character development.",
+    "rating": 5,
+    "earnings": 75,
+    "createdAt": "2024-01-03T11:00:00Z",
+    "updatedAt": "2024-01-08T14:00:00Z"
+  },
+  {
+    "id": "session-009",
+    "studentId": "student-004",
+    "tutorId": "tutor-001",
+    "subject": "Math",
+    "date": "2024-01-11T15:00:00Z",
+    "duration": 90,
+    "status": "completed",
+    "notes": "Marcus was more focused today. Good work on trigonometry basics.",
+    "rating": 4,
+    "earnings": 112.50,
+    "createdAt": "2024-01-06T12:00:00Z",
+    "updatedAt": "2024-01-11T16:30:00Z"
+  },
+  {
+    "id": "session-010",
+    "studentId": "student-005",
+    "tutorId": "tutor-001",
+    "subject": "Biology",
+    "date": "2024-01-09T10:00:00Z",
+    "duration": 60,
+    "status": "completed",
+    "notes": "Excellent session on photosynthesis. Olivia is ready for advanced topics.",
+    "rating": 5,
+    "earnings": 75,
+    "createdAt": "2024-01-04T13:00:00Z",
+    "updatedAt": "2024-01-09T11:00:00Z"
+  },
+  {
+    "id": "session-011",
+    "studentId": "student-006",
+    "tutorId": "tutor-001",
+    "subject": "Math",
+    "date": "2024-01-20T14:00:00Z",
+    "duration": 60,
+    "status": "scheduled",
+    "lessonPlan": {
+      "id": "lesson-006",
+      "title": "Fractions and Decimals Confidence Building",
+      "subject": "Math",
+      "grade": "7",
+      "duration": 60,
+      "objectives": [
+        "Build confidence with fraction operations",
+        "Convert between fractions and decimals",
+        "Solve real-world problems"
+      ],
+      "activities": [
+        {
+          "id": "activity-016",
+          "title": "Fraction Games",
+          "description": "Fun activities to practice fraction skills",
+          "duration": 20,
+          "type": "practice",
+          "resources": ["fraction tiles", "games"]
+        },
+        {
+          "id": "activity-017",
+          "title": "Decimal Conversion Practice",
+          "description": "Convert fractions to decimals and vice versa",
+          "duration": 25,
+          "type": "practice",
+          "resources": ["conversion chart", "calculator"]
+        },
+        {
+          "id": "activity-018",
+          "title": "Real-World Applications",
+          "description": "Use fractions in cooking and measurement problems",
+          "duration": 15,
+          "type": "discussion",
+          "resources": ["word problems"]
+        }
+      ],
+      "materials": ["Fraction tiles", "Calculator", "Measuring cups", "Recipe examples"],
+      "assessments": [
+        {
+          "id": "assessment-006",
+          "title": "Fraction Confidence Check",
+          "type": "quiz",
+          "points": 15,
+          "description": "Low-pressure assessment to build confidence"
+        }
+      ],
+      "createdAt": "2024-01-15T14:00:00Z",
+      "isTemplate": false
+    },
+    "notes": "Focus on building Ethan's confidence. Use encouragement and positive reinforcement.",
+    "createdAt": "2024-01-15T14:00:00Z",
+    "updatedAt": "2024-01-15T14:00:00Z"
+  },
+  {
+    "id": "session-012",
+    "studentId": "student-007",
+    "tutorId": "tutor-001",
+    "subject": "English",
+    "date": "2024-01-21T11:00:00Z",
+    "duration": 60,
+    "status": "scheduled",
+    "lessonPlan": {
+      "id": "lesson-007",
+      "title": "Reading Comprehension Strategies",
+      "subject": "English",
+      "grade": "6",
+      "duration": 60,
+      "objectives": [
+        "Learn active reading strategies",
+        "Improve reading comprehension",
+        "Practice summarizing techniques"
+      ],
+      "activities": [
+        {
+          "id": "activity-019",
+          "title": "Reading Strategy Introduction",
+          "description": "Teach annotation and active reading techniques",
+          "duration": 20,
+          "type": "explanation",
+          "resources": ["reading passage", "annotation guide"]
+        },
+        {
+          "id": "activity-020",
+          "title": "Guided Reading Practice",
+          "description": "Practice strategies with a short story",
+          "duration": 25,
+          "type": "practice",
+          "resources": ["short story", "comprehension questions"]
+        },
+        {
+          "id": "activity-021",
+          "title": "Summarization Practice",
+          "description": "Create summaries using main ideas",
+          "duration": 15,
+          "type": "practice",
+          "resources": ["summary template"]
+        }
+      ],
+      "materials": ["Age-appropriate reading passage", "Annotation tools", "Summary templates"],
+      "assessments": [
+        {
+          "id": "assessment-007",
+          "title": "Reading Comprehension Check",
+          "type": "worksheet",
+          "points": 20,
+          "description": "Questions about the reading passage"
+        }
+      ],
+      "createdAt": "2024-01-16T15:00:00Z",
+      "isTemplate": false
+    },
+    "notes": "Ava is enthusiastic about reading. Channel her energy into structured comprehension practice.",
+    "createdAt": "2024-01-16T15:00:00Z",
+    "updatedAt": "2024-01-16T15:00:00Z"
+  },
+  {
+    "id": "session-013",
+    "studentId": "student-008",
+    "tutorId": "tutor-001",
+    "subject": "Physics",
+    "date": "2024-01-22T15:30:00Z",
+    "duration": 90,
+    "status": "scheduled",
+    "lessonPlan": {
+      "id": "lesson-008",
+      "title": "Mechanics: Forces and Motion",
+      "subject": "Physics",
+      "grade": "11",
+      "duration": 90,
+      "objectives": [
+        "Understand Newton's laws of motion",
+        "Apply force equations to problems",
+        "Analyze motion with free body diagrams"
+      ],
+      "activities": [
+        {
+          "id": "activity-022",
+          "title": "Newton's Laws Review",
+          "description": "Review the three laws with examples",
+          "duration": 25,
+          "type": "explanation",
+          "resources": ["physics demonstrations", "examples"]
+        },
+        {
+          "id": "activity-023",
+          "title": "Free Body Diagrams",
+          "description": "Practice drawing and analyzing force diagrams",
+          "duration": 35,
+          "type": "practice",
+          "resources": ["diagram templates", "physics problems"]
+        },
+        {
+          "id": "activity-024",
+          "title": "Problem Solving Session",
+          "description": "Work through complex mechanics problems",
+          "duration": 30,
+          "type": "practice",
+          "resources": ["physics textbook", "calculator"]
+        }
+      ],
+      "materials": ["Physics textbook", "Calculator", "Graph paper", "Ruler"],
+      "assessments": [
+        {
+          "id": "assessment-008",
+          "title": "Forces and Motion Quiz",
+          "type": "quiz",
+          "points": 30,
+          "description": "Test understanding of Newton's laws and force calculations"
+        }
+      ],
+      "createdAt": "2024-01-17T16:00:00Z",
+      "isTemplate": false
+    },
+    "notes": "Noah has strong analytical skills. Challenge him with complex engineering-style problems.",
+    "createdAt": "2024-01-17T16:00:00Z",
+    "updatedAt": "2024-01-17T16:00:00Z"
+  },
+  {
+    "id": "session-014",
+    "studentId": "student-009",
+    "tutorId": "tutor-001",
+    "subject": "Spanish",
+    "date": "2024-01-23T16:00:00Z",
+    "duration": 60,
+    "status": "scheduled",
+    "lessonPlan": {
+      "id": "lesson-009",
+      "title": "Advanced Spanish Grammar: Subjunctive Mood",
+      "subject": "Spanish",
+      "grade": "9",
+      "duration": 60,
+      "objectives": [
+        "Understand subjunctive mood usage",
+        "Practice subjunctive conjugations",
+        "Use subjunctive in complex sentences"
+      ],
+      "activities": [
+        {
+          "id": "activity-025",
+          "title": "Subjunctive Introduction",
+          "description": "Explain when and why to use subjunctive",
+          "duration": 20,
+          "type": "explanation",
+          "resources": ["grammar guide", "examples"]
+        },
+        {
+          "id": "activity-026",
+          "title": "Conjugation Practice",
+          "description": "Practice regular and irregular subjunctive forms",
+          "duration": 25,
+          "type": "practice",
+          "resources": ["conjugation charts", "practice exercises"]
+        },
+        {
+          "id": "activity-027",
+          "title": "Sentence Construction",
+          "description": "Create complex sentences using subjunctive",
+          "duration": 15,
+          "type": "practice",
+          "resources": ["sentence frames", "vocabulary lists"]
+        }
+      ],
+      "materials": ["Spanish grammar textbook", "Conjugation charts", "Practice worksheets"],
+      "assessments": [
+        {
+          "id": "assessment-009",
+          "title": "Subjunctive Practice Test",
+          "type": "quiz",
+          "points": 25,
+          "description": "Test subjunctive recognition and usage"
+        }
+      ],
+      "createdAt": "2024-01-18T17:00:00Z",
+      "isTemplate": false
+    },
+    "notes": "Isabella is preparing for language competitions. Focus on advanced grammar and fluency.",
+    "createdAt": "2024-01-18T17:00:00Z",
+    "updatedAt": "2024-01-18T17:00:00Z"
+  },
+  {
+    "id": "session-015",
+    "studentId": "student-010",
+    "tutorId": "tutor-001",
+    "subject": "Science",
+    "date": "2024-01-24T13:30:00Z",
+    "duration": 60,
+    "status": "scheduled",
+    "lessonPlan": {
+      "id": "lesson-010",
+      "title": "Hands-On Chemistry: States of Matter",
+      "subject": "Science",
+      "grade": "8",
+      "duration": 60,
+      "objectives": [
+        "Understand states of matter transitions",
+        "Conduct safe chemistry experiments",
+        "Observe and record scientific data"
+      ],
+      "activities": [
+        {
+          "id": "activity-028",
+          "title": "States of Matter Review",
+          "description": "Quick review of solid, liquid, gas properties",
+          "duration": 15,
+          "type": "explanation",
+          "resources": ["states of matter chart"]
+        },
+        {
+          "id": "activity-029",
+          "title": "Melting and Freezing Experiment",
+          "description": "Observe ice melting and water freezing",
+          "duration": 30,
+          "type": "practice",
+          "resources": ["ice cubes", "thermometer", "data sheet"]
+        },
+        {
+          "id": "activity-030",
+          "title": "Data Analysis",
+          "description": "Graph temperature changes over time",
+          "duration": 15,
+          "type": "assessment",
+          "resources": ["graph paper", "data from experiment"]
+        }
+      ],
+      "materials": ["Ice cubes", "Thermometer", "Data recording sheets", "Graph paper"],
+      "assessments": [
+        {
+          "id": "assessment-010",
+          "title": "Lab Report",
+          "type": "project",
+          "points": 20,
+          "description": "Write up experiment observations and conclusions"
+        }
+      ],
+      "createdAt": "2024-01-19T18:00:00Z",
+      "isTemplate": false
+    },
+    "notes": "Liam loves experiments. Always include hands-on activities to maintain engagement.",
+    "createdAt": "2024-01-19T18:00:00Z",
+    "updatedAt": "2024-01-19T18:00:00Z"
+  },
+  {
+    "id": "session-016",
+    "studentId": "student-006",
+    "tutorId": "tutor-001",
+    "subject": "Math",
+    "date": "2024-01-13T14:00:00Z",
+    "duration": 60,
+    "status": "completed",
+    "notes": "Ethan gained confidence with basic algebra. Great progress!",
+    "rating": 4,
+    "earnings": 75,
+    "createdAt": "2024-01-08T14:00:00Z",
+    "updatedAt": "2024-01-13T15:00:00Z"
+  },
+  {
+    "id": "session-017",
+    "studentId": "student-007",
+    "tutorId": "tutor-001",
+    "subject": "Math",
+    "date": "2024-01-14T11:00:00Z",
+    "duration": 60,
+    "status": "completed",
+    "notes": "Ava is improving with multiplication tables. Keep up the practice!",
+    "rating": 5,
+    "earnings": 75,
+    "createdAt": "2024-01-09T15:00:00Z",
+    "updatedAt": "2024-01-14T12:00:00Z"
+  },
+  {
+    "id": "session-018",
+    "studentId": "student-008",
+    "tutorId": "tutor-001",
+    "subject": "Math",
+    "date": "2024-01-15T15:30:00Z",
+    "duration": 90,
+    "status": "completed",
+    "notes": "Noah tackled complex calculus problems well. Ready for AP level work.",
+    "rating": 5,
+    "earnings": 112.50,
+    "createdAt": "2024-01-10T16:00:00Z",
+    "updatedAt": "2024-01-15T17:00:00Z"
+  },
+  {
+    "id": "session-019",
+    "studentId": "student-011",
+    "tutorId": "tutor-001",
+    "subject": "English",
+    "date": "2024-01-25T14:00:00Z",
+    "duration": 60,
+    "status": "scheduled",
+    "lessonPlan": {
+      "id": "lesson-011",
+      "title": "Creative Writing: Character Development",
+      "subject": "English",
+      "grade": "10",
+      "duration": 60,
+      "objectives": [
+        "Develop compelling characters",
+        "Use descriptive language effectively",
+        "Create character backstories"
+      ],
+      "activities": [
+        {
+          "id": "activity-031",
+          "title": "Character Analysis",
+          "description": "Analyze well-developed characters from literature",
+          "duration": 20,
+          "type": "explanation",
+          "resources": ["character examples", "analysis worksheet"]
+        },
+        {
+          "id": "activity-032",
+          "title": "Character Creation Workshop",
+          "description": "Create original characters with detailed profiles",
+          "duration": 25,
+          "type": "practice",
+          "resources": ["character development template"]
+        },
+        {
+          "id": "activity-033",
+          "title": "Character Dialogue Practice",
+          "description": "Write dialogue that reveals character traits",
+          "duration": 15,
+          "type": "practice",
+          "resources": ["dialogue examples", "writing prompts"]
+        }
+      ],
+      "materials": ["Character development templates", "Literature examples", "Writing journals"],
+      "assessments": [
+        {
+          "id": "assessment-011",
+          "title": "Character Profile",
+          "type": "project",
+          "points": 25,
+          "description": "Complete character profile with backstory and dialogue sample"
+        }
+      ],
+      "createdAt": "2024-01-20T19:00:00Z",
+      "isTemplate": false
+    },
+    "notes": "Mia has a strong artistic vision. Help her translate visual ideas into written descriptions.",
+    "createdAt": "2024-01-20T19:00:00Z",
+    "updatedAt": "2024-01-20T19:00:00Z"
+  },
+  {
+    "id": "session-020",
+    "studentId": "student-012",
+    "tutorId": "tutor-001",
+    "subject": "Government",
+    "date": "2024-01-26T10:30:00Z",
+    "duration": 75,
+    "status": "scheduled",
+    "lessonPlan": {
+      "id": "lesson-012",
+      "title": "Constitutional Law: Bill of Rights Analysis",
+      "subject": "Government",
+      "grade": "12",
+      "duration": 75,
+      "objectives": [
+        "Analyze Bill of Rights amendments",
+        "Understand constitutional interpretation",
+        "Apply amendments to current events"
+      ],
+      "activities": [
+        {
+          "id": "activity-034",
+          "title": "Bill of Rights Overview",
+          "description": "Review first 10 amendments and their purposes",
+          "duration": 20,
+          "type": "explanation",
+          "resources": ["Constitution text", "amendment summaries"]
+        },
+        {
+          "id": "activity-035",
+          "title": "Case Study Analysis",
+          "description": "Analyze landmark Supreme Court cases",
+          "duration": 35,
+          "type": "discussion",
+          "resources": ["case summaries", "court decisions"]
+        },
+        {
+          "id": "activity-036",
+          "title": "Current Events Application",
+          "description": "Apply constitutional principles to modern issues",
+          "duration": 20,
+          "type": "discussion",
+          "resources": ["news articles", "discussion questions"]
+        }
+      ],
+      "materials": ["Constitution text", "Supreme Court case summaries", "Current events articles"],
+      "assessments": [
+        {
+          "id": "assessment-012",
+          "title": "Constitutional Analysis Essay",
+          "type": "project",
+          "points": 35,
+          "description": "Essay analyzing a constitutional issue using case law"
+        }
+      ],
+      "createdAt": "2024-01-21T20:00:00Z",
+      "isTemplate": false
+    },
+    "notes": "Benjamin has excellent debate skills. Challenge him with complex constitutional questions.",
+    "createdAt": "2024-01-21T20:00:00Z",
+    "updatedAt": "2024-01-21T20:00:00Z"
+  }
+] 

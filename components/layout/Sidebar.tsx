@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { 
   Home, 
   Users, 
@@ -27,7 +29,6 @@ interface SidebarItem {
   href: string
   badge?: string
   xpReward?: number
-  isActive?: boolean
 }
 
 const sidebarItems: SidebarItem[] = [
@@ -35,8 +36,7 @@ const sidebarItems: SidebarItem[] = [
     id: 'dashboard',
     label: 'Dashboard',
     icon: Home,
-    href: '/',
-    isActive: true
+    href: '/dashboard'
   },
   {
     id: 'students',
@@ -104,6 +104,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onClose
 }) => {
   const [collapsed, setCollapsed] = useState(isCollapsed)
+  const pathname = usePathname()
 
   const handleToggle = () => {
     const newCollapsed = !collapsed
@@ -111,12 +112,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
     onToggle?.(newCollapsed)
   }
 
-  const handleItemClick = (item: SidebarItem) => {
+  const handleItemClick = () => {
     if (isMobile) {
       onClose?.()
     }
-    // Handle navigation here
-    console.log('Navigate to:', item.href)
   }
 
   const sidebarVariants = {
@@ -206,49 +205,52 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        {sidebarItems.map((item) => (
-          <motion.button
-            key={item.id}
-            onClick={() => handleItemClick(item)}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className={cn(
-              'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200',
-              'hover:bg-white/10 text-white',
-              item.isActive && 'bg-gradient-nerdy shadow-lg nerdy-glow',
-              collapsed && 'justify-center'
-            )}
-          >
-            <item.icon className="w-5 h-5 flex-shrink-0" />
-            
-            <AnimatePresence mode="wait">
-              {!collapsed && (
-                <motion.div
-                  variants={itemVariants}
-                  initial="collapsed"
-                  animate="expanded"
-                  exit="collapsed"
-                  className="flex-1 flex items-center justify-between"
-                >
-                  <span className="font-medium text-sm">{item.label}</span>
-                  
-                  <div className="flex items-center gap-2">
-                    {item.badge && (
-                      <Badge variant="secondary" size="sm" className="bg-nerdy-pink/20 text-nerdy-pink border-nerdy-pink/30">
-                        {item.badge}
-                      </Badge>
-                    )}
-                    {item.xpReward && (
-                      <Badge variant="gradient" gradient="green" size="sm" className="bg-gradient-yellow-pink">
-                        +{item.xpReward}XP
-                      </Badge>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.button>
-        ))}
+        {sidebarItems.map((item) => {
+          const isActive = pathname === item.href
+          return (
+            <Link key={item.id} href={item.href} onClick={handleItemClick}>
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={cn(
+                  'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200',
+                  'hover:bg-white/10 text-white cursor-pointer',
+                  isActive && 'bg-gradient-nerdy shadow-lg nerdy-glow',
+                  collapsed && 'justify-center'
+                )}
+              >
+                <item.icon className="w-5 h-5 flex-shrink-0" />
+                
+                <AnimatePresence mode="wait">
+                  {!collapsed && (
+                    <motion.div
+                      variants={itemVariants}
+                      initial="collapsed"
+                      animate="expanded"
+                      exit="collapsed"
+                      className="flex-1 flex items-center justify-between"
+                    >
+                      <span className="font-medium text-sm">{item.label}</span>
+                      
+                      <div className="flex items-center gap-2">
+                        {item.badge && (
+                          <Badge variant="secondary" size="sm" className="bg-nerdy-pink/20 text-nerdy-pink border-nerdy-pink/30">
+                            {item.badge}
+                          </Badge>
+                        )}
+                        {item.xpReward && (
+                          <Badge variant="gradient" gradient="green" size="sm" className="bg-gradient-yellow-pink">
+                            +{item.xpReward}XP
+                          </Badge>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            </Link>
+          )
+        })}
       </nav>
 
       {/* User Profile */}

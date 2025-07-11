@@ -121,7 +121,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-nerdy-bg-light">
+    <div className="min-h-screen bg-gradient-nerdy-bg-light w-full m-0 p-0 bg-pink-300">
       {/* Mobile sidebar backdrop */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -135,7 +135,7 @@ export default function DashboardLayout({
         )}
       </AnimatePresence>
 
-      <div className="flex h-screen">
+      <div className="flex h-screen w-full m-0 p-0 bg-cyan-300">
         {/* Sidebar */}
         <motion.div
           initial={false}

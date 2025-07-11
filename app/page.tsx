@@ -13,6 +13,7 @@ import {
   AdministrativeTasks 
 } from '@/components/dashboard'
 import { Button, NotificationBell, useToastHelpers } from '@/components/ui'
+import SupabaseConnectionTest from '@/components/test/SupabaseConnectionTest'
 import dashboardDataRaw from '@/lib/mock-data/dashboard.json'
 
 // Type assertion to ensure proper types
@@ -133,6 +134,16 @@ export default function TutorDashboard() {
               </div>
             </div>
           </div>
+        </motion.div>
+
+        {/* Supabase Connection Test */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.05 }}
+          className="mb-8"
+        >
+          <SupabaseConnectionTest />
         </motion.div>
 
         {/* Tutor Profile Header */}

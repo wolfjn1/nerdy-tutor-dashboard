@@ -25,7 +25,6 @@ const navigation = [
   { name: 'Opportunities', href: '/opportunities', icon: Search },
   { name: 'Earnings', href: '/earnings', icon: DollarSign },
   { name: 'Achievements', href: '/achievements', icon: Trophy },
-  { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
 export default function DashboardLayout({
@@ -58,7 +57,7 @@ export default function DashboardLayout({
             <img 
               src="/nerdy-logo.png" 
               alt="Nerdy Live+AI" 
-              className="h-8 w-auto"
+              className="h-12 w-auto"
             />
           </div>
           <button
@@ -104,16 +103,21 @@ export default function DashboardLayout({
 
         {/* User section */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/20 bg-black/10 backdrop-blur-sm">
-          <div className="flex items-center gap-3">
-            <img 
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
-              alt="John Doe"
-              className="w-10 h-10 rounded-full object-cover ring-2 ring-pink-400/50"
-            />
-            <div>
-              <div className="text-sm font-semibold text-white">John Doe</div>
-              <div className="text-xs text-white/80">Expert • Level 42</div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <img 
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+                alt="John Doe"
+                className="w-10 h-10 rounded-full object-cover ring-2 ring-pink-400/50 cursor-pointer hover:ring-pink-300/70 transition-all"
+              />
+              <div>
+                <div className="text-sm font-semibold text-white">John Doe</div>
+                <div className="text-xs text-white/80">Expert • Level 42</div>
+              </div>
             </div>
+            <button className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200">
+              <Settings className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
@@ -137,10 +141,6 @@ export default function DashboardLayout({
           <div className="flex items-center gap-4">
             <button className="p-2 text-gray-600 hover:text-gray-800 transition-colors rounded-lg hover:bg-white/50">
               <Bell className="w-5 h-5" />
-            </button>
-            <button className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:from-pink-600 hover:to-purple-700 transition-all duration-200 shadow-lg">
-              <Plus className="w-4 h-4 inline mr-2" />
-              New Session
             </button>
           </div>
         </div>

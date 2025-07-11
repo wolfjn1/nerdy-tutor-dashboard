@@ -57,7 +57,7 @@ export default function DashboardPage() {
   const todaysEarnings = 425
 
   return (
-    <div className="space-y-3 w-full">
+    <div className="space-y-3 w-full bg-green-50">
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
         {/* Welcome Message */}
@@ -71,7 +71,7 @@ export default function DashboardPage() {
         </div>
         
         {/* Gamification Section */}
-        <div className="lg:text-right bg-white/60 backdrop-blur-sm rounded-xl p-2.5 border border-white/50 shadow-sm lg:min-w-[280px]">
+        <div className="lg:text-right bg-white/60 backdrop-blur-sm rounded-xl p-2.5 border border-white/50 shadow-sm lg:w-auto lg:flex-shrink-0">
           <div className="flex items-center gap-3 lg:justify-end mb-2">
             <div className="text-center lg:text-right">
               <div className="text-xl font-bold bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">

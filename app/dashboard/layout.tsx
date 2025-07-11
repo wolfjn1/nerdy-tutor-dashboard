@@ -222,7 +222,7 @@ export default function DashboardLayout({
         </motion.div>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col w-full">
           {/* Header */}
           <header className="bg-white/80 backdrop-blur-sm border-b border-white/30 sticky top-0 z-30 shadow-sm">
             <div className="flex items-center justify-between px-3 sm:px-4 py-2.5">
@@ -277,8 +277,8 @@ export default function DashboardLayout({
           </header>
 
           {/* Page Content with proper scrolling */}
-          <main className="flex-1 overflow-auto">
-            <div className="p-2 sm:p-3 max-w-full w-full">
+          <main className="flex-1 overflow-auto bg-red-50">
+            <div className="p-2 w-full bg-blue-50">
               {children}
             </div>
           </main>

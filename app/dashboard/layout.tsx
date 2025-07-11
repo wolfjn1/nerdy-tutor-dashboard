@@ -224,7 +224,7 @@ export default function DashboardLayout({
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
         <header className="bg-white/60 backdrop-blur-sm border-b border-white/30 sticky top-0 z-30">
-          <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center justify-between px-4 lg:px-6 py-4">
             <div className="flex items-center gap-4">
               {/* Mobile menu button */}
               <button
@@ -273,8 +273,8 @@ export default function DashboardLayout({
           </div>
         </header>
 
-        {/* Page Content - Remove extra padding, let page control its own spacing */}
-        <main className="flex-1 overflow-auto">
+        {/* Page Content - Add proper top padding and reduce side padding */}
+        <main className="flex-1 overflow-auto pt-6">
           {children}
         </main>
       </div>

@@ -67,15 +67,15 @@ export default function DashboardPage() {
   ]
 
   return (
-    <div className="p-6">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="px-4 lg:px-6">
+      <div className="max-w-6xl mx-auto space-y-6">
         {/* Debug Message */}
         <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
           <strong>Debug:</strong> Dashboard page is rendering! 🎉
         </div>
 
         {/* Welcome Section - Remove problematic animations */}
-        <div className="mb-8">
+        <div className="mb-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div>
               <h1 className="text-3xl font-bold text-slate-800 mb-2">
@@ -237,6 +237,7 @@ export default function DashboardPage() {
             <li>✅ Tailwind CSS classes are applied</li>
             <li>✅ Icons from Lucide React are displaying</li>
             <li>✅ Layout structure fixed for proper positioning</li>
+            <li>✅ Spacing optimized for better balance</li>
           </ul>
         </div>
       </div>

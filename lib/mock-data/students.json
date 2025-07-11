@@ -1,0 +1,314 @@
+[
+  {
+    "id": "student-001",
+    "firstName": "Emma",
+    "lastName": "Johnson",
+    "avatar": "https://images.unsplash.com/photo-1494790108755-2616c2c7c6d2?w=150&h=150&fit=crop&crop=face",
+    "grade": 9,
+    "subjects": ["Math", "Science"],
+    "parentContact": {
+      "email": "parent.johnson@email.com",
+      "phone": "(555) 123-4567",
+      "name": "Sarah Johnson",
+      "relationship": "parent"
+    },
+    "notes": "Excellent student with strong analytical skills. Needs extra help with advanced algebra concepts.",
+    "tags": ["high-performer", "motivated", "algebra-help"],
+    "progress": {
+      "attendance": 95,
+      "performance": 88,
+      "engagement": 92
+    },
+    "nextSession": "2024-01-15T14:00:00Z",
+    "totalSessions": 24,
+    "completedSessions": 22,
+    "createdAt": "2023-09-01T10:00:00Z",
+    "isActive": true
+  },
+  {
+    "id": "student-002",
+    "firstName": "Alex",
+    "lastName": "Chen",
+    "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+    "grade": 11,
+    "subjects": ["Chemistry", "Physics"],
+    "parentContact": {
+      "email": "chen.family@email.com",
+      "phone": "(555) 234-5678",
+      "name": "Michael Chen",
+      "relationship": "parent"
+    },
+    "notes": "Strong in theoretical concepts but struggles with practical applications. Very dedicated student.",
+    "tags": ["theory-strong", "practice-needs-work", "dedicated"],
+    "progress": {
+      "attendance": 90,
+      "performance": 85,
+      "engagement": 87
+    },
+    "nextSession": "2024-01-16T16:00:00Z",
+    "totalSessions": 18,
+    "completedSessions": 16,
+    "createdAt": "2023-10-15T09:30:00Z",
+    "isActive": true
+  },
+  {
+    "id": "student-003",
+    "firstName": "Sophia",
+    "lastName": "Martinez",
+    "avatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+    "grade": 8,
+    "subjects": ["English", "History"],
+    "parentContact": {
+      "email": "martinez.home@email.com",
+      "phone": "(555) 345-6789",
+      "name": "Isabella Martinez",
+      "relationship": "parent"
+    },
+    "notes": "Creative writer with excellent reading comprehension. Needs support with essay structure.",
+    "tags": ["creative", "reader", "essay-help"],
+    "progress": {
+      "attendance": 98,
+      "performance": 91,
+      "engagement": 95
+    },
+    "nextSession": "2024-01-17T13:00:00Z",
+    "totalSessions": 30,
+    "completedSessions": 29,
+    "createdAt": "2023-08-20T11:00:00Z",
+    "isActive": true
+  },
+  {
+    "id": "student-004",
+    "firstName": "Marcus",
+    "lastName": "Thompson",
+    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+    "grade": 10,
+    "subjects": ["Math", "Computer Science"],
+    "parentContact": {
+      "email": "thompson.family@email.com",
+      "phone": "(555) 456-7890",
+      "name": "David Thompson",
+      "relationship": "parent"
+    },
+    "notes": "Tech-savvy student with natural programming aptitude. Sometimes lacks focus during sessions.",
+    "tags": ["tech-savvy", "programming", "focus-issues"],
+    "progress": {
+      "attendance": 82,
+      "performance": 78,
+      "engagement": 75
+    },
+    "nextSession": "2024-01-18T15:00:00Z",
+    "totalSessions": 15,
+    "completedSessions": 12,
+    "createdAt": "2023-11-10T14:30:00Z",
+    "isActive": true
+  },
+  {
+    "id": "student-005",
+    "firstName": "Olivia",
+    "lastName": "Davis",
+    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face",
+    "grade": 12,
+    "subjects": ["Biology", "Chemistry"],
+    "parentContact": {
+      "email": "davis.household@email.com",
+      "phone": "(555) 567-8901",
+      "name": "Jennifer Davis",
+      "relationship": "parent"
+    },
+    "notes": "Pre-med student with excellent work ethic. Preparing for college entrance exams.",
+    "tags": ["pre-med", "college-prep", "hardworking"],
+    "progress": {
+      "attendance": 97,
+      "performance": 94,
+      "engagement": 96
+    },
+    "nextSession": "2024-01-19T10:00:00Z",
+    "totalSessions": 36,
+    "completedSessions": 35,
+    "createdAt": "2023-07-05T08:00:00Z",
+    "isActive": true
+  },
+  {
+    "id": "student-006",
+    "firstName": "Ethan",
+    "lastName": "Wilson",
+    "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+    "grade": 7,
+    "subjects": ["Math"],
+    "parentContact": {
+      "email": "wilson.parents@email.com",
+      "phone": "(555) 678-9012",
+      "name": "Robert Wilson",
+      "relationship": "parent"
+    },
+    "notes": "Bright student who needs confidence building. Excellent potential in mathematics.",
+    "tags": ["confidence-building", "potential", "math-focused"],
+    "progress": {
+      "attendance": 88,
+      "performance": 82,
+      "engagement": 79
+    },
+    "nextSession": "2024-01-20T14:00:00Z",
+    "totalSessions": 20,
+    "completedSessions": 18,
+    "createdAt": "2023-09-15T13:00:00Z",
+    "isActive": true
+  },
+  {
+    "id": "student-007",
+    "firstName": "Ava",
+    "lastName": "Garcia",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
+    "grade": 6,
+    "subjects": ["English", "Math"],
+    "parentContact": {
+      "email": "garcia.family@email.com",
+      "phone": "(555) 789-0123",
+      "name": "Maria Garcia",
+      "relationship": "parent"
+    },
+    "notes": "Enthusiastic learner with strong verbal skills. Working on building math confidence.",
+    "tags": ["enthusiastic", "verbal-skills", "math-confidence"],
+    "progress": {
+      "attendance": 92,
+      "performance": 86,
+      "engagement": 89
+    },
+    "nextSession": "2024-01-21T11:00:00Z",
+    "totalSessions": 25,
+    "completedSessions": 23,
+    "createdAt": "2023-08-01T10:30:00Z",
+    "isActive": true
+  },
+  {
+    "id": "student-008",
+    "firstName": "Noah",
+    "lastName": "Brown",
+    "avatar": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150&h=150&fit=crop&crop=face",
+    "grade": 11,
+    "subjects": ["Physics", "Math"],
+    "parentContact": {
+      "email": "brown.home@email.com",
+      "phone": "(555) 890-1234",
+      "name": "Lisa Brown",
+      "relationship": "parent"
+    },
+    "notes": "Strong analytical thinker with interest in engineering. Needs help with complex problem solving.",
+    "tags": ["analytical", "engineering-interest", "problem-solving"],
+    "progress": {
+      "attendance": 94,
+      "performance": 89,
+      "engagement": 91
+    },
+    "nextSession": "2024-01-22T15:30:00Z",
+    "totalSessions": 28,
+    "completedSessions": 26,
+    "createdAt": "2023-09-10T12:00:00Z",
+    "isActive": true
+  },
+  {
+    "id": "student-009",
+    "firstName": "Isabella",
+    "lastName": "Anderson",
+    "avatar": "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=150&h=150&fit=crop&crop=face",
+    "grade": 9,
+    "subjects": ["Spanish", "French"],
+    "parentContact": {
+      "email": "anderson.family@email.com",
+      "phone": "(555) 901-2345",
+      "name": "Patricia Anderson",
+      "relationship": "parent"
+    },
+    "notes": "Multilingual student with natural language acquisition skills. Preparing for language competitions.",
+    "tags": ["multilingual", "language-competition", "natural-learner"],
+    "progress": {
+      "attendance": 96,
+      "performance": 93,
+      "engagement": 97
+    },
+    "nextSession": "2024-01-23T16:00:00Z",
+    "totalSessions": 22,
+    "completedSessions": 21,
+    "createdAt": "2023-10-01T09:00:00Z",
+    "isActive": true
+  },
+  {
+    "id": "student-010",
+    "firstName": "Liam",
+    "lastName": "Taylor",
+    "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop&crop=face",
+    "grade": 8,
+    "subjects": ["Science", "Math"],
+    "parentContact": {
+      "email": "taylor.household@email.com",
+      "phone": "(555) 012-3456",
+      "name": "James Taylor",
+      "relationship": "parent"
+    },
+    "notes": "Curious student with many questions. Loves experiments and hands-on learning.",
+    "tags": ["curious", "experimental", "hands-on"],
+    "progress": {
+      "attendance": 89,
+      "performance": 84,
+      "engagement": 88
+    },
+    "nextSession": "2024-01-24T13:30:00Z",
+    "totalSessions": 16,
+    "completedSessions": 14,
+    "createdAt": "2023-11-20T15:00:00Z",
+    "isActive": true
+  },
+  {
+    "id": "student-011",
+    "firstName": "Mia",
+    "lastName": "Lee",
+    "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=face",
+    "grade": 10,
+    "subjects": ["Art", "English"],
+    "parentContact": {
+      "email": "lee.family@email.com",
+      "phone": "(555) 123-4567",
+      "name": "Susan Lee",
+      "relationship": "parent"
+    },
+    "notes": "Artistic student with strong visual learning style. Excels in creative writing assignments.",
+    "tags": ["artistic", "visual-learner", "creative-writing"],
+    "progress": {
+      "attendance": 91,
+      "performance": 87,
+      "engagement": 90
+    },
+    "nextSession": "2024-01-25T14:00:00Z",
+    "totalSessions": 19,
+    "completedSessions": 17,
+    "createdAt": "2023-10-05T11:30:00Z",
+    "isActive": true
+  },
+  {
+    "id": "student-012",
+    "firstName": "Benjamin",
+    "lastName": "White",
+    "avatar": "https://images.unsplash.com/photo-1463453091185-61582044d556?w=150&h=150&fit=crop&crop=face",
+    "grade": 12,
+    "subjects": ["History", "Government"],
+    "parentContact": {
+      "email": "white.parents@email.com",
+      "phone": "(555) 234-5678",
+      "name": "Mark White",
+      "relationship": "parent"
+    },
+    "notes": "Future political science major with strong debate skills. Needs help with essay organization.",
+    "tags": ["political-science", "debate-skills", "essay-organization"],
+    "progress": {
+      "attendance": 93,
+      "performance": 90,
+      "engagement": 94
+    },
+    "nextSession": "2024-01-26T10:30:00Z",
+    "totalSessions": 32,
+    "completedSessions": 30,
+    "createdAt": "2023-07-15T08:45:00Z",
+    "isActive": true
+  }
+] 

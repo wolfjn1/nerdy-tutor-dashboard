@@ -1,0 +1,273 @@
+{
+  "tutor": {
+    "id": "tutor-001",
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+    "title": "Expert Mathematics Tutor",
+    "specialties": ["Calculus", "Algebra", "Statistics", "SAT Prep"],
+    "rating": 4.9,
+    "totalSessions": 1247,
+    "totalEarnings": 124750,
+    "joinDate": "2022-03-15",
+    "status": "available",
+    "location": "San Francisco, CA",
+    "gamification": {
+      "level": 42,
+      "xp": 2450,
+      "xpToNextLevel": 3000,
+      "streak": 7,
+      "rank": "Expert",
+      "achievements": [
+        {
+          "id": "first-100",
+          "title": "Century Club",
+          "description": "Complete 100 tutoring sessions",
+          "icon": "🎯",
+          "unlockedAt": "2023-01-15"
+        },
+        {
+          "id": "perfect-week",
+          "title": "Perfect Week",
+          "description": "Complete all scheduled sessions in a week",
+          "icon": "⭐",
+          "unlockedAt": "2023-11-20"
+        }
+      ]
+    }
+  },
+  "upcomingSessions": [
+    {
+      "id": "session-001",
+      "studentName": "Sarah Chen",
+      "studentAvatar": "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face",
+      "subject": "AP Calculus",
+      "date": "2025-07-07",
+      "time": "14:00",
+      "duration": 60,
+      "sessionType": "regular",
+      "payRate": 85,
+      "notes": "Struggling with integration by parts",
+      "status": "confirmed",
+      "meetingLink": "https://meet.google.com/xyz-abc-123",
+      "materials": ["Calculus textbook Ch. 8", "Practice problems"]
+    },
+    {
+      "id": "session-002",
+      "studentName": "Marcus Johnson",
+      "studentAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face",
+      "subject": "SAT Math",
+      "date": "2025-07-07",
+      "time": "16:30",
+      "duration": 90,
+      "sessionType": "intensive",
+      "payRate": 120,
+      "notes": "Final SAT prep before test",
+      "status": "confirmed",
+      "meetingLink": "https://meet.google.com/abc-def-456",
+      "materials": ["SAT practice test", "Review materials"]
+    },
+    {
+      "id": "session-003",
+      "studentName": "Emily Rodriguez",
+      "studentAvatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face",
+      "subject": "Statistics",
+      "date": "2025-07-08",
+      "time": "10:00",
+      "duration": 60,
+      "sessionType": "regular",
+      "payRate": 75,
+      "notes": "Hypothesis testing and p-values",
+      "status": "pending_confirmation",
+      "meetingLink": null,
+      "materials": ["Statistics workbook"]
+    },
+    {
+      "id": "session-004",
+      "studentName": "David Kim",
+      "studentAvatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face",
+      "subject": "Algebra",
+      "date": "2025-07-09",
+      "time": "13:00",
+      "duration": 60,
+      "sessionType": "regular",
+      "payRate": 70,
+      "notes": "Quadratic equations and functions",
+      "status": "confirmed",
+      "meetingLink": "https://meet.google.com/def-ghi-789",
+      "materials": ["Algebra textbook", "Practice worksheets"]
+    },
+    {
+      "id": "session-005",
+      "studentName": "Lisa Wang",
+      "studentAvatar": "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face",
+      "subject": "Calculus",
+      "date": "2025-07-10",
+      "time": "15:00",
+      "duration": 90,
+      "sessionType": "intensive",
+      "payRate": 95,
+      "notes": "Derivatives and chain rule",
+      "status": "confirmed",
+      "meetingLink": "https://meet.google.com/ghi-jkl-012",
+      "materials": ["Calculus notes", "Problem sets"]
+    },
+    {
+      "id": "session-006",
+      "studentName": "Michael Brown",
+      "studentAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face",
+      "subject": "Statistics",
+      "date": "2025-07-11",
+      "time": "11:30",
+      "duration": 75,
+      "sessionType": "regular",
+      "payRate": 80,
+      "notes": "Confidence intervals and z-scores",
+      "status": "confirmed",
+      "meetingLink": "https://meet.google.com/jkl-mno-345",
+      "materials": ["Statistics textbook", "Calculator"]
+    },
+    {
+      "id": "session-007",
+      "studentName": "Anna Garcia",
+      "studentAvatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face",
+      "subject": "Pre-Algebra",
+      "date": "2025-07-08",
+      "time": "16:00",
+      "duration": 60,
+      "sessionType": "regular",
+      "payRate": 65,
+      "notes": "Working on solving linear equations",
+      "status": "confirmed",
+      "meetingLink": "https://meet.google.com/mno-pqr-678",
+      "materials": ["Pre-Algebra workbook", "Graphing calculator"]
+    },
+    {
+      "id": "session-008",
+      "studentName": "James Wilson",
+      "studentAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face",
+      "subject": "Trigonometry",
+      "date": "2025-07-10",
+      "time": "09:00",
+      "duration": 60,
+      "sessionType": "regular",
+      "payRate": 75,
+      "notes": "Unit circle and trigonometric identities",
+      "status": "confirmed",
+      "meetingLink": "https://meet.google.com/pqr-stu-901",
+      "materials": ["Trigonometry textbook", "Unit circle chart"]
+    }
+  ],
+  "openOpportunities": [
+    {
+      "id": "opp-001",
+      "studentName": "Alex Thompson",
+      "studentAvatar": "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=40&h=40&fit=crop&crop=face",
+      "subject": "Linear Algebra",
+      "preferredTimes": ["Monday 3-5 PM", "Wednesday 6-8 PM"],
+      "duration": 90,
+      "frequency": "weekly",
+      "payRate": 95,
+      "urgency": "high",
+      "studentLevel": "College Sophomore",
+      "needs": "Struggling with eigenvalues and eigenvectors, needs help before midterm exam",
+      "location": "Online",
+      "startDate": "2024-01-20",
+      "budget": "$380/month",
+      "matchScore": 92
+    },
+    {
+      "id": "opp-002",
+      "studentName": "Jessica Park",
+      "studentAvatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=40&h=40&fit=crop&crop=face",
+      "subject": "Calculus II",
+      "preferredTimes": ["Tuesday 4-6 PM", "Thursday 4-6 PM"],
+      "duration": 120,
+      "frequency": "twice weekly",
+      "payRate": 80,
+      "urgency": "medium",
+      "studentLevel": "College Freshman",
+      "needs": "Needs comprehensive help with series and sequences",
+      "location": "Online",
+      "startDate": "2024-01-25",
+      "budget": "$640/month",
+      "matchScore": 88
+    }
+  ],
+  "recentActivities": [
+    {
+      "id": "activity-001",
+      "type": "session_completed",
+      "message": "Completed session with Sarah Chen (+25 XP)",
+      "timestamp": "2024-01-14T15:00:00Z",
+      "xpEarned": 25
+    },
+    {
+      "id": "activity-002",
+      "type": "achievement_unlocked",
+      "message": "Unlocked 'Perfect Week' achievement (+100 XP)",
+      "timestamp": "2024-01-14T12:00:00Z",
+      "xpEarned": 100
+    },
+    {
+      "id": "activity-003",
+      "type": "opportunity_matched",
+      "message": "New opportunity matched: Linear Algebra tutoring",
+      "timestamp": "2024-01-14T09:30:00Z",
+      "xpEarned": 0
+    }
+  ],
+  "administrativeTasks": [
+    {
+      "id": "task-001",
+      "title": "Submit December timesheet",
+      "description": "Please submit your timesheet for December sessions",
+      "priority": "high",
+      "dueDate": "2024-01-17",
+      "category": "billing",
+      "actionRequired": true
+    },
+    {
+      "id": "task-002",
+      "title": "Update availability for spring semester",
+      "description": "Update your availability calendar for the upcoming semester",
+      "priority": "medium",
+      "dueDate": "2024-01-25",
+      "category": "scheduling",
+      "actionRequired": true
+    }
+  ],
+  "earnings": {
+    "thisWeek": 425,
+    "thisMonth": 3250,
+    "lastMonth": 3680,
+    "unpaidAmount": 875,
+    "pendingInvoices": 2
+  },
+  "quickActions": [
+    {
+      "id": "create-lesson",
+      "title": "AI Lesson Builder",
+      "description": "Create a personalized lesson plan",
+      "icon": "brain",
+      "xpReward": 50,
+      "color": "yellow-pink"
+    },
+    {
+      "id": "update-availability",
+      "title": "Update Schedule",
+      "description": "Modify your availability",
+      "icon": "calendar",
+      "xpReward": 10,
+      "color": "pink-cyan"
+    },
+    {
+      "id": "review-opportunities",
+      "title": "Browse Opportunities",
+      "description": "Find new tutoring opportunities",
+      "icon": "search",
+      "xpReward": 20,
+      "color": "orange-magenta"
+    }
+  ]
+} 

@@ -37,7 +37,7 @@ export default function DashboardLayout({
   const pathname = usePathname()
 
   return (
-    <div className="h-screen bg-gray-50">
+    <div className="h-screen bg-gray-50 flex">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div 
@@ -48,7 +48,7 @@ export default function DashboardLayout({
 
       {/* Sidebar */}
       <div className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 lg:static lg:inset-0
+        fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 lg:relative lg:flex-shrink-0
         transition-transform duration-300 ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
@@ -116,7 +116,7 @@ export default function DashboardLayout({
       </div>
 
       {/* Main content */}
-      <div className="lg:pl-64">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
         <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
           <div className="flex items-center gap-3">
@@ -143,7 +143,7 @@ export default function DashboardLayout({
         </div>
 
         {/* Page content */}
-        <main className="p-6">
+        <main className="flex-1 overflow-auto p-6">
           {children}
         </main>
       </div>

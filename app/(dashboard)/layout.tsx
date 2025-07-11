@@ -68,19 +68,12 @@ const navigation: NavItem[] = [
     icon: DollarSign,
     description: 'Track income and billing'
   },
-  {
+    {
     id: 'achievements',
     label: 'Achievements',
     href: '/achievements',
     icon: Trophy,
     description: 'Profile and gamification'
-  },
-  {
-    id: 'admin',
-    label: 'Admin',
-    href: '/admin',
-    icon: Settings,
-    description: 'Settings and system status'
   }
 ]
 
@@ -152,7 +145,7 @@ export default function DashboardLayout({
         animate={{
           x: isLargeScreen ? 0 : (sidebarOpen ? 0 : -320),
         }}
-        className="fixed left-0 top-0 bottom-0 w-80 bg-gradient-nerdy shadow-xl z-50 lg:relative lg:w-64 lg:flex-shrink-0"
+        className="fixed left-0 top-0 bottom-0 w-80 bg-gradient-to-b from-purple-600 via-purple-700 to-purple-800 shadow-xl z-50 lg:relative lg:w-64 lg:flex-shrink-0"
       >
         <div className="flex flex-col h-full">
           {/* Logo and Close Button */}
@@ -188,8 +181,8 @@ export default function DashboardLayout({
                   className={cn(
                     'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group',
                     isActive 
-                      ? 'bg-white/20 text-white shadow-lg' 
-                      : 'text-white/80 hover:bg-white/10 hover:text-white'
+                      ? 'bg-pink-500/30 text-white shadow-lg backdrop-blur-sm border border-pink-400/30' 
+                      : 'text-white/80 hover:bg-pink-500/20 hover:text-white'
                   )}
                 >
                   <Icon className="w-5 h-5 flex-shrink-0" />
@@ -208,9 +201,9 @@ export default function DashboardLayout({
           </nav>
 
           {/* User Section */}
-          <div className="p-4 border-t border-white/20">
+          <div className="p-4 border-t border-white/20 bg-black/10 backdrop-blur-sm">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center ring-2 ring-pink-400/50">
                 <span className="text-white font-medium text-sm">JD</span>
               </div>
               <div className="flex-1 min-w-0">

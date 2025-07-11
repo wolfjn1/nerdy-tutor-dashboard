@@ -121,7 +121,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-nerdy-bg-light">
+    <div className="min-h-screen bg-gradient-nerdy-bg-light flex">
       {/* Mobile sidebar backdrop */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -141,7 +141,7 @@ export default function DashboardLayout({
         animate={{
           x: sidebarOpen ? 0 : -320,
         }}
-        className="fixed left-0 top-0 bottom-0 w-80 bg-gradient-nerdy shadow-xl z-50 lg:translate-x-0 lg:static lg:w-64"
+        className="fixed left-0 top-0 bottom-0 w-80 bg-gradient-nerdy shadow-xl z-50 lg:translate-x-0 lg:static lg:w-64 lg:flex-shrink-0"
       >
         <div className="flex flex-col h-full">
           {/* Logo and Close Button */}
@@ -220,8 +220,8 @@ export default function DashboardLayout({
         </div>
       </motion.div>
 
-      {/* Main Content */}
-      <div className="lg:ml-64">
+      {/* Main Content - Remove lg:ml-64 since sidebar is now in flex layout */}
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
         <header className="bg-white/60 backdrop-blur-sm border-b border-white/30 sticky top-0 z-30">
           <div className="flex items-center justify-between px-6 py-4">
@@ -273,8 +273,8 @@ export default function DashboardLayout({
           </div>
         </header>
 
-        {/* Page Content */}
-        <main className="p-6">
+        {/* Page Content - Remove extra padding, let page control its own spacing */}
+        <main className="flex-1 overflow-auto">
           {children}
         </main>
       </div>
@@ -282,7 +282,7 @@ export default function DashboardLayout({
       {/* Mobile floating action button */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.3, delay: 0.5 }}
         className="fixed bottom-6 right-6 z-40 lg:hidden"
       >

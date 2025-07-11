@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { 
@@ -18,70 +17,15 @@ import {
   Plus,
   Zap
 } from 'lucide-react'
-import { Button, NotificationBell, useToastHelpers } from '@/components/ui'
-import { cn } from '@/lib/utils'
 
-interface NavItem {
-  id: string
-  label: string
-  href: string
-  icon: React.ComponentType<{ className?: string }>
-  badge?: string
-  description: string
-}
-
-const navigation: NavItem[] = [
-  {
-    id: 'dashboard',
-    label: 'Dashboard',
-    href: '/dashboard',
-    icon: Home,
-    description: 'Overview and quick actions'
-  },
-  {
-    id: 'students',
-    label: 'Students',
-    href: '/students',
-    icon: Users,
-    badge: '12',
-    description: 'Manage your students'
-  },
-  {
-    id: 'sessions',
-    label: 'Sessions',
-    href: '/sessions',
-    icon: Calendar,
-    badge: '3',
-    description: 'Schedule and track sessions'
-  },
-  {
-    id: 'opportunities',
-    label: 'Opportunities',
-    href: '/opportunities',
-    icon: Search,
-    description: 'Find new tutoring opportunities'
-  },
-  {
-    id: 'earnings',
-    label: 'Earnings',
-    href: '/earnings',
-    icon: DollarSign,
-    description: 'Track income and billing'
-  },
-  {
-    id: 'achievements',
-    label: 'Achievements',
-    href: '/achievements',
-    icon: Trophy,
-    description: 'Profile and gamification'
-  },
-  {
-    id: 'admin',
-    label: 'Admin',
-    href: '/admin',
-    icon: Settings,
-    description: 'Settings and system status'
-  }
+const navigation = [
+  { name: 'Dashboard', href: '/dashboard', icon: Home },
+  { name: 'Students', href: '/students', icon: Users, badge: '12' },
+  { name: 'Sessions', href: '/sessions', icon: Calendar, badge: '3' },
+  { name: 'Opportunities', href: '/opportunities', icon: Search },
+  { name: 'Earnings', href: '/earnings', icon: DollarSign },
+  { name: 'Achievements', href: '/achievements', icon: Trophy },
+  { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
 export default function DashboardLayout({
@@ -90,217 +34,119 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [notifications, setNotifications] = useState([
-    {
-      id: '1',
-      title: 'New Student Request',
-      message: 'Sarah Chen has requested tutoring for Calculus II',
-      type: 'info' as const,
-      timestamp: new Date(Date.now() - 5 * 60 * 1000),
-      read: false
-    },
-    {
-      id: '2',
-      title: 'Session Reminder',
-      message: 'Your session with Alex Thompson starts in 30 minutes',
-      type: 'warning' as const,
-      timestamp: new Date(Date.now() - 15 * 60 * 1000),
-      read: false
-    }
-  ])
-  
   const pathname = usePathname()
-  const { success, info } = useToastHelpers()
-
-  const markAsRead = (id: string) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))
-  }
-
-  const clearAllNotifications = () => {
-    setNotifications([])
-  }
 
   return (
-    <div className="min-h-screen bg-gradient-nerdy-bg-light">
-      {/* Mobile sidebar backdrop */}
-      <AnimatePresence>
-        {sidebarOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-      </AnimatePresence>
+    <div className="h-screen bg-gray-50">
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-gray-900/50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
-      <div className="flex h-screen">
-        {/* Sidebar */}
-        <motion.div
-          initial={false}
-          animate={{
-            x: sidebarOpen ? 0 : -256,
-          }}
-          className="fixed left-0 top-0 bottom-0 w-64 bg-gradient-nerdy shadow-xl z-50 lg:translate-x-0 lg:static lg:flex-shrink-0"
-        >
-          <div className="flex flex-col h-full">
-            {/* Logo and Close Button */}
-            <div className="flex items-center justify-between p-4 border-b border-white/20">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
-                  <span className="text-white font-bold">N</span>
-                </div>
-                <div>
-                  <div className="text-white font-bold">Nerdy</div>
-                  <div className="text-white/80 text-xs">Live+AI™</div>
-                </div>
-              </div>
-              <button
-                onClick={() => setSidebarOpen(false)}
-                className="lg:hidden p-2 text-white/80 hover:text-white transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
+      {/* Sidebar */}
+      <div className={`
+        fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 lg:static lg:inset-0
+        transition-transform duration-300 ease-in-out
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
+        {/* Logo */}
+        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">N</span>
             </div>
+            <span className="text-xl font-bold text-gray-900">Nerdy</span>
+          </div>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden p-2 text-gray-500 hover:text-gray-700"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
-            {/* Navigation */}
-            <nav className="flex-1 p-3 space-y-1">
-              {navigation.map((item) => {
-                const isActive = pathname === item.href
-                const Icon = item.icon
-                
-                return (
-                  <Link
-                    key={item.id}
-                    href={item.href}
-                    onClick={() => setSidebarOpen(false)}
-                    className={cn(
-                      'flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 group',
-                      isActive 
-                        ? 'bg-white/20 text-white shadow-lg' 
-                        : 'text-white/80 hover:bg-white/10 hover:text-white'
-                    )}
-                  >
-                    <Icon className="w-4 h-4 flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm">{item.label}</div>
-                      <div className="text-xs opacity-75 leading-tight truncate">{item.description}</div>
-                    </div>
-                    {item.badge && (
-                      <div className="bg-white/20 text-white px-2 py-0.5 rounded-full text-xs font-medium">
-                        {item.badge}
-                      </div>
-                    )}
-                  </Link>
-                )
-              })}
-            </nav>
-
-            {/* User Section */}
-            <div className="p-3 border-t border-white/20">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                  <span className="text-white font-medium text-sm">JD</span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-white font-medium text-sm">John Doe</div>
-                  <div className="text-white/80 text-xs">Expert • Level 42</div>
-                </div>
-              </div>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full border-white/30 text-white hover:bg-white/10 text-xs"
-                leftIcon={<Settings className="w-3 h-3" />}
+        {/* Navigation */}
+        <nav className="px-3 py-4 space-y-1">
+          {navigation.map((item) => {
+            const isActive = pathname === item.href
+            const Icon = item.icon
+            
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                onClick={() => setSidebarOpen(false)}
+                className={`
+                  flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors
+                  ${isActive 
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                  }
+                `}
               >
-                Settings
-              </Button>
+                <div className="flex items-center gap-3">
+                  <Icon className="w-5 h-5" />
+                  <span>{item.name}</span>
+                </div>
+                {item.badge && (
+                  <span className="px-2 py-1 text-xs font-medium bg-gray-200 text-gray-800 rounded-full">
+                    {item.badge}
+                  </span>
+                )}
+              </Link>
+            )
+          })}
+        </nav>
+
+        {/* User section */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+              <span className="text-sm font-medium text-gray-700">JD</span>
+            </div>
+            <div>
+              <div className="text-sm font-medium text-gray-900">John Doe</div>
+              <div className="text-xs text-gray-500">Expert • Level 42</div>
             </div>
           </div>
-        </motion.div>
-
-        {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Header */}
-          <header className="bg-white/80 backdrop-blur-sm border-b border-white/30 sticky top-0 z-30 shadow-sm">
-            <div className="container mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 max-w-7xl">
-              <div className="flex items-center gap-3">
-                {/* Mobile menu button */}
-                <button
-                  onClick={() => setSidebarOpen(true)}
-                  className="lg:hidden p-2 text-gray-600 hover:text-gray-800 transition-colors rounded-lg hover:bg-gray-100"
-                >
-                  <Menu className="w-5 h-5" />
-                </button>
-                
-                {/* Page title */}
-                <div className="text-xl font-bold text-slate-800">
-                  {navigation.find(item => item.href === pathname)?.label || 'Dashboard'}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                {/* Quick Actions */}
-                <div className="hidden md:flex items-center gap-2">
-                  <Button 
-                    variant="gradient" 
-                    gradientType="pink-cyan"
-                    size="sm"
-                    leftIcon={<Plus className="w-4 h-4" />}
-                    xpReward={10}
-                  >
-                    New Session
-                  </Button>
-                  <Button 
-                    variant="gradient" 
-                    gradientType="nerdy"
-                    size="sm"
-                    leftIcon={<Zap className="w-4 h-4" />}
-                    xpReward={25}
-                  >
-                    AI Assistant
-                  </Button>
-                </div>
-
-                {/* Notifications */}
-                <NotificationBell 
-                  notifications={notifications}
-                  onMarkAsRead={markAsRead}
-                  onClearAll={clearAllNotifications}
-                />
-              </div>
-            </div>
-          </header>
-
-          {/* Page Content with proper scrolling */}
-          <main className="flex-1 overflow-auto">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
-              {children}
-            </div>
-          </main>
         </div>
       </div>
 
-      {/* Mobile floating action button */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.3, delay: 0.5 }}
-        className="fixed bottom-6 right-6 z-40 lg:hidden"
-      >
-        <Button
-          variant="gradient"
-          gradientType="nerdy"
-          size="lg"
-          className="shadow-2xl rounded-full w-14 h-14 p-0"
-          xpReward={25}
-          aria-label="AI Assistant"
-        >
-          <Zap className="w-6 h-6" />
-        </Button>
-      </motion.div>
+      {/* Main content */}
+      <div className="lg:pl-64">
+        {/* Top bar */}
+        <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden p-2 text-gray-500 hover:text-gray-700"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <h1 className="text-xl font-semibold text-gray-900">
+              {navigation.find(item => item.href === pathname)?.name || 'Dashboard'}
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <button className="p-2 text-gray-500 hover:text-gray-700">
+              <Bell className="w-5 h-5" />
+            </button>
+            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <Plus className="w-4 h-4 inline mr-2" />
+              New Session
+            </button>
+          </div>
+        </div>
+
+        {/* Page content */}
+        <main className="p-6">
+          {children}
+        </main>
+      </div>
     </div>
   )
 } 

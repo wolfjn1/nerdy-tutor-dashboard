@@ -9,7 +9,7 @@ import { Calendar, Clock, TrendingUp, Zap, Users, DollarSign, AlertTriangle, Tar
 // import { Card, Button, SimpleAreaChart } from '@/components/ui'
 // import dashboardDataRaw from '@/lib/mock-data/dashboard.json'
 
-// Simple mock data for testing
+// Simple mock data for testing - updated to trigger fresh deployment
 const mockData = {
   tutor: {
     name: "John Doe",

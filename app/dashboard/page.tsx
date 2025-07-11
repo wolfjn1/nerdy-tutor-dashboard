@@ -8,55 +8,67 @@ export default function DashboardPage() {
     <div className="space-y-8">
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back, John Doe! 👋
-          </h1>
-          <p className="text-gray-600">
-            Here's your tutoring overview for today
-          </p>
-        </div>
-        
-        {/* Gamification Card */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 lg:min-w-[320px]">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <div className="text-2xl font-bold text-blue-600">Level 42</div>
-              <div className="text-sm text-gray-500">Expert</div>
+        <div className="flex items-center gap-6">
+          {/* Tutor Image */}
+          <div className="flex-shrink-0">
+            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center ring-4 ring-blue-100">
+              <span className="text-2xl font-bold text-white">JD</span>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">🔥</span>
-              <div>
-                <div className="text-lg font-bold text-orange-500">21</div>
-                <div className="text-xs text-gray-500">day streak</div>
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Welcome back, John Doe! 👋
+            </h1>
+            <p className="text-gray-600">
+              Here's your tutoring overview for today
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Prominent Gamification Section */}
+      <div className="bg-gradient-to-r from-blue-500 via-purple-600 to-cyan-500 rounded-2xl p-8 text-white shadow-xl">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+          <div className="flex items-center gap-8">
+            <div className="text-center">
+              <div className="text-4xl font-bold mb-1">Level 42</div>
+              <div className="text-blue-100">Expert</div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-4xl">🔥</span>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-orange-300">21</div>
+                <div className="text-blue-100 text-sm">day streak</div>
               </div>
             </div>
           </div>
           
-          {/* XP Progress */}
-          <div className="mb-4">
-            <div className="flex justify-between text-sm text-gray-600 mb-2">
-              <span>2450 / 3000 XP</span>
-              <span>to next level</span>
+          <div className="flex-1 max-w-md">
+            {/* XP Progress */}
+            <div className="mb-4">
+              <div className="flex justify-between text-white/90 mb-3">
+                <span className="font-semibold">2450 / 3000 XP</span>
+                <span>to next level</span>
+              </div>
+              <div className="w-full bg-white/20 rounded-full h-3">
+                <div 
+                  className="bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 h-3 rounded-full shadow-lg" 
+                  style={{ width: '82%' }}
+                />
+              </div>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full" 
-                style={{ width: '82%' }}
-              />
-            </div>
-          </div>
-          
-          {/* Recent Achievements */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-500">Recent:</span>
-            <div className="flex gap-1">
-              <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
-                🎯 Century Club
-              </span>
-              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                ⭐ Perfect Week
-              </span>
+            
+            {/* Recent Achievements */}
+            <div className="flex items-center gap-3">
+              <span className="text-white/80 text-sm font-medium">Recent:</span>
+              <div className="flex gap-2">
+                <span className="px-3 py-1.5 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full font-medium">
+                  🎯 Century Club
+                </span>
+                <span className="px-3 py-1.5 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full font-medium">
+                  ⭐ Perfect Week
+                </span>
+              </div>
             </div>
           </div>
         </div>

@@ -37,7 +37,7 @@ export default function DashboardLayout({
   const pathname = usePathname()
 
   return (
-    <div className="h-screen bg-gray-50 flex">
+    <div className="h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-cyan-50 flex">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div 
@@ -48,21 +48,24 @@ export default function DashboardLayout({
 
       {/* Sidebar */}
       <div className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 lg:relative lg:flex-shrink-0
+        fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-600 via-purple-600 to-cyan-600 shadow-xl lg:relative lg:flex-shrink-0
         transition-transform duration-300 ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         {/* Logo */}
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
+        <div className="flex items-center justify-between h-16 px-6 border-b border-white/20">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
               <span className="text-white font-bold text-sm">N</span>
             </div>
-            <span className="text-xl font-bold text-gray-900">Nerdy</span>
+            <div>
+              <span className="text-xl font-bold text-white">Nerdy</span>
+              <div className="text-white/80 text-xs">Live+AI™</div>
+            </div>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden p-2 text-gray-500 hover:text-gray-700"
+            className="lg:hidden p-2 text-white/80 hover:text-white transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -80,10 +83,10 @@ export default function DashboardLayout({
                 href={item.href}
                 onClick={() => setSidebarOpen(false)}
                 className={`
-                  flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors
+                  flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200
                   ${isActive 
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200' 
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-white/20 text-white shadow-lg backdrop-blur-sm' 
+                    : 'text-white/80 hover:bg-white/10 hover:text-white'
                   }
                 `}
               >
@@ -92,7 +95,7 @@ export default function DashboardLayout({
                   <span>{item.name}</span>
                 </div>
                 {item.badge && (
-                  <span className="px-2 py-1 text-xs font-medium bg-gray-200 text-gray-800 rounded-full">
+                  <span className="px-2 py-1 text-xs font-medium bg-white/20 text-white rounded-full">
                     {item.badge}
                   </span>
                 )}
@@ -102,14 +105,14 @@ export default function DashboardLayout({
         </nav>
 
         {/* User section */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-              <span className="text-sm font-medium text-gray-700">JD</span>
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/20 bg-black/10 backdrop-blur-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center ring-2 ring-white/30">
+              <span className="text-sm font-bold text-white">JD</span>
             </div>
             <div>
-              <div className="text-sm font-medium text-gray-900">John Doe</div>
-              <div className="text-xs text-gray-500">Expert • Level 42</div>
+              <div className="text-sm font-semibold text-white">John Doe</div>
+              <div className="text-xs text-white/80">Expert • Level 42</div>
             </div>
           </div>
         </div>
@@ -118,11 +121,11 @@ export default function DashboardLayout({
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
-        <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
+        <div className="h-16 bg-white/80 backdrop-blur-sm border-b border-white/30 flex items-center justify-between px-6 shadow-sm">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 text-gray-500 hover:text-gray-700"
+              className="lg:hidden p-2 text-gray-600 hover:text-gray-800 transition-colors rounded-lg hover:bg-white/50"
             >
               <Menu className="w-5 h-5" />
             </button>
@@ -132,10 +135,10 @@ export default function DashboardLayout({
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="p-2 text-gray-500 hover:text-gray-700">
+            <button className="p-2 text-gray-600 hover:text-gray-800 transition-colors rounded-lg hover:bg-white/50">
               <Bell className="w-5 h-5" />
             </button>
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg">
               <Plus className="w-4 h-4 inline mr-2" />
               New Session
             </button>

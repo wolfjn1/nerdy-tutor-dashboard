@@ -149,7 +149,7 @@ export default function DashboardLayout({
       >
         <div className="flex flex-col h-full">
           {/* Logo and Close Button */}
-          <div className="flex items-center justify-between p-6 border-b border-white/20">
+          <div className="flex-shrink-0 flex items-center justify-between p-6 border-b border-white/20">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
                 <span className="text-white font-bold text-xl">N</span>
@@ -168,7 +168,7 @@ export default function DashboardLayout({
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+          <nav className="flex-1 min-h-0 p-4 space-y-2 overflow-y-auto">
             {navigation.map((item) => {
               const isActive = pathname === item.href
               const Icon = item.icon
@@ -201,7 +201,7 @@ export default function DashboardLayout({
           </nav>
 
           {/* User Section */}
-          <div className="p-4 border-t border-white/20 bg-black/10 backdrop-blur-sm">
+          <div className="flex-shrink-0 p-4 border-t border-white/20 bg-black/10 backdrop-blur-sm">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center ring-2 ring-pink-400/50">
                 <span className="text-white font-medium text-sm">JD</span>

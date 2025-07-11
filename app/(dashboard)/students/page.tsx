@@ -287,7 +287,7 @@ export default function StudentsPage() {
   const previousStudentsCount = studentsWithStats.filter(s => !s.isActive || !s.stats.nextSession).length
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 lg:space-y-6">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -295,14 +295,14 @@ export default function StudentsPage() {
         className="flex items-center justify-between"
       >
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-1 lg:mb-2">
             My Students
           </h1>
-          <p className="text-gray-600">
+          <p className="text-sm lg:text-base text-gray-600">
             Manage your student roster and track their progress
           </p>
         </div>
-        <Button variant="gradient" gradientType="nerdy" leftIcon={<Eye className="h-4 w-4" />}>
+        <Button variant="gradient" gradientType="nerdy" leftIcon={<Eye className="h-4 w-4" />} size="sm" className="lg:size-default">
           View Opportunities
         </Button>
       </motion.div>
@@ -312,7 +312,6 @@ export default function StudentsPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="mb-6"
       >
         <Card className="bg-white/80 backdrop-blur-sm border-0">
           <div className="p-2">
@@ -345,10 +344,10 @@ export default function StudentsPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="grid grid-cols-1 md:grid-cols-4 gap-4"
+        className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4"
       >
         <Card className="bg-white/80 backdrop-blur-sm border-0">
-          <div className="p-4">
+          <div className="p-3 lg:p-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                 <Users className="h-6 w-6 text-purple-600" />
@@ -362,7 +361,7 @@ export default function StudentsPage() {
         </Card>
 
         <Card className="bg-white/80 backdrop-blur-sm border-0">
-          <div className="p-4">
+          <div className="p-3 lg:p-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                 <TrendingUp className="h-6 w-6 text-green-600" />
@@ -378,7 +377,7 @@ export default function StudentsPage() {
         </Card>
 
         <Card className="bg-white/80 backdrop-blur-sm border-0">
-          <div className="p-4">
+          <div className="p-3 lg:p-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <Calendar className="h-6 w-6 text-blue-600" />
@@ -394,7 +393,7 @@ export default function StudentsPage() {
         </Card>
 
         <Card className="bg-white/80 backdrop-blur-sm border-0">
-          <div className="p-4">
+          <div className="p-3 lg:p-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
                 <Star className="h-6 w-6 text-yellow-600" />
@@ -417,15 +416,15 @@ export default function StudentsPage() {
         transition={{ delay: 0.3 }}
       >
         <Card className="bg-white/80 backdrop-blur-sm border-0">
-          <div className="p-4">
-            <div className="flex flex-col lg:flex-row gap-4">
+          <div className="p-3 lg:p-4">
+            <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
               {/* Search */}
               <div className="flex-1">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
                     type="text"
-                    placeholder="Search students by name or subject..."
+                    placeholder="Search students..."
                     value={searchTerm}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                     className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"

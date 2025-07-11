@@ -140,16 +140,16 @@ export default function DashboardLayout({
         <motion.div
           initial={false}
           animate={{
-            x: sidebarOpen ? 0 : -280,
+            x: sidebarOpen ? 0 : -224,
           }}
-          className="fixed left-0 top-0 bottom-0 w-56 bg-gradient-nerdy shadow-xl z-50 lg:translate-x-0 lg:static lg:flex-shrink-0"
+          className="fixed left-0 top-0 bottom-0 w-44 bg-gradient-nerdy shadow-xl z-50 lg:translate-x-0 lg:static lg:flex-shrink-0"
         >
           <div className="flex flex-col h-full">
             {/* Logo and Close Button */}
-            <div className="flex items-center justify-between p-3 border-b border-white/20">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
-                  <span className="text-white font-bold">N</span>
+            <div className="flex items-center justify-between p-2.5 border-b border-white/20">
+              <div className="flex items-center gap-1.5">
+                <div className="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">N</span>
                 </div>
                 <div>
                   <div className="text-white font-bold text-sm">Nerdy</div>
@@ -165,7 +165,7 @@ export default function DashboardLayout({
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-2 space-y-0.5">
+            <nav className="flex-1 p-1.5 space-y-0.5">
               {navigation.map((item) => {
                 const isActive = pathname === item.href
                 const Icon = item.icon
@@ -176,7 +176,7 @@ export default function DashboardLayout({
                     href={item.href}
                     onClick={() => setSidebarOpen(false)}
                     className={cn(
-                      'flex items-center gap-2.5 px-2.5 py-2 rounded-lg transition-all duration-200 group',
+                      'flex items-center gap-2 px-2 py-1.5 rounded-lg transition-all duration-200 group',
                       isActive 
                         ? 'bg-white/20 text-white shadow-lg' 
                         : 'text-white/80 hover:bg-white/10 hover:text-white'
@@ -184,11 +184,11 @@ export default function DashboardLayout({
                   >
                     <Icon className="w-4 h-4 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm">{item.label}</div>
-                      <div className="text-xs opacity-75 leading-tight truncate">{item.description}</div>
+                      <div className="font-medium text-xs">{item.label}</div>
+                      <div className="text-xs opacity-70 leading-tight truncate">{item.description}</div>
                     </div>
                     {item.badge && (
-                      <div className="bg-white/20 text-white px-1.5 py-0.5 rounded-full text-xs font-medium">
+                      <div className="bg-white/20 text-white px-1 py-0.5 rounded-full text-xs font-medium">
                         {item.badge}
                       </div>
                     )}
@@ -198,9 +198,9 @@ export default function DashboardLayout({
             </nav>
 
             {/* User Section */}
-            <div className="p-2 border-t border-white/20">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
+            <div className="p-1.5 border-t border-white/20">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
                   <span className="text-white font-medium text-xs">JD</span>
                 </div>
                 <div className="flex-1 min-w-0">
@@ -212,7 +212,7 @@ export default function DashboardLayout({
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full border-white/30 text-white hover:bg-white/10 text-xs py-1.5"
+                className="w-full border-white/30 text-white hover:bg-white/10 text-xs py-1 px-2"
                 leftIcon={<Settings className="w-3 h-3" />}
               >
                 Settings
@@ -278,7 +278,7 @@ export default function DashboardLayout({
 
           {/* Page Content with proper scrolling */}
           <main className="flex-1 overflow-auto">
-            <div className="p-3 sm:p-4 max-w-full">
+            <div className="p-2 sm:p-3 max-w-full w-full">
               {children}
             </div>
           </main>

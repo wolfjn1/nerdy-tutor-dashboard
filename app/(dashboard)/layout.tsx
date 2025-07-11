@@ -90,6 +90,17 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isLargeScreen, setIsLargeScreen] = useState(false)
+
+  React.useEffect(() => {
+    const checkScreenSize = () => {
+      setIsLargeScreen(window.innerWidth >= 1024) // lg breakpoint
+    }
+    
+    checkScreenSize()
+    window.addEventListener('resize', checkScreenSize)
+    return () => window.removeEventListener('resize', checkScreenSize)
+  }, [])
   const [notifications, setNotifications] = useState([
     {
       id: '1',
@@ -135,11 +146,11 @@ export default function DashboardLayout({
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
+            {/* Sidebar */}
       <motion.div
         initial={false}
         animate={{
-          x: sidebarOpen ? 0 : -320,
+          x: isLargeScreen ? 0 : (sidebarOpen ? 0 : -320),
         }}
         className="fixed left-0 top-0 bottom-0 w-80 bg-gradient-nerdy shadow-xl z-50 lg:translate-x-0 lg:static lg:w-64"
       >

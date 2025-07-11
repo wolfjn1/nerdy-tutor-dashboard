@@ -1,8 +1,9 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import { Plus, Zap, Calendar, MessageCircle } from 'lucide-react'
 import { 
   TutorProfileHeader, 
   WeeklyCalendar, 
@@ -11,12 +12,53 @@ import {
   EarningsSummary, 
   AdministrativeTasks 
 } from '@/components/dashboard'
+import { Button, NotificationBell, useToastHelpers } from '@/components/ui'
 import dashboardDataRaw from '@/lib/mock-data/dashboard.json'
 
 // Type assertion to ensure proper types
 const dashboardData = dashboardDataRaw as any
 
 export default function TutorDashboard() {
+  const { success, info } = useToastHelpers()
+  const [notifications, setNotifications] = useState([
+    {
+      id: '1',
+      title: 'New Student Request',
+      message: 'Sarah Chen has requested tutoring for Calculus II',
+      type: 'info' as const,
+      timestamp: new Date(Date.now() - 5 * 60 * 1000),
+      read: false,
+      actionLabel: 'View Request',
+      onAction: () => info('Opening student request...', 'Taking you to the opportunities page')
+    },
+    {
+      id: '2',
+      title: 'Session Reminder',
+      message: 'Your session with Alex Thompson starts in 30 minutes',
+      type: 'warning' as const,
+      timestamp: new Date(Date.now() - 15 * 60 * 1000),
+      read: false,
+      actionLabel: 'Join Session',
+      onAction: () => success('Session started!', 'Redirecting to video call...')
+    },
+    {
+      id: '3',
+      title: 'Achievement Unlocked!',
+      message: 'You\'ve completed 100 tutoring sessions this month',
+      type: 'success' as const,
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      read: true
+    }
+  ])
+
+  const markAsRead = (id: string) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))
+  }
+
+  const clearAllNotifications = () => {
+    setNotifications([])
+  }
+
   return (
     <div className="min-h-screen bg-gradient-nerdy-bg-light">
       <div className="container mx-auto px-4 py-8">
@@ -50,14 +92,44 @@ export default function TutorDashboard() {
                 </p>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-sm text-slate-500">
-                {new Date().toLocaleDateString('en-US', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
+            <div className="flex items-center gap-4">
+              {/* Notification Bell */}
+              <NotificationBell 
+                notifications={notifications}
+                onMarkAsRead={markAsRead}
+                onClearAll={clearAllNotifications}
+              />
+              
+              {/* Quick Actions */}
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="gradient" 
+                  gradientType="pink-cyan"
+                  size="sm"
+                  leftIcon={<Plus className="w-4 h-4" />}
+                  xpReward={10}
+                >
+                  New Session
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  leftIcon={<Calendar className="w-4 h-4" />}
+                  className="border-slate-300 text-slate-600 hover:bg-slate-100"
+                >
+                  Schedule
+                </Button>
+              </div>
+              
+              <div className="text-right">
+                <div className="text-sm text-slate-500">
+                  {new Date().toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </div>
               </div>
             </div>
           </div>
@@ -178,6 +250,52 @@ export default function TutorDashboard() {
           </div>
         </motion.div>
       </div>
+      
+      {/* Floating Action Button */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3, delay: 1 }}
+        className="fixed bottom-8 right-8 z-40"
+      >
+        <div className="flex flex-col gap-3">
+          {/* Secondary Actions */}
+          <div className="flex flex-col gap-2 items-end">
+            <Button
+              variant="gradient"
+              gradientType="orange-magenta"
+              size="md"
+              leftIcon={<MessageCircle className="w-4 h-4" />}
+              className="shadow-lg backdrop-blur-sm"
+              xpReward={5}
+            >
+              Quick Message
+            </Button>
+            <Button
+              variant="gradient"
+              gradientType="yellow-pink"
+              size="md"
+              leftIcon={<Calendar className="w-4 h-4" />}
+              className="shadow-lg backdrop-blur-sm"
+              xpReward={5}
+            >
+              Schedule Session
+            </Button>
+          </div>
+          
+          {/* Primary Action */}
+          <Button
+            variant="gradient"
+            gradientType="nerdy"
+            size="lg"
+            leftIcon={<Zap className="w-5 h-5" />}
+            className="shadow-2xl backdrop-blur-sm font-bold text-lg px-8 py-4"
+            xpReward={25}
+          >
+            AI Assistant
+          </Button>
+        </div>
+      </motion.div>
     </div>
   )
 } 

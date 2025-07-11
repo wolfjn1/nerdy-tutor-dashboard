@@ -5,6 +5,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { motion, AnimatePresence, HTMLMotionProps } from 'framer-motion'
 import { Loader2, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useToastHelpers } from './Toast'
 
 const buttonVariants = cva(
   'inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 select-none leading-none',
@@ -82,15 +83,22 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const [showXPAnimation, setShowXPAnimation] = useState(false)
+    const { success } = useToastHelpers()
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (disabled || isLoading) return
 
-      // Show XP animation if xpReward is provided
+      // Show XP animation and toast notification if xpReward is provided
       if (xpReward && xpReward > 0) {
         setShowXPAnimation(true)
         setTimeout(() => setShowXPAnimation(false), 2000)
         onXPGained?.(xpReward)
+        
+        // Show success toast with XP reward
+        success(
+          `+${xpReward} XP earned!`,
+          `Great job! You've gained ${xpReward} experience points.`
+        )
       }
 
       onClick?.(e)

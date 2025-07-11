@@ -3,7 +3,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { DollarSign, TrendingUp, TrendingDown, FileText, Clock, CreditCard } from 'lucide-react'
-import { Button, Card, Badge } from '@/components/ui'
+import { Button, Card, Badge, SimpleAreaChart } from '@/components/ui'
 import { cn } from '@/lib/utils'
 
 interface EarningsData {
@@ -142,40 +142,38 @@ export const EarningsSummary: React.FC<EarningsSummaryProps> = ({
         </div>
       </div>
 
-      {/* Weekly Breakdown */}
+      {/* Weekly Breakdown Chart */}
       <div className="mt-6 pt-6 border-t border-slate-200">
         <h3 className="text-lg font-semibold text-slate-800 mb-4">Weekly Breakdown</h3>
-        <div className="space-y-2">
-          {[
-            { day: 'Mon', amount: 85, sessions: 1 },
-            { day: 'Tue', amount: 170, sessions: 2 },
-            { day: 'Wed', amount: 0, sessions: 0 },
-            { day: 'Thu', amount: 255, sessions: 3 },
-            { day: 'Fri', amount: 120, sessions: 1 },
-            { day: 'Sat', amount: 0, sessions: 0 },
-            { day: 'Sun', amount: 90, sessions: 1 }
-          ].map((day, index) => (
-            <div key={day.day} className="flex items-center justify-between py-2">
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-slate-600 w-8">{day.day}</span>
-                <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full rounded-full"
-                    style={{ background: 'linear-gradient(135deg, #fbbf24 0%, #f97316 25%, #ec4899 50%, #d946ef 75%, #06b6d4 100%)' }}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(day.amount / 255) * 100}%` }}
-                    transition={{ delay: index * 0.1, duration: 0.5 }}
-                  />
-                </div>
-              </div>
-              <div className="text-right">
-                <span className="text-sm font-medium text-slate-800">${day.amount}</span>
-                <span className="text-xs text-slate-500 ml-2">
-                  {day.sessions} session{day.sessions !== 1 ? 's' : ''}
-                </span>
-              </div>
-            </div>
-          ))}
+        <div className="h-64">
+          <SimpleAreaChart
+            data={[
+              { day: 'Mon', amount: 85, sessions: 1 },
+              { day: 'Tue', amount: 170, sessions: 2 },
+              { day: 'Wed', amount: 0, sessions: 0 },
+              { day: 'Thu', amount: 255, sessions: 3 },
+              { day: 'Fri', amount: 120, sessions: 1 },
+              { day: 'Sat', amount: 0, sessions: 0 },
+              { day: 'Sun', amount: 90, sessions: 1 }
+            ]}
+            xDataKey="day"
+            yDataKey="amount"
+            height={200}
+            color="#06b6d4"
+            gradient={true}
+          />
+        </div>
+        
+        {/* Quick Stats Below Chart */}
+        <div className="grid grid-cols-2 gap-4 mt-4">
+          <div className="text-center p-3 bg-slate-50 rounded-lg">
+            <div className="text-lg font-bold text-slate-800">8</div>
+            <div className="text-xs text-slate-600">Total Sessions</div>
+          </div>
+          <div className="text-center p-3 bg-slate-50 rounded-lg">
+            <div className="text-lg font-bold text-slate-800">$106</div>
+            <div className="text-xs text-slate-600">Average Day</div>
+          </div>
         </div>
       </div>
     </Card>

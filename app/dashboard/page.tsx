@@ -57,7 +57,7 @@ export default function DashboardPage() {
   const todaysEarnings = 425
 
   return (
-    <div className="space-y-3 w-full bg-green-50">
+    <div className="space-y-3 w-full p-2">
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
         {/* Welcome Message */}

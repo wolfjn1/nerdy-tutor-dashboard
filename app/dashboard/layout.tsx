@@ -277,8 +277,8 @@ export default function DashboardLayout({
           </header>
 
           {/* Page Content with proper scrolling */}
-          <main className="flex-1 overflow-auto bg-red-50">
-            <div className="p-2 w-full bg-blue-50">
+          <main className="flex-1 overflow-auto">
+            <div className="p-0 w-full">
               {children}
             </div>
           </main>

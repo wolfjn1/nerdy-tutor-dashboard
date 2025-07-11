@@ -16,12 +16,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body className={inter.className}>
         <ToastProvider>
-          <div className="min-h-screen bg-gradient-nerdy-bg text-white">
-            {children}
-          </div>
+          {children}
         </ToastProvider>
       </body>
     </html>

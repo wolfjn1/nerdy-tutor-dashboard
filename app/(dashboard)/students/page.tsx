@@ -178,116 +178,118 @@ export default function StudentsPage() {
         transition={{ duration: 0.2 }}
         onClick={() => router.push(`/students/${student.id}`)}
       >
-        <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gray-800 text-white cursor-pointer overflow-hidden min-h-[400px] flex flex-col">
-          <div className="p-6 flex-1 flex flex-col">
-            {/* Warning Banner for Missing Sessions */}
-            {needsSessionScheduled && (
-              <div className="mb-4 p-2 bg-red-500/20 border border-red-500/50 rounded-lg">
-                <div className="flex items-center gap-2 text-red-200 text-sm">
-                  <Clock className="h-4 w-4" />
-                  <span className="font-medium">Schedule session needed</span>
+        <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-gray-800 text-white cursor-pointer overflow-hidden h-[440px]">
+          <div className="p-6 h-full flex flex-col justify-between">
+            <div className="flex-1">
+              {/* Warning Banner for Missing Sessions */}
+              {needsSessionScheduled && (
+                <div className="mb-4 p-2 bg-red-500/20 border border-red-500/50 rounded-lg">
+                  <div className="flex items-center gap-2 text-red-200 text-sm">
+                    <Clock className="h-4 w-4" />
+                    <span className="font-medium">Schedule session needed</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Header */}
+              <div className="flex items-center gap-3 mb-4">
+                <Avatar
+                  src={student.avatar}
+                  fallback={`${student.firstName[0]}${student.lastName[0]}`}
+                  size="lg"
+                  className="border-2 border-purple-400/50"
+                />
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-white">
+                    {student.firstName} {student.lastName}
+                  </h3>
+                  <p className="text-sm text-gray-400">Grade {student.grade}</p>
                 </div>
               </div>
-            )}
 
-            {/* Header */}
-            <div className="flex items-center gap-3 mb-4">
-              <Avatar
-                src={student.avatar}
-                fallback={`${student.firstName[0]}${student.lastName[0]}`}
-                size="lg"
-                className="border-2 border-purple-400/50"
-              />
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-white">
-                  {student.firstName} {student.lastName}
-                </h3>
-                <p className="text-sm text-gray-400">Grade {student.grade}</p>
+              {/* Subjects */}
+              <div className="mb-4">
+                <div className="flex flex-wrap gap-1">
+                  {student.subjects.slice(0, 2).map(subject => (
+                    <Badge key={subject} variant="secondary" className="text-xs bg-purple-600/30 text-purple-200 border-purple-500/30">
+                      {subject}
+                    </Badge>
+                  ))}
+                  {student.subjects.length > 2 && (
+                    <Badge variant="secondary" className="text-xs bg-gray-600/30 text-gray-300">
+                      +{student.subjects.length - 2}
+                    </Badge>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* Subjects */}
-            <div className="mb-4">
-              <div className="flex flex-wrap gap-1">
-                {student.subjects.slice(0, 2).map(subject => (
-                  <Badge key={subject} variant="secondary" className="text-xs bg-purple-600/30 text-purple-200 border-purple-500/30">
-                    {subject}
-                  </Badge>
-                ))}
-                {student.subjects.length > 2 && (
-                  <Badge variant="secondary" className="text-xs bg-gray-600/30 text-gray-300">
-                    +{student.subjects.length - 2}
-                  </Badge>
+              {/* Progress Bars */}
+              <div className="space-y-3 mb-4">
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-gray-400">Performance</span>
+                    <span className="text-white font-medium">{student.progress.performance}%</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full transition-all duration-500 ${getProgressColor(student.progress.performance)}`}
+                      style={{ width: `${student.progress.performance}%` }}
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-gray-400">Attendance</span>
+                    <span className="text-white font-medium">{student.progress.attendance}%</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full transition-all duration-500 ${getProgressColor(student.progress.attendance)}`}
+                      style={{ width: `${student.progress.attendance}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="text-center">
+                  <div className="text-lg font-semibold text-white">{student.stats.completedSessions}</div>
+                  <div className="text-xs text-gray-400">Sessions</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-semibold text-white flex items-center justify-center gap-1">
+                    {student.stats.avgRating > 0 ? student.stats.avgRating : '-'}
+                    {student.stats.avgRating > 0 && <Star className="h-3 w-3 text-yellow-500 fill-current" />}
+                  </div>
+                  <div className="text-xs text-gray-400">Rating</div>
+                </div>
+              </div>
+
+              {/* Next Session or Warning */}
+              <div className="mb-4">
+                {student.stats.nextSession ? (
+                  <div className="flex items-center gap-2 text-sm text-gray-400">
+                    <Calendar className="h-4 w-4" />
+                    <span>Next: {formatDate(student.stats.nextSession)}</span>
+                  </div>
+                ) : needsSessionScheduled ? (
+                  <div className="flex items-center gap-2 text-sm text-red-400">
+                    <Clock className="h-4 w-4" />
+                    <span>No session scheduled</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <Clock className="h-4 w-4" />
+                    <span>No upcoming sessions</span>
+                  </div>
                 )}
               </div>
             </div>
 
-            {/* Progress Bars */}
-            <div className="space-y-3 mb-4">
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-400">Performance</span>
-                  <span className="text-white font-medium">{student.progress.performance}%</span>
-                </div>
-                <div className="w-full bg-gray-700 rounded-full h-2">
-                  <div 
-                    className={`h-2 rounded-full transition-all duration-500 ${getProgressColor(student.progress.performance)}`}
-                    style={{ width: `${student.progress.performance}%` }}
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-400">Attendance</span>
-                  <span className="text-white font-medium">{student.progress.attendance}%</span>
-                </div>
-                <div className="w-full bg-gray-700 rounded-full h-2">
-                  <div 
-                    className={`h-2 rounded-full transition-all duration-500 ${getProgressColor(student.progress.attendance)}`}
-                    style={{ width: `${student.progress.attendance}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className="text-center">
-                <div className="text-lg font-semibold text-white">{student.stats.completedSessions}</div>
-                <div className="text-xs text-gray-400">Sessions</div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-semibold text-white flex items-center justify-center gap-1">
-                  {student.stats.avgRating > 0 ? student.stats.avgRating : '-'}
-                  {student.stats.avgRating > 0 && <Star className="h-3 w-3 text-yellow-500 fill-current" />}
-                </div>
-                <div className="text-xs text-gray-400">Rating</div>
-              </div>
-            </div>
-
-            {/* Next Session or Warning */}
-            <div className="mb-4">
-              {student.stats.nextSession ? (
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <Calendar className="h-4 w-4" />
-                  <span>Next: {formatDate(student.stats.nextSession)}</span>
-                </div>
-              ) : needsSessionScheduled ? (
-                <div className="flex items-center gap-2 text-sm text-red-400">
-                  <Clock className="h-4 w-4" />
-                  <span>No session scheduled</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <Clock className="h-4 w-4" />
-                  <span>No upcoming sessions</span>
-                </div>
-              )}
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-2 mt-auto">
+            {/* Actions - Always at bottom */}
+            <div className="flex gap-2">
               <Button size="sm" variant="outline" className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700">
                 <MessageCircle className="h-4 w-4 mr-2" />
                 Message
@@ -498,7 +500,7 @@ export default function StudentsPage() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
           <AnimatePresence mode="popLayout">
             {filteredStudents.map((student, index) => (
               <motion.div

@@ -364,32 +364,51 @@ export default function StudentsPage() {
         <Card className="bg-white/80 backdrop-blur-sm border-0">
           <div className="p-2">
             <div className="flex gap-1">
-              <Button
-                variant={activeTab === 'current' ? 'gradient' : 'ghost'}
-                gradientType={activeTab === 'current' ? 'nerdy' : undefined}
-                size="sm"
-                onClick={() => setActiveTab('current')}
-                className={cn(
-                  "flex-1",
-                  activeTab !== 'current' && "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                )}
-              >
-                <Users className="h-4 w-4 mr-2" />
-                Current Students ({currentStudentsCount})
-              </Button>
-              <Button
-                variant={activeTab === 'previous' ? 'gradient' : 'ghost'}
-                gradientType={activeTab === 'previous' ? 'nerdy' : undefined}
-                size="sm"
-                onClick={() => setActiveTab('previous')}
-                className={cn(
-                  "flex-1",
-                  activeTab !== 'previous' && "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                )}
-              >
-                <Clock className="h-4 w-4 mr-2" />
-                Previous Students ({previousStudentsCount})
-              </Button>
+              {activeTab === 'current' ? (
+                <Button
+                  variant="gradient"
+                  gradientType="nerdy"
+                  size="sm"
+                  onClick={() => setActiveTab('current')}
+                  className="flex-1"
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  Current Students ({currentStudentsCount})
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setActiveTab('current')}
+                  className="flex-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  Current Students ({currentStudentsCount})
+                </Button>
+              )}
+              
+              {activeTab === 'previous' ? (
+                <Button
+                  variant="gradient"
+                  gradientType="nerdy"
+                  size="sm"
+                  onClick={() => setActiveTab('previous')}
+                  className="flex-1"
+                >
+                  <Clock className="h-4 w-4 mr-2" />
+                  Previous Students ({previousStudentsCount})
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setActiveTab('previous')}
+                  className="flex-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                >
+                  <Clock className="h-4 w-4 mr-2" />
+                  Previous Students ({previousStudentsCount})
+                </Button>
+              )}
             </div>
           </div>
         </Card>

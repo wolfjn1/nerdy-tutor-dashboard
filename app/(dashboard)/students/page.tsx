@@ -422,7 +422,7 @@ export default function StudentsPage() {
         className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4"
         style={{ opacity: '1 !important', transform: 'none !important' }}
       >
-        <Card className="bg-white/80 backdrop-blur-sm border-0">
+        <Card className="bg-white/80 backdrop-blur-sm border-0" animate={false}>
           <div className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -436,7 +436,7 @@ export default function StudentsPage() {
           </div>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-0">
+        <Card className="bg-white/80 backdrop-blur-sm border-0" animate={false}>
           <div className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -452,7 +452,7 @@ export default function StudentsPage() {
           </div>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-0">
+        <Card className="bg-white/80 backdrop-blur-sm border-0" animate={false}>
           <div className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -468,7 +468,7 @@ export default function StudentsPage() {
           </div>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-0">
+        <Card className="bg-white/80 backdrop-blur-sm border-0" animate={false}>
           <div className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">

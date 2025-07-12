@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "seed": "tsx scripts/seed-database.ts"
   },
   "dependencies": {
     "@fullcalendar/daygrid": "^6.1.18",
@@ -27,7 +28,6 @@
     "@supabase/supabase-js": "^2.50.5",
     "@tanstack/react-query": "^5.8.4",
     "@tanstack/react-query-devtools": "^5.8.4",
-    "@types/node": "^20.10.0",
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",
     "autoprefixer": "^10.4.16",
@@ -51,12 +51,16 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.9.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.10",
+    "@types/node": "^24.0.13",
     "eslint": "^8.55.0",
     "eslint-config-next": "14.0.3",
     "prettier": "^3.1.0",
-    "prettier-plugin-tailwindcss": "^0.5.7"
+    "prettier-plugin-tailwindcss": "^0.5.7",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.3"
   }
 }

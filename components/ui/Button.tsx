@@ -92,7 +92,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     }
 
     const getGradientClasses = () => {
-      if (variant !== 'gradient') return ''
+      if (variant !== 'gradient' || !gradientType) return ''
       
       const baseClasses = 'relative overflow-hidden'
       

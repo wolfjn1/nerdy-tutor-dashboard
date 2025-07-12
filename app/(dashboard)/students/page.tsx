@@ -367,7 +367,8 @@ export default function StudentsPage() {
       <div className="bg-white rounded-xl border border-gray-200 p-4">
         <div className="flex gap-2">
           <Button
-            variant={activeTab === 'current' ? 'solid' : 'outline'}
+            variant={activeTab === 'current' ? 'gradient' : 'outline'}
+            gradientType={activeTab === 'current' ? 'nerdy' : undefined}
             size="sm"
             onClick={() => setActiveTab('current')}
             className="flex-1"
@@ -377,7 +378,8 @@ export default function StudentsPage() {
           </Button>
           
           <Button
-            variant={activeTab === 'previous' ? 'solid' : 'outline'}
+            variant={activeTab === 'previous' ? 'gradient' : 'outline'}
+            gradientType={activeTab === 'previous' ? 'nerdy' : undefined}
             size="sm"
             onClick={() => setActiveTab('previous')}
             className="flex-1"

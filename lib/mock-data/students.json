@@ -310,5 +310,57 @@
     "completedSessions": 30,
     "createdAt": "2023-07-15T08:45:00Z",
     "isActive": true
+  },
+  {
+    "id": "student-013",
+    "firstName": "Grace",
+    "lastName": "Kim",
+    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face",
+    "grade": 9,
+    "subjects": ["Math"],
+    "parentContact": {
+      "email": "kim.family@email.com",
+      "phone": "(555) 345-6789",
+      "name": "Jennifer Kim",
+      "relationship": "parent"
+    },
+    "notes": "Completed tutoring program successfully. Moving to a different tutor.",
+    "tags": ["graduated", "successful"],
+    "progress": {
+      "attendance": 95,
+      "performance": 88,
+      "engagement": 90
+    },
+    "nextSession": null,
+    "totalSessions": 24,
+    "completedSessions": 24,
+    "createdAt": "2023-06-01T10:00:00Z",
+    "isActive": false
+  },
+  {
+    "id": "student-014",
+    "firstName": "Ryan",
+    "lastName": "Lopez",
+    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+    "grade": 11,
+    "subjects": ["Chemistry", "Math"],
+    "parentContact": {
+      "email": "lopez.home@email.com",
+      "phone": "(555) 456-7890",
+      "name": "Carlos Lopez",
+      "relationship": "parent"
+    },
+    "notes": "Student moved to another state. Tutoring relationship ended.",
+    "tags": ["relocated", "ended"],
+    "progress": {
+      "attendance": 87,
+      "performance": 82,
+      "engagement": 85
+    },
+    "nextSession": null,
+    "totalSessions": 15,
+    "completedSessions": 15,
+    "createdAt": "2023-05-15T14:00:00Z",
+    "isActive": false
   }
 ] 

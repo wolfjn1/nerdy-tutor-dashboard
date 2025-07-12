@@ -318,17 +318,6 @@ export default function StudentsPage() {
   const currentStudentsCount = studentsWithStats.filter(s => s.isActive).length
   const previousStudentsCount = studentsWithStats.filter(s => !s.isActive).length
 
-  // Debug logging
-  console.log('studentsWithStats:', studentsWithStats.length)
-  console.log('filteredStudents:', filteredStudents.length)
-  console.log('activeTab:', activeTab)
-  console.log('filteredStudents with stats:', filteredStudents.map(s => ({
-    name: s.firstName + ' ' + s.lastName,
-    avgRating: s.stats.avgRating,
-    completedSessions: s.stats.completedSessions,
-    nextSession: s.stats.nextSession
-  })))
-
   return (
     <div className="space-y-4 lg:space-y-6">
       {/* Header */}

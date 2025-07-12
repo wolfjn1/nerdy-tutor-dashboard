@@ -589,11 +589,8 @@ export default function SessionsPage() {
                     )}
                   >
                     {daySessions.map((session, index) => (
-                      <motion.div
+                      <div
                         key={session.id}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        whileHover={{ scale: 1.05 }}
                         className={cn(
                           "absolute left-2 right-2 p-2 rounded-lg cursor-pointer shadow-sm transition-all duration-200",
                           getSessionColor(session.status),
@@ -614,7 +611,7 @@ export default function SessionsPage() {
                         <div className="text-xs opacity-80">
                           {formatTime(session.date)}
                         </div>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 )
@@ -686,11 +683,7 @@ export default function SessionsPage() {
     <div className="min-h-screen bg-gradient-nerdy-bg-light">
       <div className="max-w-7xl mx-auto p-6">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-4"
-        >
+        <div className="mb-4">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -709,7 +702,7 @@ export default function SessionsPage() {
               New Session
             </Button>
           </div>
-        </motion.div>
+        </div>
 
         {/* Controls */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
@@ -822,12 +815,7 @@ export default function SessionsPage() {
 
         {/* Current Date Display */}
         {viewMode === 'calendar' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mb-6"
-          >
+          <div className="mb-6">
             <h2 className="text-xl font-semibold text-gray-900">
               {calendarView === 'week' && (
                 <>
@@ -840,15 +828,11 @@ export default function SessionsPage() {
                 </>
               )}
             </h2>
-          </motion.div>
+          </div>
         )}
 
         {/* Main Content */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-        >
+        <div>
           {viewMode === 'calendar' && (
             <>
               {calendarView === 'week' && <WeekView />}
@@ -885,7 +869,7 @@ export default function SessionsPage() {
               <p className="text-gray-500">Try adjusting your search or filters</p>
             </motion.div>
           )}
-        </motion.div>
+        </div>
       </div>
 
       {/* Session Details Modal */}

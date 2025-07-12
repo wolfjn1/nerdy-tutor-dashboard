@@ -2,8 +2,11 @@
 
 import React from 'react'
 import { Calendar, Clock, TrendingUp, Users, DollarSign, Target, BookOpen, Trophy } from 'lucide-react'
+import { useTutorStore } from '@/lib/stores/tutorStore'
 
 export default function DashboardPage() {
+  const { tutor } = useTutorStore()
+  
   return (
     <div className="space-y-4">
       {/* Header Section */}
@@ -12,14 +15,14 @@ export default function DashboardPage() {
           {/* Tutor Image */}
           <div className="flex-shrink-0">
             <img 
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
-              alt="John Doe"
+              src={tutor?.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"}
+              alt={tutor ? `${tutor.firstName} ${tutor.lastName}` : "John Doe"}
               className="w-16 h-16 rounded-full object-cover ring-4 ring-pink-200 shadow-lg"
             />
           </div>
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Welcome back, John Doe! 👋
+              Welcome back, {tutor ? `${tutor.firstName} ${tutor.lastName}` : 'John Doe'}! 👋
             </h1>
             <p className="text-gray-600">
               Here's your tutoring overview for today

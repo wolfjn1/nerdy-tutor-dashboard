@@ -39,6 +39,7 @@ interface TutorState {
   
   // Actions
   setTutor: (tutor: TutorProfile) => void
+  updateTutorAvatar: (avatarUrl: string) => void
   addStudent: (student: Student) => void
   updateStudent: (id: string, updates: Partial<Student>) => void
   removeStudent: (id: string) => void
@@ -95,6 +96,12 @@ export const useTutorStore = create<TutorState>()(
       // Actions
       setTutor: (tutor) => {
         set({ tutor })
+      },
+      
+      updateTutorAvatar: (avatarUrl) => {
+        set((state) => ({
+          tutor: state.tutor ? { ...state.tutor, avatar: avatarUrl } : null
+        }))
       },
       
       addStudent: (student) => {

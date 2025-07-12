@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { Button, NotificationBell, useToastHelpers, Avatar } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { useTutorStore } from '@/lib/stores/tutorStore'
 
 interface NavItem {
   id: string
@@ -115,6 +116,7 @@ export default function DashboardLayout({
   
   const pathname = usePathname()
   const { success, info } = useToastHelpers()
+  const { tutor } = useTutorStore()
 
   const markAsRead = (id: string) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))
@@ -204,26 +206,28 @@ export default function DashboardLayout({
           <div className="flex-shrink-0 p-3 border-t border-white/20 bg-black/10 backdrop-blur-sm">
             <div className="flex items-center gap-3 mb-3">
               <Avatar
-                src="https://api.dicebear.com/7.x/avataaars/svg?seed=JohnDoe&backgroundColor=b6e3f4"
-                fallback="JD"
+                src={tutor?.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"}
+                fallback={tutor?.firstName && tutor?.lastName ? `${tutor.firstName[0]}${tutor.lastName[0]}` : "JD"}
                 size="sm"
                 className="ring-2 ring-pink-400/50"
                 animate={false}
               />
               <div className="flex-1 min-w-0">
-                <div className="text-white font-medium text-sm">John Doe</div>
+                <div className="text-white font-medium text-sm">{tutor ? `${tutor.firstName} ${tutor.lastName}` : 'John Doe'}</div>
                 <div className="text-white/80 text-xs">Expert Tutor • Level 42</div>
               </div>
             </div>
             
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full border-white/30 text-white hover:bg-white/10"
-              leftIcon={<Settings className="w-4 h-4" />}
-            >
-              Settings
-            </Button>
+            <Link href="/settings" onClick={() => setSidebarOpen(false)}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full border-white/30 text-white hover:bg-white/10"
+                leftIcon={<Settings className="w-4 h-4" />}
+              >
+                Settings
+              </Button>
+            </Link>
           </div>
         </div>
       </motion.div>
@@ -251,15 +255,6 @@ export default function DashboardLayout({
             <div className="flex items-center gap-4">
               {/* Quick Actions */}
               <div className="hidden md:flex items-center gap-2">
-                <Button 
-                  variant="gradient" 
-                  gradientType="pink-cyan"
-                  size="sm"
-                  leftIcon={<Plus className="w-4 h-4" />}
-                  xpReward={10}
-                >
-                  New Session
-                </Button>
                 <Button 
                   variant="gradient" 
                   gradientType="nerdy"

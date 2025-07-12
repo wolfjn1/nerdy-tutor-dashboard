@@ -17,7 +17,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Menu,
-  X
+  X,
+  Search
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Avatar, Badge } from '@/components/ui'
@@ -53,6 +54,12 @@ const sidebarItems: SidebarItem[] = [
     badge: '3'
   },
   {
+    id: 'opportunities',
+    label: 'Opportunities',
+    icon: Search,
+    href: '/opportunities'
+  },
+  {
     id: 'tools',
     label: 'AI Tools',
     icon: Brain,
@@ -67,10 +74,10 @@ const sidebarItems: SidebarItem[] = [
     badge: '5'
   },
   {
-    id: 'billing',
-    label: 'Billing',
+    id: 'earnings',
+    label: 'Earnings',
     icon: DollarSign,
-    href: '/billing'
+    href: '/earnings'
   },
   {
     id: 'achievements',
@@ -83,6 +90,12 @@ const sidebarItems: SidebarItem[] = [
     label: 'Profile',
     icon: User,
     href: '/profile'
+  },
+  {
+    id: 'settings',
+    label: 'Settings',
+    icon: Settings,
+    href: '/settings'
   },
 ]
 

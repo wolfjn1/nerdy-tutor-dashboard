@@ -1,159 +1,160 @@
 # Nerdy Live+AI™ - Tutor Portal
 
-A cutting-edge tutor portal web application powered by AI technology, built with Next.js 14 and featuring an immersive gamification system. This prototype showcases the future of educational platforms with a vibrant gradient theme inspired by the Nerdy Live+AI brand identity.
+A modern tutor dashboard application built with Next.js 14, TypeScript, and Tailwind CSS. Features a vibrant purple/pink "nerdy" theme with comprehensive student management, session scheduling, earnings tracking, and gamification elements.
 
-## 🎨 Brand Identity
+🚀 **Live Demo**: [https://nerdy-tutor-dashboard.vercel.app/](https://nerdy-tutor-dashboard.vercel.app/)
 
-**Nerdy Live+AI™** represents the perfect fusion of traditional educational tools enhanced with cutting-edge AI technology. The platform features:
+## 🎨 Design System
 
-- **Dark Theme Background**: Rich gradient from deep purple to teal blue
-- **Vibrant Text Gradient**: Rainbow spectrum from yellow → orange → pink → magenta → cyan
-- **Modern Glass Effects**: Frosted glass components with subtle transparency
-- **Animated Gradients**: Dynamic color transitions and hover effects
+The application follows a consistent design language with:
+- **White card backgrounds** with subtle borders
+- **Purple/Pink gradient accents** for active states and CTAs
+- **Clean, modern UI** with proper spacing and typography
+- **Responsive design** that works across all devices
 
-## 🚀 Features
+## ✅ Implemented Features
 
-### Core Features
-- **🎮 Advanced Gamification** - XP points, dynamic leveling, achievements, and streak tracking
-- **👥 AI-Enhanced Student Management** - Intelligent student roster with performance analytics
-- **📅 Smart Scheduling** - AI-powered session scheduling and calendar optimization
-- **🤖 Live+AI Tools Suite** - Personalized lesson plans, homework generation, and adaptive content
-- **💬 Unified Communication** - Integrated messaging for students, parents, and tutors
-- **💰 Automated Billing** - Smart invoice generation and payment tracking
-- **📊 Real-time Analytics** - Performance metrics and progress visualization
+### 📊 Dashboard
+- Welcome section with tutor profile picture (synced across app)
+- Gamification display (Level, XP, Streak)
+- Today's statistics (Sessions, Earnings, Students, Success Rate)
+- Next session preview with quick actions
+- Three-column layout for Required Actions, Today's Schedule, and Quick Actions
 
-### UI/UX Highlights
-- **🎨 Nerdy Brand Theme** - Vibrant gradients with dark backdrop
-- **📱 Responsive Design** - Mobile-first with adaptive layouts
-- **✨ Micro-interactions** - Smooth animations and engaging feedback
-- **⚡ Performance Optimized** - Fast loading and 60fps animations
-- **♿ Accessibility First** - ARIA compliance and keyboard navigation
-- **🔥 Glass Morphism** - Modern frosted glass aesthetic
+### 👥 Students Management
+- **Current Students** tab with active student cards
+- **Previous Students** tab for historical records
+- Student cards showing:
+  - Profile picture and basic info
+  - Performance metrics (Attendance, Performance, Engagement)
+  - Next scheduled session
+  - Tags for subjects and attributes
+- **Filtering System**:
+  - Search by name
+  - Filter by subject
+  - Filter by grade
+  - "No Scheduled Sessions" checkbox
+- **Student Detail Pages** with comprehensive information
+- Warning indicators for students without scheduled sessions
 
-## 🛠️ Technology Stack
+### 📅 Sessions Calendar
+- Monthly calendar view with week navigation
+- Visual session blocks showing:
+  - Student name
+  - Subject
+  - Time duration
+- **Session Details Modal** with:
+  - Student information
+  - Session date/time/duration
+  - Notes and ratings
+  - Join session functionality
+  - Meeting link management
+
+### 💼 Opportunities
+- Browse available tutoring opportunities
+- **Advanced Filtering**:
+  - Urgency level (High/Medium/Low)
+  - Sort by match score, pay rate, urgency, or start date
+- **Opportunity Cards** displaying:
+  - Student info and requirements
+  - Preferred times
+  - Pay rate and duration
+  - Match score with hover explanation
+- **Detailed View Modal** for each opportunity
+- **Preferences Modal** for setting tutor preferences
+- Pagination controls with customizable items per page
+
+### 💰 Earnings & Billing
+- **Earnings Overview** with monthly/weekly/daily stats
+- **Transaction History** with detailed records
+- **Invoice Management**:
+  - Create invoices from completed sessions
+  - Select multiple sessions for bulk invoicing
+  - Invoice preview and details
+  - Payment status tracking
+- **Uninvoiced Sessions** section
+- Payment methods management
+- Export functionality for financial records
+
+### ⚙️ Settings
+Comprehensive settings page with sections for:
+- **Profile Management**:
+  - Upload profile picture (synced across app)
+  - Edit personal information
+  - Bio management
+- **Notification Preferences**:
+  - Email notifications
+  - Push notifications
+  - Granular control over notification types
+- **Privacy Settings**:
+  - Profile visibility options
+  - Information display preferences
+- **Platform Preferences**:
+  - Language and timezone
+  - Session reminder timing
+  - Auto-accept settings
+- **Security**:
+  - Password management
+  - Two-factor authentication
+  - Login activity monitoring
+- **Billing & Payment**:
+  - Payment method management
+  - Tax information
+  - Invoice settings
+- **Account Management**:
+  - Data export
+  - Account deletion
+
+### 🎮 Gamification System
+- XP and leveling system
+- Streak tracking
+- Achievement badges
+- Visual progress bars with animations
+- Level 42 "Expert Tutor" status
+
+## 🛠️ Technical Stack
 
 ### Frontend
-- **Next.js 14** - React framework with App Router
-- **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first styling with custom Nerdy theme
-- **Framer Motion** - Advanced animations and transitions
+- **Next.js 14** with App Router
+- **TypeScript** for type safety
+- **Tailwind CSS** for styling
+- **Framer Motion** for animations (with fixes for stuck states)
 
 ### State Management
-- **Zustand** - Lightweight reactive state management
-- **React Query** - Data fetching and caching
-- **Persistent Storage** - Local storage with encryption
+- **Zustand** with persistence for:
+  - User profile data
+  - Avatar management
+  - Gamification stats
+  - UI preferences
 
 ### UI Components
-- **Radix UI** - Accessible headless components
-- **Lucide React** - Beautiful icon library
-- **Recharts** - Data visualization components
-- **React Hook Form + Zod** - Form handling and validation
+- Custom component library with consistent styling
+- Reusable Card, Button, Badge, Avatar components
+- Modal system for overlays
+- Toast notifications for user feedback
 
-### Development Tools
-- **ESLint** - Code quality and consistency
-- **Prettier** - Code formatting
-- **TypeScript** - Static type checking
+### Data
+- Mock data system for development
+- Structured JSON files for students, sessions, etc.
+- Realistic sample data for testing
 
-## 🎨 Nerdy Design System
-
-### Color Palette
-```css
-/* Nerdy Brand Colors */
---nerdy-purple: #2d1b69    /* Deep brand purple */
---nerdy-navy: #1a1b3a      /* Dark navy base */
---nerdy-teal: #0891b2      /* Bright teal accent */
---nerdy-cyan: #06b6d4      /* Electric cyan */
---nerdy-yellow: #fbbf24    /* Warm yellow */
---nerdy-orange: #f97316    /* Vibrant orange */
---nerdy-pink: #ec4899      /* Hot pink */
---nerdy-magenta: #d946ef   /* Electric magenta */
-```
-
-### Signature Gradients
-```css
-/* Main Brand Gradient */
---gradient-nerdy: linear-gradient(135deg, 
-  #fbbf24 0%,     /* Yellow */
-  #f97316 25%,    /* Orange */
-  #ec4899 50%,    /* Pink */
-  #d946ef 75%,    /* Magenta */
-  #06b6d4 100%    /* Cyan */
-);
-
-/* Background Gradient */
---gradient-nerdy-bg: linear-gradient(135deg, 
-  #2d1b69 0%,     /* Purple */
-  #1a1b3a 50%,    /* Navy */
-  #0891b2 100%    /* Teal */
-);
-```
-
-### Typography
-- **Font Family**: Inter (Google Fonts) - Clean, modern, and highly readable
-- **Brand Text**: Large "nerdy" in white + colorful "Live+AI™" gradient
-- **Hierarchy**: Consistent spacing with gradient text accents
-
-## 🏗️ Project Structure
-
-```
-nerdy-tutor-portal/
-├── app/                          # Next.js App Router
-│   ├── layout.tsx               # Root layout with Nerdy theme
-│   ├── page.tsx                 # Landing page with brand showcase
-│   └── globals.css              # Nerdy brand styles and animations
-├── components/                   # React components
-│   ├── ui/                      # Base UI components
-│   │   ├── Button.tsx          # Multi-gradient buttons with XP rewards
-│   │   ├── Card.tsx            # Glass-effect cards with hover animations
-│   │   ├── Badge.tsx           # Gradient badges with pulse effects
-│   │   └── Avatar.tsx          # Status-aware avatars
-│   ├── layout/                  # Layout components
-│   │   ├── Sidebar.tsx         # Collapsible navigation with Nerdy branding
-│   │   ├── Header.tsx          # Search and notifications
-│   │   └── MobileNav.tsx       # Bottom mobile navigation
-│   └── [features]/             # Feature-specific components
-├── lib/                         # Utilities and business logic
-│   ├── stores/                 # Zustand state management
-│   ├── hooks/                  # Custom React hooks
-│   ├── utils/                  # Helper functions
-│   ├── types/                  # TypeScript definitions
-│   └── mock-data/              # Development data
-└── styles/                     # Additional stylesheets
-```
-
-## 🎮 Enhanced Gamification System
-
-### XP & Leveling
-- **Dynamic XP Sources**: AI tool usage, session completion, student achievements
-- **Progressive Leveling**: Increasing XP requirements with visual feedback
-- **Prestige Titles**: Novice → Skilled → Expert → Master → Legendary Tutor
-
-### Achievement System
-- **Milestone Rewards**: First student, 100 sessions, perfect streak
-- **Performance Badges**: High ratings, completion rates, innovation
-- **Social Recognition**: Community contributions and referrals
-- **Seasonal Events**: Special achievements and limited-time rewards
-
-### Visual Feedback
-- **Gradient XP Bars**: Colorful progress indicators
-- **Particle Effects**: Celebration animations for level-ups
-- **Streak Flames**: Growing fire icons for consecutive days
-- **Glow Effects**: Subtle lighting on interactive elements
-
-## 🔧 Quick Start
+## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js 18+ and npm
-- Modern web browser with CSS gradients support
+- Git
 
 ### Installation
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd nerdy-tutor-portal
+git clone https://github.com/[your-username]/tutor-profile.git
+cd tutor-profile
 
 # Install dependencies
 npm install
+
+# Set up environment variables (if needed)
+cp .env.example .env.local
 
 # Start development server
 npm run dev
@@ -167,108 +168,50 @@ npm run dev          # Start development server
 npm run build        # Build for production
 npm run start        # Start production server
 npm run lint         # Run ESLint
-npm run type-check   # Run TypeScript checking
 ```
 
-## 📱 Responsive Design Features
+## 📱 Key Pages
 
-### Mobile Experience
-- **Bottom Navigation**: Key actions always accessible
-- **Swipe Gestures**: Intuitive touch interactions
-- **Adaptive Layouts**: Content reorganizes for smaller screens
-- **Touch Targets**: Optimized for finger navigation
+- `/dashboard` - Main dashboard overview
+- `/students` - Student management
+- `/students/[studentId]` - Individual student details
+- `/sessions` - Calendar and session management
+- `/opportunities` - Browse tutoring opportunities
+- `/earnings` - Financial overview and invoicing
+- `/settings` - Account and preference management
+- `/achievements` - Gamification and progress tracking
 
-### Tablet Experience
-- **Sidebar Transitions**: Smooth collapsible navigation
-- **Split Views**: Dual-pane layouts for efficiency
-- **Gesture Support**: Enhanced touch interactions
+## 🎯 Recent Updates
 
-### Desktop Experience
-- **Multi-column Layouts**: Maximum information density
-- **Keyboard Shortcuts**: Power user features
-- **Hover Effects**: Rich interactive feedback
+### January 2025
+- Fixed navigation and routing issues
+- Implemented consistent avatar system across all pages
+- Added functional photo upload in settings
+- Created comprehensive opportunities page with filtering
+- Built complete earnings/billing system with invoicing
+- Developed full settings page with all sections
+- Fixed Framer Motion animation issues
+- Standardized design system across all pages
+- Removed "New Session" button (all sessions are pre-scheduled)
 
-## 🚀 Performance Features
+## 🚢 Deployment
 
-### Optimization Techniques
-- **Static Generation**: Pre-rendered pages for instant loading
-- **Code Splitting**: Automatic bundle optimization
-- **Image Optimization**: WebP format with lazy loading
-- **Font Optimization**: Preloaded Google Fonts
+The application is deployed on Vercel:
+- **Production URL**: https://nerdy-tutor-dashboard.vercel.app/
+- **Auto-deployment**: Enabled from main branch
+- **Environment**: Node.js 18.x
 
-### Animation Performance
-- **GPU Acceleration**: Hardware-accelerated transitions
-- **Reduced Motion**: Accessibility-aware animations
-- **60fps Target**: Smooth interactions across devices
+### Deploy Your Own
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/[your-username]/tutor-profile)
 
-## 🧪 Development Features
+## 🤝 Contributing
 
-### Mock Data System
-- **Realistic Profiles**: 12 diverse student personas
-- **Complete Histories**: Full session and progress records
-- **Achievement Database**: Comprehensive gamification data
-- **Analytics Simulation**: Realistic performance metrics
-
-### Type Safety
-- **100% TypeScript**: Full type coverage
-- **Interface Contracts**: Clear API definitions
-- **Runtime Validation**: Zod schema validation
-
-## 🔮 Roadmap
-
-### Phase 1: AI Integration
-- [ ] Real-time AI lesson generation
-- [ ] Intelligent student matching
-- [ ] Automated progress analysis
-- [ ] Smart scheduling optimization
-
-### Phase 2: Advanced Features
-- [ ] Video conferencing integration
-- [ ] Collaborative whiteboards
-- [ ] Parent portal dashboard
-- [ ] Multi-language support
-
-### Phase 3: Platform Expansion
-- [ ] Mobile applications (iOS/Android)
-- [ ] API for third-party integrations
-- [ ] Administrative dashboard
-- [ ] Marketplace for tutors
-
-## 🎯 Brand Guidelines
-
-### Logo Usage
-- **Primary**: "nerdy" in white + "Live+AI™" in gradient
-- **Minimum Size**: 120px width for digital
-- **Clear Space**: 20px margin on all sides
-- **Background**: Always on dark gradient backdrop
-
-### Color Applications
-- **Primary Actions**: Nerdy rainbow gradient
-- **Secondary Elements**: Individual gradient segments
-- **Text**: White on dark, gradient for emphasis
-- **Borders**: Subtle white/gradient with transparency
-
-### Animation Principles
-- **Smooth Transitions**: 250ms standard duration
-- **Gradient Motion**: Animated background positions
-- **Hover Effects**: Scale and glow transformations
-- **Loading States**: Shimmer and pulse effects
+This is a demonstration project showcasing modern web development practices. Feel free to explore the code and use it as inspiration for your own projects.
 
 ## 📄 License
 
-This project is a prototype showcasing modern educational technology. All rights reserved to Nerdy Live+AI™.
-
-## 🙏 Acknowledgments
-
-- **Brand Inspiration**: Nerdy Live+AI™ visual identity
-- **UI Foundation**: Radix UI accessibility standards
-- **Icons**: Lucide React comprehensive library
-- **Photography**: Unsplash professional portraits
+This project is a prototype for Nerdy Live+AI™. All rights reserved.
 
 ---
 
-**Powered by Nerdy Live+AI™ - Where traditional tools meet cutting-edge technology** 🚀✨ # Force rebuild - Fri Jul 11 15:56:17 MST 2025
-Updated $(date)
-# Build successful - triggering redeploy Fri Jul 11 19:50:31 MST 2025
-# Force deployment Fri Jul 11 21:10:18 MST 2025
-# Force fresh deployment Fri Jul 11 21:37:32 MST 2025
+**Built with ❤️ using Next.js, TypeScript, and Tailwind CSS**

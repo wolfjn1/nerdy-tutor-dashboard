@@ -106,22 +106,22 @@ const Modal: React.FC<ModalProps> = ({
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.2 }}
               className={cn(
-                'relative w-full rounded-lg bg-white dark:bg-gray-900 shadow-xl',
+                'relative w-full rounded-lg bg-white shadow-xl',
                 getSizeClasses(),
                 className
               )}
             >
               {/* Header */}
               {(title || description || showCloseButton) && (
-                <div className="flex items-start justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-start justify-between p-6 border-b border-gray-200">
                   <div className="flex-1">
                     {title && (
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      <h3 className="text-lg font-semibold text-gray-900">
                         {title}
                       </h3>
                     )}
                     {description && (
-                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                      <p className="mt-1 text-sm text-gray-500">
                         {description}
                       </p>
                     )}
@@ -130,7 +130,7 @@ const Modal: React.FC<ModalProps> = ({
                   {showCloseButton && (
                     <button
                       onClick={onClose}
-                      className="ml-4 p-2 -m-2 text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 transition-colors"
+                      className="ml-4 p-2 -m-2 text-gray-400 hover:text-gray-500 transition-colors"
                     >
                       <X className="h-5 w-5" />
                     </button>

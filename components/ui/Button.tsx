@@ -223,7 +223,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     }
 
     const combinedClasses = cn(
-      buttonVariants({ variant, size }),
+      buttonVariants({ 
+        variant, 
+        gradientType: variant === 'gradient' ? gradientType : undefined, 
+        size 
+      }),
       getGradientClasses(),
       getOutlineClasses(),
       getGhostClasses(),

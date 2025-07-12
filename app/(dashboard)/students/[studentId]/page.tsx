@@ -428,45 +428,44 @@ export default function StudentDetailPage() {
                 {/* Progress Overview */}
                 <div className="lg:col-span-2 space-y-6">
                   <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Progress Overview</h3>
-                      <div className="space-y-4">
-                        <div>
-                          <div className="flex justify-between text-sm mb-2">
-                            <span className="text-gray-600">Performance</span>
-                            <span className="text-gray-900 font-medium">{student.progress.performance}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-3">
-                            <div 
-                              className="h-3 rounded-full bg-gradient-nerdy transition-all duration-500"
-                              style={{ width: `${student.progress.performance}%` }}
-                            />
-                          </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Progress Overview</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex justify-between text-sm mb-2">
+                          <span className="text-gray-600">Performance</span>
+                          <span className="text-gray-900 font-medium">{student.progress.performance}%</span>
                         </div>
-                        
-                        <div>
-                          <div className="flex justify-between text-sm mb-2">
-                            <span className="text-gray-600">Attendance</span>
-                            <span className="text-gray-900 font-medium">{student.progress.attendance}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-3">
-                            <div 
-                              className="h-3 rounded-full bg-gradient-pink-cyan transition-all duration-500"
-                              style={{ width: `${student.progress.attendance}%` }}
-                            />
-                          </div>
+                        <div className="w-full bg-gray-200 rounded-full h-3">
+                          <div 
+                            className="h-3 rounded-full bg-gradient-nerdy transition-all duration-500"
+                            style={{ width: `${student.progress.performance}%` }}
+                          />
                         </div>
-                        
-                        <div>
-                          <div className="flex justify-between text-sm mb-2">
-                            <span className="text-gray-600">Engagement</span>
-                            <span className="text-gray-900 font-medium">{student.progress.engagement}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-3">
-                            <div 
-                              className="h-3 rounded-full bg-gradient-yellow-pink transition-all duration-500"
-                              style={{ width: `${student.progress.engagement}%` }}
-                            />
-                          </div>
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between text-sm mb-2">
+                          <span className="text-gray-600">Attendance</span>
+                          <span className="text-gray-900 font-medium">{student.progress.attendance}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-3">
+                          <div 
+                            className="h-3 rounded-full bg-gradient-pink-cyan transition-all duration-500"
+                            style={{ width: `${student.progress.attendance}%` }}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between text-sm mb-2">
+                          <span className="text-gray-600">Engagement</span>
+                          <span className="text-gray-900 font-medium">{student.progress.engagement}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-3">
+                          <div 
+                            className="h-3 rounded-full bg-gradient-yellow-pink transition-all duration-500"
+                            style={{ width: `${student.progress.engagement}%` }}
+                          />
                         </div>
                       </div>
                     </div>

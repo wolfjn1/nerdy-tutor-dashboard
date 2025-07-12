@@ -66,7 +66,7 @@ type CalendarView = 'day' | 'week' | 'month'
 
 export default function SessionsPage() {
   const router = useRouter()
-  const [currentDate, setCurrentDate] = useState(new Date())
+  const [currentDate, setCurrentDate] = useState(new Date('2025-01-08')) // Set to current week with sessions
   const [viewMode, setViewMode] = useState<ViewMode>('calendar')
   const [calendarView, setCalendarView] = useState<CalendarView>('week')
   const [selectedSession, setSelectedSession] = useState<SessionWithStudent | null>(null)

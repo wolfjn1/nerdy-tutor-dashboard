@@ -145,7 +145,7 @@ export default function DashboardLayout({
         animate={{
           x: isLargeScreen ? 0 : (sidebarOpen ? 0 : -320),
         }}
-        className="fixed left-0 top-0 bottom-0 w-80 bg-gradient-to-b from-purple-600 via-purple-700 to-purple-800 shadow-xl z-50 lg:relative lg:w-64 lg:flex-shrink-0"
+        className="fixed left-0 top-0 bottom-0 w-80 h-screen bg-gradient-to-b from-purple-600 via-purple-700 to-purple-800 shadow-xl z-50 lg:relative lg:w-64 lg:flex-shrink-0"
       >
         <div className="flex flex-col h-full">
           {/* Logo and Close Button */}

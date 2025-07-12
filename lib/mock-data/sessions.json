@@ -4,7 +4,7 @@
     "studentId": "student-001",
     "tutorId": "tutor-001",
     "subject": "Math",
-    "date": "2024-01-15T14:00:00Z",
+    "date": "2025-01-15T14:00:00Z",
     "duration": 60,
     "status": "scheduled",
     "lessonPlan": {
@@ -65,7 +65,7 @@
         "subject": "Math",
         "studentId": "student-001",
         "sessionId": "session-001",
-        "dueDate": "2024-01-18T23:59:59Z",
+        "dueDate": "2025-01-18T23:59:59Z",
         "status": "assigned",
         "attachments": ["math_practice_set.pdf"],
         "submissions": [],
@@ -81,7 +81,7 @@
     "studentId": "student-002",
     "tutorId": "tutor-001",
     "subject": "Chemistry",
-    "date": "2024-01-16T16:00:00Z",
+    "date": "2025-01-16T16:00:00Z",
     "duration": 90,
     "status": "scheduled",
     "lessonPlan": {
@@ -143,7 +143,7 @@
     "studentId": "student-003",
     "tutorId": "tutor-001",
     "subject": "English",
-    "date": "2024-01-17T13:00:00Z",
+    "date": "2025-01-17T13:00:00Z",
     "duration": 60,
     "status": "scheduled",
     "lessonPlan": {
@@ -205,7 +205,7 @@
     "studentId": "student-004",
     "tutorId": "tutor-001",
     "subject": "Computer Science",
-    "date": "2024-01-18T15:00:00Z",
+    "date": "2025-01-18T15:00:00Z",
     "duration": 90,
     "status": "scheduled",
     "lessonPlan": {
@@ -267,7 +267,7 @@
     "studentId": "student-005",
     "tutorId": "tutor-001",
     "subject": "Biology",
-    "date": "2024-01-19T10:00:00Z",
+    "date": "2025-01-19T10:00:00Z",
     "duration": 60,
     "status": "scheduled",
     "lessonPlan": {

@@ -19,7 +19,7 @@
       "performance": 88,
       "engagement": 92
     },
-    "nextSession": "2024-01-15T14:00:00Z",
+    "nextSession": "2025-01-15T14:00:00Z",
     "totalSessions": 24,
     "completedSessions": 22,
     "createdAt": "2023-09-01T10:00:00Z",
@@ -45,7 +45,7 @@
       "performance": 85,
       "engagement": 87
     },
-    "nextSession": "2024-01-16T16:00:00Z",
+    "nextSession": "2025-01-16T16:00:00Z",
     "totalSessions": 18,
     "completedSessions": 16,
     "createdAt": "2023-10-15T09:30:00Z",
@@ -71,7 +71,7 @@
       "performance": 91,
       "engagement": 95
     },
-    "nextSession": "2024-01-17T13:00:00Z",
+    "nextSession": "2025-01-17T13:00:00Z",
     "totalSessions": 30,
     "completedSessions": 29,
     "createdAt": "2023-08-20T11:00:00Z",
@@ -97,7 +97,7 @@
       "performance": 78,
       "engagement": 75
     },
-    "nextSession": "2024-01-18T15:00:00Z",
+    "nextSession": "2025-01-18T15:00:00Z",
     "totalSessions": 15,
     "completedSessions": 12,
     "createdAt": "2023-11-10T14:30:00Z",
@@ -123,7 +123,7 @@
       "performance": 94,
       "engagement": 96
     },
-    "nextSession": "2024-01-19T10:00:00Z",
+    "nextSession": "2025-01-19T10:00:00Z",
     "totalSessions": 36,
     "completedSessions": 35,
     "createdAt": "2023-07-05T08:00:00Z",
@@ -149,7 +149,7 @@
       "performance": 82,
       "engagement": 79
     },
-    "nextSession": "2024-01-20T14:00:00Z",
+    "nextSession": "2025-01-20T14:00:00Z",
     "totalSessions": 20,
     "completedSessions": 18,
     "createdAt": "2023-09-15T13:00:00Z",
@@ -175,7 +175,7 @@
       "performance": 86,
       "engagement": 89
     },
-    "nextSession": "2024-01-21T11:00:00Z",
+    "nextSession": "2025-01-21T11:00:00Z",
     "totalSessions": 25,
     "completedSessions": 23,
     "createdAt": "2023-08-01T10:30:00Z",
@@ -201,7 +201,7 @@
       "performance": 89,
       "engagement": 91
     },
-    "nextSession": "2024-01-22T15:30:00Z",
+    "nextSession": "2025-01-22T15:30:00Z",
     "totalSessions": 28,
     "completedSessions": 26,
     "createdAt": "2023-09-10T12:00:00Z",
@@ -227,7 +227,7 @@
       "performance": 93,
       "engagement": 97
     },
-    "nextSession": "2024-01-23T16:00:00Z",
+    "nextSession": "2025-01-23T16:00:00Z",
     "totalSessions": 22,
     "completedSessions": 21,
     "createdAt": "2023-10-01T09:00:00Z",
@@ -253,7 +253,7 @@
       "performance": 84,
       "engagement": 88
     },
-    "nextSession": "2024-01-24T13:30:00Z",
+    "nextSession": "2025-01-24T13:30:00Z",
     "totalSessions": 16,
     "completedSessions": 14,
     "createdAt": "2023-11-20T15:00:00Z",
@@ -279,7 +279,7 @@
       "performance": 87,
       "engagement": 90
     },
-    "nextSession": "2024-01-25T14:00:00Z",
+    "nextSession": null,
     "totalSessions": 19,
     "completedSessions": 17,
     "createdAt": "2023-10-05T11:30:00Z",
@@ -305,7 +305,7 @@
       "performance": 90,
       "engagement": 94
     },
-    "nextSession": "2024-01-26T10:30:00Z",
+    "nextSession": null,
     "totalSessions": 32,
     "completedSessions": 30,
     "createdAt": "2023-07-15T08:45:00Z",

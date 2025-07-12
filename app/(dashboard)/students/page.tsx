@@ -179,12 +179,15 @@ export default function StudentsPage() {
     // Check if student is active but has no upcoming session
     const needsSessionScheduled = student.isActive && !student.stats.nextSession
     
-    // Debug logging for warning banners
-    console.log(`Student ${student.firstName} ${student.lastName}:`, {
-      isActive: student.isActive,
-      nextSession: student.stats.nextSession,
-      needsSessionScheduled
-    })
+    // Debug warning banner logic
+    if (student.firstName === 'Mia' || student.firstName === 'Benjamin') {
+      console.log(`DEBUG ${student.firstName}:`, {
+        isActive: student.isActive,
+        nextSession: student.stats.nextSession,
+        needsSessionScheduled,
+        originalNextSession: student.nextSession
+      })
+    }
     
     return (
       <motion.div
@@ -324,6 +327,12 @@ export default function StudentsPage() {
   // Get counts for tabs
   const currentStudentsCount = studentsWithStats.filter(s => s.isActive).length
   const previousStudentsCount = studentsWithStats.filter(s => !s.isActive).length
+
+  // Debug: Force cache clear
+  console.log('Students page loaded at:', new Date().toISOString())
+  console.log('Total students with stats:', studentsWithStats.length)
+  console.log('Current students count:', currentStudentsCount)
+  console.log('Previous students count:', previousStudentsCount)
 
   return (
     <div className="space-y-4 lg:space-y-6">

@@ -72,8 +72,17 @@ export default function StudentsPage() {
       
       const totalEarnings = completedSessions.reduce((sum, s) => sum + (s.earnings || 0), 0)
       
-      const nextSession = upcomingSessions
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0]
+      // Respect the student's nextSession from JSON, but also check for scheduled sessions
+      let nextSession: Date | undefined = undefined
+      if (student.nextSession) {
+        nextSession = student.nextSession
+      } else {
+        const nextScheduledSession = upcomingSessions
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0]
+        if (nextScheduledSession) {
+          nextSession = new Date(nextScheduledSession.date)
+        }
+      }
       
       const lastSession = completedSessions
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
@@ -84,7 +93,7 @@ export default function StudentsPage() {
           totalSessions: studentSessions.length,
           completedSessions: completedSessions.length,
           avgRating: Math.round(avgRating * 10) / 10,
-          nextSession: nextSession ? new Date(nextSession.date) : undefined,
+          nextSession,
           lastSession: lastSession ? new Date(lastSession.date) : undefined,
           totalEarnings
         }
@@ -309,6 +318,17 @@ export default function StudentsPage() {
   const currentStudentsCount = studentsWithStats.filter(s => s.isActive).length
   const previousStudentsCount = studentsWithStats.filter(s => !s.isActive).length
 
+  // Debug logging
+  console.log('studentsWithStats:', studentsWithStats.length)
+  console.log('filteredStudents:', filteredStudents.length)
+  console.log('activeTab:', activeTab)
+  console.log('filteredStudents with stats:', filteredStudents.map(s => ({
+    name: s.firstName + ' ' + s.lastName,
+    avgRating: s.stats.avgRating,
+    completedSessions: s.stats.completedSessions,
+    nextSession: s.stats.nextSession
+  })))
+
   return (
     <div className="space-y-4 lg:space-y-6">
       {/* Header */}
@@ -341,7 +361,7 @@ export default function StudentsPage() {
             <div className="flex gap-1">
               <Button
                 variant={activeTab === 'current' ? 'gradient' : 'ghost'}
-                {...(activeTab === 'current' ? { gradientType: 'nerdy' } : {})}
+                gradientType={activeTab === 'current' ? 'nerdy' : undefined}
                 size="sm"
                 onClick={() => setActiveTab('current')}
                 className="flex-1"
@@ -351,7 +371,7 @@ export default function StudentsPage() {
               </Button>
               <Button
                 variant={activeTab === 'previous' ? 'gradient' : 'ghost'}
-                {...(activeTab === 'previous' ? { gradientType: 'nerdy' } : {})}
+                gradientType={activeTab === 'previous' ? 'nerdy' : undefined}
                 size="sm"
                 onClick={() => setActiveTab('previous')}
                 className="flex-1"
@@ -425,9 +445,12 @@ export default function StudentsPage() {
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-xl font-bold text-gray-900">
-                  {filteredStudents.length > 0 && filteredStudents.some(s => s.stats.avgRating > 0) ? 
-                    Math.round(filteredStudents.reduce((sum, s) => sum + s.stats.avgRating, 0) / filteredStudents.filter(s => s.stats.avgRating > 0).length * 10) / 10 : 
-                    0}
+                  {(() => {
+                    const studentsWithRatings = filteredStudents.filter(s => s.stats.avgRating > 0)
+                    if (studentsWithRatings.length === 0) return '0'
+                    const avgRating = studentsWithRatings.reduce((sum, s) => sum + s.stats.avgRating, 0) / studentsWithRatings.length
+                    return Math.round(avgRating * 10) / 10
+                  })()}
                 </div>
                 <div className="text-xs text-gray-500 leading-tight">Avg Rating</div>
               </div>

@@ -146,15 +146,15 @@ export default function SettingsPage() {
       </div>
 
       {/* Avatar Upload */}
-      <div className="flex items-center gap-6">
-                  <Avatar
-            src={profileData.avatar}
-            fallback={profileData.firstName && profileData.lastName ? `${profileData.firstName[0]}${profileData.lastName[0]}` : "JD"}
-            size="2xl"
-            className="border-4 border-gray-200"
-            animate={false}
-          />
-        <div>
+      <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+        <Avatar
+          src={profileData.avatar}
+          fallback={profileData.firstName && profileData.lastName ? `${profileData.firstName[0]}${profileData.lastName[0]}` : "JD"}
+          size="2xl"
+          className="border-4 border-gray-200"
+          animate={false}
+        />
+        <div className="text-center sm:text-left">
           <input
             ref={fileInputRef}
             type="file"
@@ -177,7 +177,7 @@ export default function SettingsPage() {
 
       {/* Form Fields */}
       <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               First Name
@@ -257,7 +257,7 @@ export default function SettingsPage() {
             Email Notifications
           </h4>
           <div className="space-y-3">
-            <label className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+            <label className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
               <div>
                 <div className="font-medium text-gray-900">New Student Requests</div>
                 <div className="text-sm text-gray-500">Get notified when students want to book sessions</div>
@@ -270,7 +270,7 @@ export default function SettingsPage() {
               />
             </label>
 
-            <label className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+            <label className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
               <div>
                 <div className="font-medium text-gray-900">Session Reminders</div>
                 <div className="text-sm text-gray-500">Receive reminders before upcoming sessions</div>
@@ -283,7 +283,7 @@ export default function SettingsPage() {
               />
             </label>
 
-            <label className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+            <label className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
               <div>
                 <div className="font-medium text-gray-900">Payment Updates</div>
                 <div className="text-sm text-gray-500">Get notified about payments and invoices</div>
@@ -305,7 +305,7 @@ export default function SettingsPage() {
             Push Notifications
           </h4>
           <div className="space-y-3">
-            <label className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+            <label className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
               <div>
                 <div className="font-medium text-gray-900">New Student Requests</div>
                 <div className="text-sm text-gray-500">Instant notifications on your device</div>
@@ -318,7 +318,7 @@ export default function SettingsPage() {
               />
             </label>
 
-            <label className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+            <label className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
               <div>
                 <div className="font-medium text-gray-900">Session Reminders</div>
                 <div className="text-sm text-gray-500">Get push notifications before sessions</div>
@@ -349,7 +349,7 @@ export default function SettingsPage() {
             Profile Visibility
           </label>
           <div className="space-y-2">
-            <label className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+            <label className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
               <input
                 type="radio"
                 name="visibility"
@@ -363,7 +363,7 @@ export default function SettingsPage() {
                 <div className="text-sm text-gray-500">Anyone can view your profile</div>
               </div>
             </label>
-            <label className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+            <label className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
               <input
                 type="radio"
                 name="visibility"
@@ -383,7 +383,7 @@ export default function SettingsPage() {
         <div className="space-y-3">
           <h4 className="font-medium text-gray-900">Profile Information</h4>
           
-          <label className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+          <label className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
             <div>
               <div className="font-medium text-gray-900">Show Rating</div>
               <div className="text-sm text-gray-500">Display your average rating on your profile</div>
@@ -396,7 +396,7 @@ export default function SettingsPage() {
             />
           </label>
 
-          <label className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+          <label className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
             <div>
               <div className="font-medium text-gray-900">Show Session Count</div>
               <div className="text-sm text-gray-500">Display total number of completed sessions</div>
@@ -470,7 +470,7 @@ export default function SettingsPage() {
           </select>
         </div>
 
-        <label className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+        <label className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
           <div>
             <div className="font-medium text-gray-900">Auto-accept Reschedule Requests</div>
             <div className="text-sm text-gray-500">Automatically approve student reschedule requests</div>
@@ -693,9 +693,24 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      <div className="flex gap-6">
-        {/* Sidebar Navigation */}
-        <div className="w-64 flex-shrink-0">
+      {/* Mobile Section Selector */}
+      <div className="md:hidden mb-4">
+        <select
+          value={activeSection}
+          onChange={(e) => setActiveSection(e.target.value)}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-purple-500"
+        >
+          {sections.map((section) => (
+            <option key={section.id} value={section.id}>
+              {section.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Desktop Sidebar Navigation */}
+        <div className="hidden md:block w-64 flex-shrink-0">
           <nav className="space-y-1" style={{ opacity: '1 !important', transform: 'none !important' }}>
             {sections.map((section) => {
               const Icon = section.icon
@@ -719,13 +734,13 @@ export default function SettingsPage() {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1">
-          <div className="bg-white rounded-xl border border-gray-200 p-6" style={{ opacity: '1 !important', transform: 'none !important' }}>
+        <div className="flex-1 min-w-0">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 md:p-6" style={{ opacity: '1 !important', transform: 'none !important' }}>
             {renderContent()}
 
             {/* Save Button */}
-            <div className="mt-8 pt-6 border-t border-gray-200 flex items-center justify-between">
-              <p className="text-sm text-gray-500">
+            <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-sm text-gray-500 text-center sm:text-left">
                 {isSaving ? 'Saving changes...' : 'Remember to save your changes'}
               </p>
               <Button
@@ -733,6 +748,7 @@ export default function SettingsPage() {
                 gradientType="nerdy"
                 onClick={handleSave}
                 disabled={isSaving}
+                className="w-full sm:w-auto"
               >
                 {isSaving ? (
                   <>
@@ -762,7 +778,7 @@ export default function SettingsPage() {
         <div className="space-y-4">
           <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
               <div className="text-sm text-red-700">
                 <p className="font-medium mb-1">This will permanently delete:</p>
                 <ul className="list-disc list-inside space-y-1">

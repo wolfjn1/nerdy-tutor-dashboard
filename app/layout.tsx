@@ -8,6 +8,27 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Nerdy Live+AI - Tutor Portal',
   description: 'A gamified tutor portal powered by AI. Manage students, create personalized lessons, and track your teaching journey with cutting-edge technology.',
+  icons: {
+    icon: [
+      {
+        url: '/favicon.svg',
+        type: 'image/svg+xml',
+      },
+      {
+        url: '/nerdy-logo.png',
+        sizes: '1024x1024',
+        type: 'image/png',
+      },
+    ],
+    shortcut: '/favicon.svg',
+    apple: [
+      {
+        url: '/nerdy-logo.png',
+        sizes: '1024x1024',
+        type: 'image/png',
+      },
+    ],
+  },
 }
 
 export default function RootLayout({

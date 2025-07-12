@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { 
   Search, 
@@ -190,12 +189,9 @@ export default function StudentsPage() {
     }
     
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        whileHover={{ y: -2 }}
-        transition={{ duration: 0.2 }}
+      <div
         onClick={() => router.push(`/students/${student.id}`)}
+        className="hover:-translate-y-1 transition-transform duration-200"
       >
         <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-gray-800 text-white cursor-pointer overflow-hidden h-[440px]">
           <div className="p-6 h-full flex flex-col justify-between">
@@ -320,7 +316,7 @@ export default function StudentsPage() {
             </div>
           </div>
         </Card>
-      </motion.div>
+      </div>
     )
   }
 
@@ -337,12 +333,7 @@ export default function StudentsPage() {
   return (
     <div className="space-y-4 lg:space-y-6">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between opacity-100"
-        style={{ opacity: 1 }}
-      >
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-1 lg:mb-2">
             My Students
@@ -354,16 +345,10 @@ export default function StudentsPage() {
         <Button variant="gradient" gradientType="nerdy" leftIcon={<Eye className="h-4 w-4" />} size="sm" className="lg:size-default">
           View Opportunities
         </Button>
-      </motion.div>
+      </div>
 
       {/* Tabs */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="opacity-100"
-        style={{ opacity: 1 }}
-      >
+      <div>
         <Card className="bg-white/80 backdrop-blur-sm border-0">
           <div className="p-2">
             <div className="flex gap-1">
@@ -415,7 +400,7 @@ export default function StudentsPage() {
             </div>
           </div>
         </Card>
-      </motion.div>
+      </div>
 
       {/* Stats Cards */}
       <div
@@ -491,13 +476,7 @@ export default function StudentsPage() {
       </div>
 
       {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="opacity-100"
-        style={{ opacity: 1 }}
-      >
+      <div>
         <Card className="bg-white/80 backdrop-blur-sm border-0">
           <div className="p-3 lg:p-4">
             <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
@@ -552,44 +531,26 @@ export default function StudentsPage() {
             </div>
           </div>
         </Card>
-      </motion.div>
+      </div>
 
       {/* Students Grid */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-        className="opacity-100"
-        style={{ opacity: 1 }}
-      >
+      <div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
-          <AnimatePresence mode="popLayout">
-            {filteredStudents.map((student, index) => (
-              <motion.div
-                key={student.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ delay: index * 0.05 }}
-              >
-                <StudentCard student={student} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
+          {filteredStudents.map((student) => (
+            <div key={student.id}>
+              <StudentCard student={student} />
+            </div>
+          ))}
         </div>
 
         {filteredStudents.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-12"
-          >
+          <div className="text-center py-12">
             <Users className="h-16 w-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No {activeTab} students found</h3>
             <p className="text-gray-500">Try adjusting your search or filters</p>
-          </motion.div>
+          </div>
         )}
-      </motion.div>
+      </div>
     </div>
   )
 } 

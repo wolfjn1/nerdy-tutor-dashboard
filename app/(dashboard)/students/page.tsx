@@ -179,6 +179,13 @@ export default function StudentsPage() {
     // Check if student is active but has no upcoming session
     const needsSessionScheduled = student.isActive && !student.stats.nextSession
     
+    // Debug logging for warning banners
+    console.log(`Student ${student.firstName} ${student.lastName}:`, {
+      isActive: student.isActive,
+      nextSession: student.stats.nextSession,
+      needsSessionScheduled
+    })
+    
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -353,7 +360,10 @@ export default function StudentsPage() {
                 gradientType={activeTab === 'current' ? 'nerdy' : undefined}
                 size="sm"
                 onClick={() => setActiveTab('current')}
-                className="flex-1"
+                className={cn(
+                  "flex-1",
+                  activeTab !== 'current' && "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                )}
               >
                 <Users className="h-4 w-4 mr-2" />
                 Current Students ({currentStudentsCount})
@@ -363,7 +373,10 @@ export default function StudentsPage() {
                 gradientType={activeTab === 'previous' ? 'nerdy' : undefined}
                 size="sm"
                 onClick={() => setActiveTab('previous')}
-                className="flex-1"
+                className={cn(
+                  "flex-1",
+                  activeTab !== 'previous' && "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                )}
               >
                 <Clock className="h-4 w-4 mr-2" />
                 Previous Students ({previousStudentsCount})

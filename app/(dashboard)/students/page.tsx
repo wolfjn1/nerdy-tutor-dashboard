@@ -340,7 +340,8 @@ export default function StudentsPage() {
           <div className="p-2">
             <div className="flex gap-1">
               <Button
-                variant={activeTab === 'current' ? 'solid' : 'ghost'}
+                variant={activeTab === 'current' ? 'gradient' : 'ghost'}
+                gradientType={activeTab === 'current' ? 'nerdy' : undefined}
                 size="sm"
                 onClick={() => setActiveTab('current')}
                 className="flex-1"
@@ -349,7 +350,8 @@ export default function StudentsPage() {
                 Current Students ({currentStudentsCount})
               </Button>
               <Button
-                variant={activeTab === 'previous' ? 'solid' : 'ghost'}
+                variant={activeTab === 'previous' ? 'gradient' : 'ghost'}
+                gradientType={activeTab === 'previous' ? 'nerdy' : undefined}
                 size="sm"
                 onClick={() => setActiveTab('previous')}
                 className="flex-1"
@@ -370,62 +372,62 @@ export default function StudentsPage() {
         className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4"
       >
         <Card className="bg-white/80 backdrop-blur-sm border-0">
-          <div className="p-3 lg:p-4">
+          <div className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Users className="h-6 w-6 text-purple-600" />
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Users className="h-5 w-5 text-purple-600" />
               </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900">{filteredStudents.length}</div>
-                <div className="text-sm text-gray-500">{activeTab === 'current' ? 'Current' : 'Previous'} Students</div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xl font-bold text-gray-900">{filteredStudents.length}</div>
+                <div className="text-xs text-gray-500 leading-tight">{activeTab === 'current' ? 'Current' : 'Previous'} Students</div>
               </div>
             </div>
           </div>
         </Card>
 
         <Card className="bg-white/80 backdrop-blur-sm border-0">
-          <div className="p-3 lg:p-4">
+          <div className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <TrendingUp className="h-6 w-6 text-green-600" />
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="h-5 w-5 text-green-600" />
               </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900">
+              <div className="min-w-0 flex-1">
+                <div className="text-xl font-bold text-gray-900">
                   {filteredStudents.length > 0 ? Math.round(filteredStudents.reduce((sum, s) => sum + s.progress.performance, 0) / filteredStudents.length) : 0}%
                 </div>
-                <div className="text-sm text-gray-500">Avg Performance</div>
+                <div className="text-xs text-gray-500 leading-tight">Avg Performance</div>
               </div>
             </div>
           </div>
         </Card>
 
         <Card className="bg-white/80 backdrop-blur-sm border-0">
-          <div className="p-3 lg:p-4">
+          <div className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Calendar className="h-6 w-6 text-blue-600" />
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Calendar className="h-5 w-5 text-blue-600" />
               </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900">
+              <div className="min-w-0 flex-1">
+                <div className="text-xl font-bold text-gray-900">
                   {activeTab === 'current' ? filteredStudents.filter(s => s.stats.nextSession).length : filteredStudents.reduce((sum, s) => sum + s.stats.completedSessions, 0)}
                 </div>
-                <div className="text-sm text-gray-500">{activeTab === 'current' ? 'With Scheduled Sessions' : 'Total Completed Sessions'}</div>
+                <div className="text-xs text-gray-500 leading-tight">{activeTab === 'current' ? 'With Scheduled Sessions' : 'Total Completed Sessions'}</div>
               </div>
             </div>
           </div>
         </Card>
 
         <Card className="bg-white/80 backdrop-blur-sm border-0">
-          <div className="p-3 lg:p-4">
+          <div className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <Star className="h-6 w-6 text-yellow-600" />
+              <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Star className="h-5 w-5 text-yellow-600" />
               </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900">
+              <div className="min-w-0 flex-1">
+                <div className="text-xl font-bold text-gray-900">
                   {filteredStudents.length > 0 ? Math.round(filteredStudents.reduce((sum, s) => sum + s.stats.avgRating, 0) / filteredStudents.length * 10) / 10 : 0}
                 </div>
-                <div className="text-sm text-gray-500">Avg Rating</div>
+                <div className="text-xs text-gray-500 leading-tight">Avg Rating</div>
               </div>
             </div>
           </div>

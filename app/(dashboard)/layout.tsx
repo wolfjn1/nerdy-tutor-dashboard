@@ -168,7 +168,7 @@ export default function DashboardLayout({
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 min-h-0 p-4 space-y-2 overflow-y-auto">
+          <nav className="flex-1 min-h-0 p-4 space-y-1 overflow-y-auto">
             {navigation.map((item) => {
               const isActive = pathname === item.href
               const Icon = item.icon
@@ -179,16 +179,16 @@ export default function DashboardLayout({
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
                   className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group',
+                    'flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 group',
                     isActive 
                       ? 'bg-pink-500/30 text-white shadow-lg backdrop-blur-sm border border-pink-400/30' 
                       : 'text-white/80 hover:bg-pink-500/20 hover:text-white'
                   )}
                 >
-                  <Icon className="w-5 h-5 flex-shrink-0" />
+                  <Icon className="w-4 h-4 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm">{item.label}</div>
-                    <div className="text-xs opacity-80 leading-tight">{item.description}</div>
+                    <div className="text-xs opacity-70 leading-tight">{item.description}</div>
                   </div>
                   {item.badge && (
                     <div className="bg-white/20 text-white px-2 py-1 rounded-full text-xs font-medium">
@@ -201,9 +201,9 @@ export default function DashboardLayout({
           </nav>
 
           {/* User Section */}
-          <div className="flex-shrink-0 p-4 border-t border-white/20 bg-black/10 backdrop-blur-sm">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center ring-2 ring-pink-400/50">
+          <div className="flex-shrink-0 p-3 border-t border-white/20 bg-black/10 backdrop-blur-sm">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center ring-2 ring-pink-400/50">
                 <span className="text-white font-medium text-sm">JD</span>
               </div>
               <div className="flex-1 min-w-0">

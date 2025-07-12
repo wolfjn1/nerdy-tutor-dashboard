@@ -340,7 +340,8 @@ export default function StudentsPage() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between"
+        className="flex items-center justify-between opacity-100"
+        style={{ opacity: 1 }}
       >
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-1 lg:mb-2">
@@ -360,6 +361,8 @@ export default function StudentsPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
+        className="opacity-100"
+        style={{ opacity: 1 }}
       >
         <Card className="bg-white/80 backdrop-blur-sm border-0">
           <div className="p-2">
@@ -415,11 +418,9 @@ export default function StudentsPage() {
       </motion.div>
 
       {/* Stats Cards */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
+      <div
         className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4"
+        style={{ opacity: '1 !important', transform: 'none !important' }}
       >
         <Card className="bg-white/80 backdrop-blur-sm border-0">
           <div className="p-4">
@@ -487,13 +488,15 @@ export default function StudentsPage() {
             </div>
           </div>
         </Card>
-      </motion.div>
+      </div>
 
       {/* Filters */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
+        className="opacity-100"
+        style={{ opacity: 1 }}
       >
         <Card className="bg-white/80 backdrop-blur-sm border-0">
           <div className="p-3 lg:p-4">
@@ -556,6 +559,8 @@ export default function StudentsPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
+        className="opacity-100"
+        style={{ opacity: 1 }}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
           <AnimatePresence mode="popLayout">

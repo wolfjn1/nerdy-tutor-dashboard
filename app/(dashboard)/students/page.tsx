@@ -341,7 +341,7 @@ export default function StudentsPage() {
             <div className="flex gap-1">
               <Button
                 variant={activeTab === 'current' ? 'gradient' : 'ghost'}
-                gradientType={activeTab === 'current' ? 'nerdy' : undefined}
+                {...(activeTab === 'current' ? { gradientType: 'nerdy' } : {})}
                 size="sm"
                 onClick={() => setActiveTab('current')}
                 className="flex-1"
@@ -351,7 +351,7 @@ export default function StudentsPage() {
               </Button>
               <Button
                 variant={activeTab === 'previous' ? 'gradient' : 'ghost'}
-                gradientType={activeTab === 'previous' ? 'nerdy' : undefined}
+                {...(activeTab === 'previous' ? { gradientType: 'nerdy' } : {})}
                 size="sm"
                 onClick={() => setActiveTab('previous')}
                 className="flex-1"
@@ -425,7 +425,9 @@ export default function StudentsPage() {
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-xl font-bold text-gray-900">
-                  {filteredStudents.length > 0 ? Math.round(filteredStudents.reduce((sum, s) => sum + s.stats.avgRating, 0) / filteredStudents.length * 10) / 10 : 0}
+                  {filteredStudents.length > 0 && filteredStudents.some(s => s.stats.avgRating > 0) ? 
+                    Math.round(filteredStudents.reduce((sum, s) => sum + s.stats.avgRating, 0) / filteredStudents.filter(s => s.stats.avgRating > 0).length * 10) / 10 : 
+                    0}
                 </div>
                 <div className="text-xs text-gray-500 leading-tight">Avg Rating</div>
               </div>

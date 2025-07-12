@@ -481,190 +481,173 @@ export default function SessionsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
         >
-          <Card className="bg-white/80 backdrop-blur-sm border-0">
-            <div className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-blue-600" />
+          <div className="bg-white rounded-xl border border-blue-200 p-4 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <div className="text-xl font-bold text-gray-900">
+                  {sessions.filter(s => s.status === 'scheduled').length}
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-gray-900">
-                    {sessions.filter(s => s.status === 'scheduled').length}
-                  </div>
-                  <div className="text-sm text-gray-500">Scheduled</div>
-                </div>
+                <div className="text-sm text-gray-600">Scheduled</div>
               </div>
             </div>
-          </Card>
+          </div>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-0">
-            <div className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-green-600" />
+          <div className="bg-white rounded-xl border border-green-200 p-4 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <CheckCircle className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <div className="text-xl font-bold text-gray-900">
+                  {sessions.filter(s => s.status === 'completed').length}
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-gray-900">
-                    {sessions.filter(s => s.status === 'completed').length}
-                  </div>
-                  <div className="text-sm text-gray-500">Completed</div>
-                </div>
+                <div className="text-sm text-gray-600">Completed</div>
               </div>
             </div>
-          </Card>
+          </div>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-0">
-            <div className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <DollarSign className="h-6 w-6 text-purple-600" />
+          <div className="bg-white rounded-xl border border-purple-200 p-4 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <DollarSign className="w-5 h-5 text-purple-600" />
+              </div>
+              <div>
+                <div className="text-xl font-bold text-gray-900">
+                  ${sessions.filter(s => s.status === 'completed').reduce((sum, s) => sum + (s.earnings || 0), 0)}
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-gray-900">
-                    ${sessions.filter(s => s.status === 'completed').reduce((sum, s) => sum + (s.earnings || 0), 0)}
-                  </div>
-                  <div className="text-sm text-gray-500">Total Earnings</div>
-                </div>
+                <div className="text-sm text-gray-600">Total Earnings</div>
               </div>
             </div>
-          </Card>
+          </div>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-0">
-            <div className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-yellow-600" />
+          <div className="bg-white rounded-xl border border-pink-200 p-4 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+                <Clock className="w-5 h-5 text-pink-600" />
+              </div>
+              <div>
+                <div className="text-xl font-bold text-gray-900">
+                  {Math.round(sessions.filter(s => s.status === 'completed').reduce((sum, s) => sum + s.duration, 0) / 60)}h
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-gray-900">
-                    {Math.round(sessions.filter(s => s.status === 'completed').reduce((sum, s) => sum + s.duration, 0) / 60)}h
-                  </div>
-                  <div className="text-sm text-gray-500">Total Hours</div>
-                </div>
+                <div className="text-sm text-gray-600">Total Hours</div>
               </div>
             </div>
-          </Card>
+          </div>
         </motion.div>
 
         {/* Controls */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-6"
-        >
-          <Card className="bg-white/80 backdrop-blur-sm border-0">
-            <div className="p-4">
-              <div className="flex flex-col lg:flex-row gap-4">
-                {/* View Controls */}
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant={viewMode === 'calendar' ? 'solid' : 'outline'}
-                    size="sm"
-                    onClick={() => setViewMode('calendar')}
-                  >
-                    <Calendar className="h-4 w-4 mr-2" />
-                    Calendar
-                  </Button>
-                  <Button
-                    variant={viewMode === 'list' ? 'solid' : 'outline'}
-                    size="sm"
-                    onClick={() => setViewMode('list')}
-                  >
-                    <List className="h-4 w-4 mr-2" />
-                    List
-                  </Button>
-                </div>
-
-                {/* Calendar View Controls */}
-                {viewMode === 'calendar' && (
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant={calendarView === 'week' ? 'solid' : 'outline'}
-                      size="sm"
-                      onClick={() => setCalendarView('week')}
-                    >
-                      Week
-                    </Button>
-                    <Button
-                      variant={calendarView === 'month' ? 'solid' : 'outline'}
-                      size="sm"
-                      onClick={() => setCalendarView('month')}
-                    >
-                      Month
-                    </Button>
-                  </div>
-                )}
-
-                {/* Navigation */}
-                {viewMode === 'calendar' && (
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigateCalendar('prev')}
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={goToToday}
-                    >
-                      Today
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigateCalendar('next')}
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
-
-                {/* Search and Filters */}
-                <div className="flex-1 flex gap-2">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Search sessions..."
-                      value={searchTerm}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-                      className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                  </div>
-                  
-                  <select
-                    value={statusFilter}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatusFilter(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  >
-                    <option value="all">All Status</option>
-                    <option value="scheduled">Scheduled</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                    <option value="no_show">No Show</option>
-                  </select>
-                  
-                  <select
-                    value={subjectFilter}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSubjectFilter(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  >
-                    <option value="all">All Subjects</option>
-                    {uniqueSubjects.map(subject => (
-                      <option key={subject} value={subject}>{subject}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex flex-col lg:flex-row gap-4">
+            {/* View Controls */}
+            <div className="flex items-center gap-2">
+              <Button
+                variant={viewMode === 'calendar' ? 'solid' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('calendar')}
+              >
+                <Calendar className="h-4 w-4 mr-2" />
+                Calendar
+              </Button>
+              <Button
+                variant={viewMode === 'list' ? 'solid' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('list')}
+              >
+                <List className="h-4 w-4 mr-2" />
+                List
+              </Button>
             </div>
-          </Card>
-        </motion.div>
+
+            {/* Calendar View Controls */}
+            {viewMode === 'calendar' && (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={calendarView === 'week' ? 'solid' : 'outline'}
+                  size="sm"
+                  onClick={() => setCalendarView('week')}
+                >
+                  Week
+                </Button>
+                <Button
+                  variant={calendarView === 'month' ? 'solid' : 'outline'}
+                  size="sm"
+                  onClick={() => setCalendarView('month')}
+                >
+                  Month
+                </Button>
+              </div>
+            )}
+
+            {/* Navigation */}
+            {viewMode === 'calendar' && (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigateCalendar('prev')}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToToday}
+                >
+                  Today
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigateCalendar('next')}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+
+            {/* Search and Filters */}
+            <div className="flex-1 flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search sessions..."
+                  value={searchTerm}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                  className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+              
+              <select
+                value={statusFilter}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatusFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="all">All Status</option>
+                <option value="scheduled">Scheduled</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="no_show">No Show</option>
+              </select>
+              
+              <select
+                value={subjectFilter}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSubjectFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="all">All Subjects</option>
+                {uniqueSubjects.map(subject => (
+                  <option key={subject} value={subject}>{subject}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
 
         {/* Current Date Display */}
         {viewMode === 'calendar' && (

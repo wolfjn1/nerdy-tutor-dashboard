@@ -18,7 +18,7 @@ import {
   Plus,
   Zap
 } from 'lucide-react'
-import { Button, NotificationBell, useToastHelpers } from '@/components/ui'
+import { Button, NotificationBell, useToastHelpers, Avatar } from '@/components/ui'
 import { cn } from '@/lib/utils'
 
 interface NavItem {
@@ -203,9 +203,13 @@ export default function DashboardLayout({
           {/* User Section */}
           <div className="flex-shrink-0 p-3 border-t border-white/20 bg-black/10 backdrop-blur-sm">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center ring-2 ring-pink-400/50">
-                <span className="text-white font-medium text-sm">JD</span>
-              </div>
+              <Avatar
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed=JohnDoe&backgroundColor=b6e3f4"
+                fallback="JD"
+                size="sm"
+                className="ring-2 ring-pink-400/50"
+                animate={false}
+              />
               <div className="flex-1 min-w-0">
                 <div className="text-white font-medium text-sm">John Doe</div>
                 <div className="text-white/80 text-xs">Expert Tutor • Level 42</div>

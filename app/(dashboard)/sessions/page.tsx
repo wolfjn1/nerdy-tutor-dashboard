@@ -44,6 +44,12 @@ const students = studentsData.map(student => ({
   createdAt: new Date(student.createdAt)
 })) as Student[]
 
+// Convert UTC dates to local timezone
+const convertUTCToLocal = (utcDate: Date | string): Date => {
+  const date = new Date(utcDate)
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+}
+
 const sessions = sessionsData.map(session => ({
   ...session,
   date: new Date(session.date),
@@ -181,7 +187,7 @@ export default function SessionsPage() {
   // Get sessions for a specific date
   const getSessionsForDate = (date: Date) => {
     return filteredSessions.filter(session => {
-      const sessionDate = session.date
+      const sessionDate = new Date(session.date)
       return sessionDate.toDateString() === date.toDateString()
     })
   }
@@ -514,7 +520,7 @@ export default function SessionsPage() {
     // Get sessions organized by day and hour
     const getSessionsForDayHour = (day: Date, hour: number) => {
       return filteredSessions.filter(session => {
-        const sessionDate = session.date
+        const sessionDate = new Date(session.date)
         return sessionDate.toDateString() === day.toDateString() &&
                sessionDate.getHours() === hour
       })
@@ -683,7 +689,7 @@ export default function SessionsPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-4"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -705,72 +711,8 @@ export default function SessionsPage() {
           </div>
         </motion.div>
 
-        {/* Stats Cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
-        >
-          <div className="bg-white rounded-xl border border-blue-200 p-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Calendar className="w-5 h-5 text-blue-600" />
-              </div>
-              <div>
-                <div className="text-xl font-bold text-gray-900">
-                  {sessions.filter(s => s.status === 'scheduled').length}
-                </div>
-                <div className="text-sm text-gray-600">Scheduled</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl border border-green-200 p-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <CheckCircle className="w-5 h-5 text-green-600" />
-              </div>
-              <div>
-                <div className="text-xl font-bold text-gray-900">
-                  {sessions.filter(s => s.status === 'completed').length}
-                </div>
-                <div className="text-sm text-gray-600">Completed</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl border border-purple-200 p-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                <DollarSign className="w-5 h-5 text-purple-600" />
-              </div>
-              <div>
-                <div className="text-xl font-bold text-gray-900">
-                  ${sessions.filter(s => s.status === 'completed').reduce((sum, s) => sum + (s.earnings || 0), 0)}
-                </div>
-                <div className="text-sm text-gray-600">Total Earnings</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl border border-pink-200 p-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
-                <Clock className="w-5 h-5 text-pink-600" />
-              </div>
-              <div>
-                <div className="text-xl font-bold text-gray-900">
-                  {Math.round(sessions.filter(s => s.status === 'completed').reduce((sum, s) => sum + s.duration, 0) / 60)}h
-                </div>
-                <div className="text-sm text-gray-600">Total Hours</div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
         {/* Controls */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
           <div className="flex flex-col lg:flex-row gap-4">
             {/* View Controls */}
             <div className="flex items-center gap-2">

@@ -57,6 +57,7 @@ export default function StudentsPage() {
   const [sortBy, setSortBy] = useState<'name' | 'performance' | 'nextSession'>('name')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [activeTab, setActiveTab] = useState<'current' | 'previous'>('current')
+  const [showNoScheduledSessions, setShowNoScheduledSessions] = useState(false)
 
   // Process students with session stats
   const studentsWithStats = useMemo((): StudentWithStats[] => {
@@ -134,7 +135,11 @@ export default function StudentsPage() {
       const matchesSubject = selectedSubject === 'all' || student.subjects.includes(selectedSubject)
       const matchesGrade = selectedGrade === 'all' || student.grade.toString() === selectedGrade
       
-      return matchesTab && matchesSearch && matchesSubject && matchesGrade
+      // New filter for students without scheduled sessions
+      const matchesNoScheduledSessions = !showNoScheduledSessions || 
+        (showNoScheduledSessions && activeTab === 'current' && !student.stats.nextSession)
+      
+      return matchesTab && matchesSearch && matchesSubject && matchesGrade && matchesNoScheduledSessions
     })
 
     // Sort students
@@ -155,7 +160,7 @@ export default function StudentsPage() {
     })
 
     return filtered
-  }, [studentsWithStats, searchTerm, selectedSubject, selectedGrade, sortBy, activeTab])
+  }, [studentsWithStats, searchTerm, selectedSubject, selectedGrade, sortBy, activeTab, showNoScheduledSessions])
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', {
@@ -323,6 +328,7 @@ export default function StudentsPage() {
   console.log('Search term:', searchTerm)
   console.log('Selected subject:', selectedSubject)
   console.log('Selected grade:', selectedGrade)
+  console.log('Show no scheduled sessions:', showNoScheduledSessions)
 
   // Calculate total stats for display - simplified and direct
   const relevantStudents = activeTab === 'current' 
@@ -491,6 +497,19 @@ export default function StudentsPage() {
               <option value="performance">Sort by Performance</option>
               <option value="nextSession">Sort by Next Session</option>
             </select>
+
+            {/* Only show for current students tab */}
+            {activeTab === 'current' && (
+              <label className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white cursor-pointer hover:bg-gray-50">
+                <input
+                  type="checkbox"
+                  checked={showNoScheduledSessions}
+                  onChange={(e) => setShowNoScheduledSessions(e.target.checked)}
+                  className="w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
+                />
+                <span className="text-gray-700 whitespace-nowrap">No scheduled sessions</span>
+              </label>
+            )}
           </div>
         </div>
       </div>

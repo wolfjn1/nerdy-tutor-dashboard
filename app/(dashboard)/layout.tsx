@@ -145,7 +145,7 @@ export default function DashboardLayout({
         animate={{
           x: isLargeScreen ? 0 : (sidebarOpen ? 0 : -320),
         }}
-        className="fixed left-0 top-0 bottom-0 w-80 h-screen bg-gradient-to-b from-purple-600 via-purple-700 to-purple-800 shadow-xl z-50 lg:relative lg:w-64 lg:flex-shrink-0"
+        className="fixed left-0 top-0 bottom-0 w-80 h-screen bg-gradient-to-b from-purple-600 via-purple-700 to-purple-800 shadow-xl z-50 lg:w-64"
       >
         <div className="flex flex-col h-full">
           {/* Logo and Close Button */}
@@ -225,7 +225,7 @@ export default function DashboardLayout({
       </motion.div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 lg:ml-64">
         {/* Header */}
         <header className="bg-white/60 backdrop-blur-sm border-b border-white/30 sticky top-0 z-30">
           <div className="flex items-center justify-between px-4 lg:px-6 py-3 lg:py-4">

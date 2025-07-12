@@ -11,20 +11,30 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
+        url: '/nerdy-logo.png',
+        sizes: '32x32',
+        type: 'image/png',
+      },
+      {
+        url: '/nerdy-logo.png',
+        sizes: '16x16',
+        type: 'image/png',
+      },
+      {
+        url: '/nerdy-logo.png',
+        sizes: '192x192',
+        type: 'image/png',
+      },
+      {
         url: '/favicon.svg',
         type: 'image/svg+xml',
       },
-      {
-        url: '/nerdy-logo.png',
-        sizes: '1024x1024',
-        type: 'image/png',
-      },
     ],
-    shortcut: '/favicon.svg',
+    shortcut: '/nerdy-logo.png',
     apple: [
       {
         url: '/nerdy-logo.png',
-        sizes: '1024x1024',
+        sizes: '180x180',
         type: 'image/png',
       },
     ],

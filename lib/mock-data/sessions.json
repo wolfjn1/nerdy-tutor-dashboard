@@ -4,7 +4,7 @@
     "studentId": "student-001",
     "tutorId": "tutor-001",
     "subject": "Math",
-    "date": "2025-01-15T14:00:00Z",
+    "date": "2025-01-06T14:00:00Z",
     "duration": 60,
     "status": "scheduled",
     "lessonPlan": {
@@ -65,7 +65,7 @@
         "subject": "Math",
         "studentId": "student-001",
         "sessionId": "session-001",
-        "dueDate": "2025-01-18T23:59:59Z",
+        "dueDate": "2025-01-09T23:59:59Z",
         "status": "assigned",
         "attachments": ["math_practice_set.pdf"],
         "submissions": [],
@@ -81,7 +81,7 @@
     "studentId": "student-002",
     "tutorId": "tutor-001",
     "subject": "Chemistry",
-    "date": "2025-01-16T16:00:00Z",
+    "date": "2025-01-07T16:00:00Z",
     "duration": 90,
     "status": "scheduled",
     "lessonPlan": {
@@ -143,7 +143,7 @@
     "studentId": "student-003",
     "tutorId": "tutor-001",
     "subject": "English",
-    "date": "2025-01-17T13:00:00Z",
+    "date": "2025-01-08T13:00:00Z",
     "duration": 60,
     "status": "scheduled",
     "lessonPlan": {
@@ -205,7 +205,7 @@
     "studentId": "student-004",
     "tutorId": "tutor-001",
     "subject": "Computer Science",
-    "date": "2025-01-18T15:00:00Z",
+    "date": "2025-01-09T15:00:00Z",
     "duration": 90,
     "status": "scheduled",
     "lessonPlan": {
@@ -267,7 +267,7 @@
     "studentId": "student-005",
     "tutorId": "tutor-001",
     "subject": "Biology",
-    "date": "2025-01-19T10:00:00Z",
+    "date": "2025-01-10T10:00:00Z",
     "duration": 60,
     "status": "scheduled",
     "lessonPlan": {
@@ -323,6 +323,66 @@
     "notes": "Olivia is well-prepared for college. Focus on AP-level depth and test-taking strategies.",
     "createdAt": "2024-01-14T13:00:00Z",
     "updatedAt": "2024-01-14T13:00:00Z"
+  },
+  {
+    "id": "session-013",
+    "studentId": "student-008",
+    "tutorId": "tutor-001",
+    "subject": "Physics",
+    "date": "2025-01-06T10:00:00Z",
+    "duration": 60,
+    "status": "scheduled",
+    "notes": "Review Newton's Laws of Motion",
+    "createdAt": "2024-01-02T09:00:00Z",
+    "updatedAt": "2024-01-02T09:00:00Z"
+  },
+  {
+    "id": "session-014",
+    "studentId": "student-009",
+    "tutorId": "tutor-001",
+    "subject": "Spanish",
+    "date": "2025-01-07T11:00:00Z",
+    "duration": 60,
+    "status": "scheduled",
+    "notes": "Practice conversational Spanish and verb conjugations",
+    "createdAt": "2024-01-02T10:00:00Z",
+    "updatedAt": "2024-01-02T10:00:00Z"
+  },
+  {
+    "id": "session-015",
+    "studentId": "student-010",
+    "tutorId": "tutor-001",
+    "subject": "Math",
+    "date": "2025-01-08T16:00:00Z",
+    "duration": 60,
+    "status": "scheduled",
+    "notes": "Geometry - circles and angles",
+    "createdAt": "2024-01-02T11:00:00Z",
+    "updatedAt": "2024-01-02T11:00:00Z"
+  },
+  {
+    "id": "session-016",
+    "studentId": "student-001",
+    "tutorId": "tutor-001",
+    "subject": "Math",
+    "date": "2025-01-09T10:00:00Z",
+    "duration": 60,
+    "status": "scheduled",
+    "notes": "Continue with quadratic equations - factoring practice",
+    "createdAt": "2024-01-02T12:00:00Z",
+    "updatedAt": "2024-01-02T12:00:00Z"
+  },
+  {
+    "id": "session-017",
+    "studentId": "student-003",
+    "tutorId": "tutor-001",
+    "subject": "English",
+    "date": "2025-01-10T14:00:00Z",
+    "duration": 60,
+    "status": "scheduled",
+    "notes": "Review essay draft and provide feedback",
+    "createdAt": "2024-01-02T13:00:00Z",
+    "updatedAt": "2024-01-02T13:00:00Z"
   },
   {
     "id": "session-006",

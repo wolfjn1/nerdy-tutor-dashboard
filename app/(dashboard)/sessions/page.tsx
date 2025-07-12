@@ -27,9 +27,11 @@ import {
   MoreHorizontal,
   Edit,
   Trash2,
-  Copy
+  Copy,
+  ExternalLink,
+  X
 } from 'lucide-react'
-import { Card, Button, Badge, Avatar } from '@/components/ui'
+import { Card, Button, Badge, Avatar, Modal } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import studentsData from '@/lib/mock-data/students.json'
 import sessionsData from '@/lib/mock-data/sessions.json'
@@ -61,7 +63,8 @@ export default function SessionsPage() {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [viewMode, setViewMode] = useState<ViewMode>('calendar')
   const [calendarView, setCalendarView] = useState<CalendarView>('week')
-  const [selectedSession, setSelectedSession] = useState<Session | null>(null)
+  const [selectedSession, setSelectedSession] = useState<SessionWithStudent | null>(null)
+  const [showSessionModal, setShowSessionModal] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [subjectFilter, setSubjectFilter] = useState<string>('all')
@@ -228,6 +231,153 @@ export default function SessionsPage() {
     }
   }
 
+  // Session Details Modal
+  const SessionDetailsModal = ({ session, isOpen, onClose }: { 
+    session: SessionWithStudent | null, 
+    isOpen: boolean, 
+    onClose: () => void 
+  }) => {
+    if (!session) return null
+
+    const joinLink = `https://meet.nerdy-tutor.com/session/${session.id}`
+
+    return (
+      <Modal isOpen={isOpen} onClose={onClose} size="lg">
+        <div className="p-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Session Details</h2>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="h-8 w-8 p-0"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Student Info */}
+          <div className="flex items-center gap-4 mb-6">
+            <Avatar
+              src={session.student.avatar}
+              fallback={`${session.student.firstName[0]}${session.student.lastName[0]}`}
+              size="xl"
+              className="border-4 border-purple-200"
+            />
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900">
+                {session.student.firstName} {session.student.lastName}
+              </h3>
+              <p className="text-gray-600">{session.student.grade} • {session.subject}</p>
+              <Badge 
+                variant="secondary" 
+                className={cn('mt-2', getStatusColor(session.status))}
+              >
+                <span className="flex items-center gap-1">
+                  {getStatusIcon(session.status)}
+                  {session.status.replace('_', ' ')}
+                </span>
+              </Badge>
+            </div>
+          </div>
+
+          {/* Session Details */}
+          <div className="space-y-4 mb-6">
+            <div>
+              <h4 className="text-sm font-medium text-gray-500 mb-1">Date & Time</h4>
+              <p className="text-gray-900">
+                {formatDate(session.date)} at {formatTime(session.date)}
+              </p>
+            </div>
+
+            <div>
+              <h4 className="text-sm font-medium text-gray-500 mb-1">Duration</h4>
+              <p className="text-gray-900">{formatDuration(session.duration)}</p>
+            </div>
+
+            {session.notes && (
+              <div>
+                <h4 className="text-sm font-medium text-gray-500 mb-1">Notes</h4>
+                <p className="text-gray-900">{session.notes}</p>
+              </div>
+            )}
+
+            {session.rating && (
+              <div>
+                <h4 className="text-sm font-medium text-gray-500 mb-1">Rating</h4>
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={cn(
+                        'h-5 w-5',
+                        i < session.rating! ? 'text-yellow-500 fill-current' : 'text-gray-300'
+                      )}
+                    />
+                  ))}
+                  <span className="text-gray-600 ml-2">{session.rating.toFixed(1)}</span>
+                </div>
+              </div>
+            )}
+
+            {session.earnings && (
+              <div>
+                <h4 className="text-sm font-medium text-gray-500 mb-1">Earnings</h4>
+                <p className="text-gray-900 text-lg font-semibold">${session.earnings}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3">
+            {session.status === 'scheduled' && (
+              <>
+                <Button
+                  variant="gradient"
+                  gradientType="nerdy"
+                  leftIcon={<Video className="h-4 w-4" />}
+                  onClick={() => window.open(joinLink, '_blank')}
+                  className="flex-1"
+                >
+                  Join Session
+                </Button>
+                <Button
+                  variant="outline"
+                  leftIcon={<ExternalLink className="h-4 w-4" />}
+                  onClick={() => {
+                    navigator.clipboard.writeText(joinLink)
+                    // You can add a toast notification here
+                  }}
+                >
+                  Copy Link
+                </Button>
+              </>
+            )}
+            
+            {session.status === 'completed' && (
+              <Button
+                variant="gradient"
+                gradientType="nerdy"
+                onClick={() => router.push(`/sessions/${session.id}`)}
+                className="flex-1"
+              >
+                View Details
+              </Button>
+            )}
+
+            <Button
+              variant="outline"
+              onClick={() => router.push(`/students/${session.studentId}`)}
+            >
+              View Student Profile
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    )
+  }
+
   const SessionCard = ({ session }: { session: SessionWithStudent }) => (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -336,7 +486,10 @@ export default function SessionsPage() {
                 'text-xs p-1 rounded border truncate cursor-pointer hover:shadow-sm transition-shadow',
                 getStatusColor(session.status)
               )}
-              onClick={() => setSelectedSession(session)}
+              onClick={() => {
+                setSelectedSession(session)
+                setShowSessionModal(true)
+              }}
             >
               <div className="flex items-center gap-1">
                 <span className="font-medium">{formatTime(session.date)}</span>
@@ -356,58 +509,134 @@ export default function SessionsPage() {
 
   const WeekView = () => {
     const weekDays = getWeekDays(currentDate)
-    const hours = Array.from({ length: 12 }, (_, i) => i + 8) // 8 AM to 8 PM
+    const hours = Array.from({ length: 14 }, (_, i) => i + 7) // 7 AM to 9 PM
+    
+    // Get sessions organized by day and hour
+    const getSessionsForDayHour = (day: Date, hour: number) => {
+      return filteredSessions.filter(session => {
+        const sessionDate = session.date
+        return sessionDate.toDateString() === day.toDateString() &&
+               sessionDate.getHours() === hour
+      })
+    }
+
+    // Get color for session based on status
+    const getSessionColor = (status: Session['status']) => {
+      switch (status) {
+        case 'scheduled': return 'bg-blue-500 hover:bg-blue-600 text-white'
+        case 'in_progress': return 'bg-green-500 hover:bg-green-600 text-white'
+        case 'completed': return 'bg-gray-400 hover:bg-gray-500 text-white'
+        case 'cancelled': return 'bg-red-400 hover:bg-red-500 text-white'
+        case 'no_show': return 'bg-orange-400 hover:bg-orange-500 text-white'
+        default: return 'bg-gray-400 hover:bg-gray-500 text-white'
+      }
+    }
     
     return (
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        {/* Header */}
-        <div className="grid grid-cols-8 border-b border-gray-200">
-          <div className="p-4 border-r border-gray-200">
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+        {/* Header with days */}
+        <div className="grid grid-cols-8 bg-gray-50 border-b border-gray-200">
+          <div className="p-4 text-center">
             <div className="text-sm font-medium text-gray-500">Time</div>
           </div>
-          {weekDays.map((day) => (
-            <div key={day.toISOString()} className="p-4 border-r border-gray-200 last:border-r-0">
-              <div className="text-sm font-medium text-gray-900">
-                {day.toLocaleDateString('en-US', { weekday: 'short' })}
+          {weekDays.map((day) => {
+            const isToday = day.toDateString() === new Date().toDateString()
+            return (
+              <div key={day.toISOString()} className={cn(
+                "p-4 text-center border-l border-gray-200",
+                isToday && "bg-purple-50"
+              )}>
+                <div className={cn(
+                  "text-sm font-medium",
+                  isToday ? "text-purple-600" : "text-gray-900"
+                )}>
+                  {day.toLocaleDateString('en-US', { weekday: 'short' })}
+                </div>
+                <div className={cn(
+                  "text-2xl font-semibold mt-1",
+                  isToday ? "text-purple-600" : "text-gray-700"
+                )}>
+                  {day.getDate()}
+                </div>
               </div>
-              <div className="text-xs text-gray-500">
-                {day.getDate()}
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
         
-        {/* Time slots */}
-        <div className="max-h-96 overflow-y-auto">
+        {/* Time slots with sessions */}
+        <div className="max-h-[600px] overflow-y-auto">
           {hours.map((hour) => (
-            <div key={hour} className="grid grid-cols-8 border-b border-gray-100 last:border-b-0">
-              <div className="p-2 border-r border-gray-100 text-sm text-gray-500">
-                {hour}:00
+            <div key={hour} className="grid grid-cols-8 border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
+              <div className="p-3 text-right pr-4 text-sm text-gray-500 font-medium">
+                {hour === 12 ? '12:00 PM' : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`}
               </div>
               {weekDays.map((day) => {
-                const daySessions = getSessionsForDate(day).filter(session => 
-                  session.date.getHours() === hour
-                )
+                const daySessions = getSessionsForDayHour(day, hour)
+                const isToday = day.toDateString() === new Date().toDateString()
+                
                 return (
-                  <div key={day.toISOString()} className="p-2 border-r border-gray-100 last:border-r-0 min-h-[60px]">
-                    {daySessions.map((session) => (
-                      <div
+                  <div 
+                    key={day.toISOString()} 
+                    className={cn(
+                      "p-2 border-l border-gray-100 min-h-[60px] relative",
+                      isToday && "bg-purple-50/30"
+                    )}
+                  >
+                    {daySessions.map((session, index) => (
+                      <motion.div
                         key={session.id}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        whileHover={{ scale: 1.05 }}
                         className={cn(
-                          'text-xs p-1 rounded border truncate cursor-pointer hover:shadow-sm transition-shadow mb-1',
-                          getStatusColor(session.status)
+                          "absolute left-2 right-2 p-2 rounded-lg cursor-pointer shadow-sm transition-all duration-200",
+                          getSessionColor(session.status),
+                          index > 0 && "top-8" // Stack multiple sessions
                         )}
-                        onClick={() => setSelectedSession(session)}
+                        style={{ top: index * 35 }}
+                        onClick={() => {
+                          setSelectedSession(session)
+                          setShowSessionModal(true)
+                        }}
                       >
-                        <div className="font-medium">{session.student.firstName}</div>
-                        <div className="text-xs">{session.subject}</div>
-                      </div>
+                        <div className="text-xs font-medium truncate">
+                          {session.student.firstName} {session.student.lastName[0]}.
+                        </div>
+                        <div className="text-xs opacity-90 truncate">
+                          {session.subject}
+                        </div>
+                        <div className="text-xs opacity-80">
+                          {formatTime(session.date)}
+                        </div>
+                      </motion.div>
                     ))}
                   </div>
                 )
               })}
             </div>
           ))}
+        </div>
+
+        {/* Legend */}
+        <div className="bg-gray-50 border-t border-gray-200 p-4">
+          <div className="flex items-center justify-center gap-6 text-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-blue-500 rounded"></div>
+              <span className="text-gray-600">Scheduled</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-green-500 rounded"></div>
+              <span className="text-gray-600">In Progress</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-gray-400 rounded"></div>
+              <span className="text-gray-600">Completed</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-red-400 rounded"></div>
+              <span className="text-gray-600">Cancelled</span>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -716,6 +945,16 @@ export default function SessionsPage() {
           )}
         </motion.div>
       </div>
+
+      {/* Session Details Modal */}
+      <SessionDetailsModal
+        session={selectedSession}
+        isOpen={showSessionModal}
+        onClose={() => {
+          setShowSessionModal(false)
+          setSelectedSession(null)
+        }}
+      />
     </div>
   )
 } 

@@ -349,7 +349,7 @@ export default function StudentsPage() {
       </div>
 
       {/* Tabs */}
-      <div>
+      <div style={{ opacity: '1 !important', transform: 'none !important' }}>
         <Card className="bg-white/80 backdrop-blur-sm border-0" animate={false}>
           <div className="p-2">
             <div className="flex gap-1">
@@ -477,7 +477,7 @@ export default function StudentsPage() {
       </div>
 
       {/* Filters */}
-      <div>
+      <div style={{ opacity: '1 !important', transform: 'none !important' }}>
         <Card className="bg-white/80 backdrop-blur-sm border-0" animate={false}>
           <div className="p-3 lg:p-4">
             <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
@@ -535,10 +535,10 @@ export default function StudentsPage() {
       </div>
 
       {/* Students Grid */}
-      <div>
+      <div style={{ opacity: '1 !important', transform: 'none !important' }}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
           {filteredStudents.map((student) => (
-            <div key={student.id}>
+            <div key={student.id} style={{ opacity: '1 !important', transform: 'none !important' }}>
               <StudentCard student={student} />
             </div>
           ))}

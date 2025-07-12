@@ -249,7 +249,7 @@ export default function SessionsPage() {
 
     return (
       <Modal isOpen={isOpen} onClose={onClose} size="lg">
-        <div className="p-6">
+        <div className="bg-white rounded-xl p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900">Session Details</h2>
@@ -257,14 +257,14 @@ export default function SessionsPage() {
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="h-8 w-8 p-0"
+              className="h-8 w-8 p-0 text-gray-400 hover:text-gray-600"
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
 
           {/* Student Info */}
-          <div className="flex items-center gap-4 mb-6">
+          <div className="flex items-center gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
             <Avatar
               src={session.student.avatar}
               fallback={`${session.student.firstName[0]}${session.student.lastName[0]}`}
@@ -290,27 +290,27 @@ export default function SessionsPage() {
 
           {/* Session Details */}
           <div className="space-y-4 mb-6">
-            <div>
+            <div className="border-b border-gray-100 pb-3">
               <h4 className="text-sm font-medium text-gray-500 mb-1">Date & Time</h4>
               <p className="text-gray-900">
                 {formatDate(session.date)} at {formatTime(session.date)}
               </p>
             </div>
 
-            <div>
+            <div className="border-b border-gray-100 pb-3">
               <h4 className="text-sm font-medium text-gray-500 mb-1">Duration</h4>
               <p className="text-gray-900">{formatDuration(session.duration)}</p>
             </div>
 
             {session.notes && (
-              <div>
+              <div className="border-b border-gray-100 pb-3">
                 <h4 className="text-sm font-medium text-gray-500 mb-1">Notes</h4>
                 <p className="text-gray-900">{session.notes}</p>
               </div>
             )}
 
             {session.rating && (
-              <div>
+              <div className="border-b border-gray-100 pb-3">
                 <h4 className="text-sm font-medium text-gray-500 mb-1">Rating</h4>
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
@@ -542,24 +542,24 @@ export default function SessionsPage() {
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
         {/* Header with days */}
         <div className="grid grid-cols-8 bg-gray-50 border-b border-gray-200">
-          <div className="p-4 text-center">
-            <div className="text-sm font-medium text-gray-500">Time</div>
+          <div className="p-2 text-center">
+            <div className="text-xs font-medium text-gray-500">Time</div>
           </div>
           {weekDays.map((day) => {
             const isToday = day.toDateString() === new Date().toDateString()
             return (
               <div key={day.toISOString()} className={cn(
-                "p-4 text-center border-l border-gray-200",
+                "p-2 text-center border-l border-gray-200",
                 isToday && "bg-purple-50"
               )}>
                 <div className={cn(
-                  "text-sm font-medium",
+                  "text-xs font-medium",
                   isToday ? "text-purple-600" : "text-gray-900"
                 )}>
                   {day.toLocaleDateString('en-US', { weekday: 'short' })}
                 </div>
                 <div className={cn(
-                  "text-2xl font-semibold mt-1",
+                  "text-lg font-semibold",
                   isToday ? "text-purple-600" : "text-gray-700"
                 )}>
                   {day.getDate()}
@@ -570,10 +570,10 @@ export default function SessionsPage() {
         </div>
         
         {/* Time slots with sessions */}
-        <div className="max-h-[600px] overflow-y-auto">
+        <div className="max-h-[450px] overflow-y-auto">
           {hours.map((hour) => (
             <div key={hour} className="grid grid-cols-8 border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
-              <div className="p-3 text-right pr-4 text-sm text-gray-500 font-medium">
+              <div className="p-2 text-right pr-3 text-xs text-gray-500 font-medium">
                 {hour === 12 ? '12:00 PM' : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`}
               </div>
               {weekDays.map((day) => {
@@ -584,7 +584,7 @@ export default function SessionsPage() {
                   <div 
                     key={day.toISOString()} 
                     className={cn(
-                      "p-2 border-l border-gray-100 min-h-[60px] relative",
+                      "p-1 border-l border-gray-100 min-h-[50px] relative",
                       isToday && "bg-purple-50/30"
                     )}
                   >
@@ -592,7 +592,7 @@ export default function SessionsPage() {
                       <div
                         key={session.id}
                         className={cn(
-                          "absolute left-2 right-2 p-2 rounded-lg cursor-pointer shadow-sm transition-all duration-200",
+                          "absolute left-1 right-1 p-1.5 rounded-md cursor-pointer shadow-sm transition-all duration-200",
                           getSessionColor(session.status),
                           index > 0 && "top-8" // Stack multiple sessions
                         )}
@@ -621,8 +621,8 @@ export default function SessionsPage() {
         </div>
 
         {/* Legend */}
-        <div className="bg-gray-50 border-t border-gray-200 p-4">
-          <div className="flex items-center justify-center gap-6 text-xs">
+        <div className="bg-gray-50 border-t border-gray-200 p-2">
+          <div className="flex items-center justify-center gap-4 text-xs">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 bg-blue-500 rounded"></div>
               <span className="text-gray-600">Scheduled</span>
@@ -681,15 +681,15 @@ export default function SessionsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-nerdy-bg-light">
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-4">
         {/* Header */}
-        <div className="mb-4">
+        <div className="mb-2">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-2xl font-bold text-gray-900 mb-1">
                 My Sessions
               </h1>
-              <p className="text-gray-600">
+              <p className="text-sm text-gray-600">
                 Schedule and manage your tutoring sessions
               </p>
             </div>
@@ -698,6 +698,7 @@ export default function SessionsPage() {
               gradientType="nerdy" 
               leftIcon={<Plus className="h-4 w-4" />}
               onClick={() => router.push('/sessions/new')}
+              size="sm"
             >
               New Session
             </Button>
@@ -705,7 +706,7 @@ export default function SessionsPage() {
         </div>
 
         {/* Controls */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-3 mb-2">
           <div className="flex flex-col lg:flex-row gap-4">
             {/* View Controls */}
             <div className="flex items-center gap-2">
@@ -815,8 +816,8 @@ export default function SessionsPage() {
 
         {/* Current Date Display */}
         {viewMode === 'calendar' && (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">
+          <div className="mb-3">
+            <h2 className="text-lg font-semibold text-gray-900">
               {calendarView === 'week' && (
                 <>
                   {formatDate(startOfWeek(currentDate))} - {formatDate(endOfWeek(currentDate))}

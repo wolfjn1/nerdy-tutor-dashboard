@@ -193,7 +193,7 @@ export default function StudentsPage() {
         onClick={() => router.push(`/students/${student.id}`)}
         className="hover:-translate-y-1 transition-transform duration-200"
       >
-        <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-gray-800 text-white cursor-pointer overflow-hidden h-[440px]">
+        <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-gray-800 text-white cursor-pointer overflow-hidden h-[440px]" animate={false}>
           <div className="p-6 h-full flex flex-col justify-between">
             <div className="flex-1">
               {/* Warning Banner for Missing Sessions */}
@@ -213,6 +213,7 @@ export default function StudentsPage() {
                   fallback={`${student.firstName[0]}${student.lastName[0]}`}
                   size="lg"
                   className="border-2 border-purple-400/50"
+                  animate={false}
                 />
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-white">
@@ -226,12 +227,12 @@ export default function StudentsPage() {
               <div className="mb-4">
                 <div className="flex flex-wrap gap-1">
                   {student.subjects.slice(0, 2).map(subject => (
-                    <Badge key={subject} variant="secondary" className="text-xs bg-purple-600/30 text-purple-200 border-purple-500/30">
+                    <Badge key={subject} variant="secondary" className="text-xs bg-purple-600/30 text-purple-200 border-purple-500/30" animate={false}>
                       {subject}
                     </Badge>
                   ))}
                   {student.subjects.length > 2 && (
-                    <Badge variant="secondary" className="text-xs bg-gray-600/30 text-gray-300">
+                    <Badge variant="secondary" className="text-xs bg-gray-600/30 text-gray-300" animate={false}>
                       +{student.subjects.length - 2}
                     </Badge>
                   )}
@@ -349,7 +350,7 @@ export default function StudentsPage() {
 
       {/* Tabs */}
       <div>
-        <Card className="bg-white/80 backdrop-blur-sm border-0">
+        <Card className="bg-white/80 backdrop-blur-sm border-0" animate={false}>
           <div className="p-2">
             <div className="flex gap-1">
               {activeTab === 'current' ? (
@@ -477,7 +478,7 @@ export default function StudentsPage() {
 
       {/* Filters */}
       <div>
-        <Card className="bg-white/80 backdrop-blur-sm border-0">
+        <Card className="bg-white/80 backdrop-blur-sm border-0" animate={false}>
           <div className="p-3 lg:p-4">
             <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
               {/* Search */}

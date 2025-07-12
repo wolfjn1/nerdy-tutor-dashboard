@@ -251,34 +251,26 @@ export default function SessionsPage() {
       <Modal isOpen={isOpen} onClose={onClose} size="lg">
         <div className="bg-white rounded-xl p-6">
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Session Details</h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="h-8 w-8 p-0 text-gray-400 hover:text-gray-600"
-            >
-              <X className="h-4 w-4" />
-            </Button>
+          <div className="mb-4">
+            <h2 className="text-xl font-bold text-gray-900">Session Details</h2>
           </div>
 
           {/* Student Info */}
-          <div className="flex items-center gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+          <div className="flex items-center gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
             <Avatar
               src={session.student.avatar}
               fallback={`${session.student.firstName[0]}${session.student.lastName[0]}`}
-              size="xl"
-              className="border-4 border-purple-200"
+              size="lg"
+              className="border-2 border-purple-200"
             />
             <div>
-              <h3 className="text-xl font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900">
                 {session.student.firstName} {session.student.lastName}
               </h3>
-              <p className="text-gray-600">{session.student.grade} • {session.subject}</p>
+              <p className="text-sm text-gray-600">{session.student.grade} • {session.subject}</p>
               <Badge 
                 variant="secondary" 
-                className={cn('mt-2', getStatusColor(session.status))}
+                className={cn('mt-1 text-xs', getStatusColor(session.status))}
               >
                 <span className="flex items-center gap-1">
                   {getStatusIcon(session.status)}
@@ -289,54 +281,29 @@ export default function SessionsPage() {
           </div>
 
           {/* Session Details */}
-          <div className="space-y-4 mb-6">
-            <div className="border-b border-gray-100 pb-3">
-              <h4 className="text-sm font-medium text-gray-500 mb-1">Date & Time</h4>
-              <p className="text-gray-900">
+          <div className="space-y-2 mb-4 text-sm">
+            <div>
+              <span className="font-medium text-gray-500">Date & Time:</span>
+              <span className="ml-2 text-gray-900">
                 {formatDate(session.date)} at {formatTime(session.date)}
-              </p>
+              </span>
             </div>
 
-            <div className="border-b border-gray-100 pb-3">
-              <h4 className="text-sm font-medium text-gray-500 mb-1">Duration</h4>
-              <p className="text-gray-900">{formatDuration(session.duration)}</p>
+            <div>
+              <span className="font-medium text-gray-500">Duration:</span>
+              <span className="ml-2 text-gray-900">{formatDuration(session.duration)}</span>
             </div>
 
             {session.notes && (
-              <div className="border-b border-gray-100 pb-3">
-                <h4 className="text-sm font-medium text-gray-500 mb-1">Notes</h4>
-                <p className="text-gray-900">{session.notes}</p>
-              </div>
-            )}
-
-            {session.rating && (
-              <div className="border-b border-gray-100 pb-3">
-                <h4 className="text-sm font-medium text-gray-500 mb-1">Rating</h4>
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={cn(
-                        'h-5 w-5',
-                        i < session.rating! ? 'text-yellow-500 fill-current' : 'text-gray-300'
-                      )}
-                    />
-                  ))}
-                  <span className="text-gray-600 ml-2">{session.rating.toFixed(1)}</span>
-                </div>
-              </div>
-            )}
-
-            {session.earnings && (
               <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-1">Earnings</h4>
-                <p className="text-gray-900 text-lg font-semibold">${session.earnings}</p>
+                <span className="font-medium text-gray-500">Notes:</span>
+                <span className="ml-2 text-gray-900">{session.notes}</span>
               </div>
             )}
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             {session.status === 'scheduled' && (
               <>
                 <Button
@@ -345,6 +312,7 @@ export default function SessionsPage() {
                   leftIcon={<Video className="h-4 w-4" />}
                   onClick={() => window.open(joinLink, '_blank')}
                   className="flex-1"
+                  size="sm"
                 >
                   Join Session
                 </Button>
@@ -355,26 +323,17 @@ export default function SessionsPage() {
                     navigator.clipboard.writeText(joinLink)
                     // You can add a toast notification here
                   }}
+                  size="sm"
                 >
                   Copy Link
                 </Button>
               </>
             )}
             
-            {session.status === 'completed' && (
-              <Button
-                variant="gradient"
-                gradientType="nerdy"
-                onClick={() => router.push(`/sessions/${session.id}`)}
-                className="flex-1"
-              >
-                View Details
-              </Button>
-            )}
-
             <Button
               variant="outline"
               onClick={() => router.push(`/students/${session.studentId}`)}
+              size="sm"
             >
               View Student Profile
             </Button>

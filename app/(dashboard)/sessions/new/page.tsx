@@ -28,7 +28,7 @@ import {
   DollarSign,
   Repeat
 } from 'lucide-react'
-import { Card, Button, Badge, Avatar } from '@/components/ui'
+import { Button, Badge, Avatar } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import studentsData from '@/lib/mock-data/students.json'
 import { Student } from '@/lib/types'
@@ -54,9 +54,6 @@ export default function NewSessionPage() {
   const [sessionTime, setSessionTime] = useState('')
   const [duration, setDuration] = useState(60)
   const [subject, setSubject] = useState('')
-  const [sessionType, setSessionType] = useState<'in-person' | 'online'>('online')
-  const [location, setLocation] = useState('')
-  const [hourlyRate, setHourlyRate] = useState(75)
   const [isRecurring, setIsRecurring] = useState(false)
   const [recurringPattern, setRecurringPattern] = useState<'weekly' | 'biweekly' | 'monthly'>('weekly')
   const [recurringEnd, setRecurringEnd] = useState('')
@@ -86,11 +83,6 @@ export default function NewSessionPage() {
     return selectedStudent.subjects
   }, [selectedStudent])
 
-  // Calculate session cost
-  const sessionCost = useMemo(() => {
-    return (duration / 60) * hourlyRate
-  }, [duration, hourlyRate])
-
   // Validation functions
   const validateStep = (stepNumber: number) => {
     const newErrors: Record<string, string> = {}
@@ -100,7 +92,6 @@ export default function NewSessionPage() {
       if (!subject) newErrors.subject = 'Please select a subject'
       if (!sessionDate) newErrors.date = 'Please select a date'
       if (!sessionTime) newErrors.time = 'Please select a time'
-      if (sessionType === 'in-person' && !location) newErrors.location = 'Please enter a location'
     }
     
     if (stepNumber === 2 && lessonTitle) {
@@ -259,7 +250,7 @@ export default function NewSessionPage() {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-6"
               >
-                <Card className="bg-white/80 backdrop-blur-sm border-0">
+                <div className="bg-white border border-purple-200 rounded-lg shadow-sm">
                   <div className="p-6">
                     <h2 className="text-xl font-semibold text-gray-900 mb-6">Session Details</h2>
                     
@@ -408,91 +399,7 @@ export default function NewSessionPage() {
                         )}
                       </div>
 
-                      {/* Session Type */}
-                      <div className="lg:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Session Type
-                        </label>
-                        <div className="grid grid-cols-2 gap-3">
-                          <button
-                            type="button"
-                            onClick={() => setSessionType('online')}
-                            className={cn(
-                              'p-4 border-2 rounded-lg text-left transition-colors',
-                              sessionType === 'online'
-                                ? 'border-purple-500 bg-purple-50'
-                                : 'border-gray-300 hover:border-gray-400'
-                            )}
-                          >
-                            <Video className="h-5 w-5 text-purple-600 mb-2" />
-                            <div className="font-medium text-gray-900">Online Session</div>
-                            <div className="text-sm text-gray-500">Video call via Zoom/Google Meet</div>
-                          </button>
-                          
-                          <button
-                            type="button"
-                            onClick={() => setSessionType('in-person')}
-                            className={cn(
-                              'p-4 border-2 rounded-lg text-left transition-colors',
-                              sessionType === 'in-person'
-                                ? 'border-purple-500 bg-purple-50'
-                                : 'border-gray-300 hover:border-gray-400'
-                            )}
-                          >
-                            <MapPin className="h-5 w-5 text-purple-600 mb-2" />
-                            <div className="font-medium text-gray-900">In-Person</div>
-                            <div className="text-sm text-gray-500">Meet at a physical location</div>
-                          </button>
-                        </div>
-                      </div>
 
-                      {/* Location (if in-person) */}
-                      {sessionType === 'in-person' && (
-                        <div className="lg:col-span-2">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Location *
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="Enter meeting location"
-                            value={location}
-                            onChange={(e) => setLocation(e.target.value)}
-                            className={cn(
-                              'w-full px-3 py-3 border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500',
-                              errors.location ? 'border-red-300' : 'border-gray-300'
-                            )}
-                          />
-                          {errors.location && (
-                            <p className="mt-1 text-sm text-red-600">{errors.location}</p>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Hourly Rate */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Hourly Rate ($)
-                        </label>
-                        <input
-                          type="number"
-                          value={hourlyRate}
-                          onChange={(e) => setHourlyRate(parseInt(e.target.value) || 0)}
-                          min="0"
-                          step="5"
-                          className="w-full px-3 py-3 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        />
-                      </div>
-
-                      {/* Session Cost */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Session Cost
-                        </label>
-                        <div className="w-full px-3 py-3 border border-gray-300 rounded-lg text-sm bg-gray-50 flex items-center gap-2">
-                          <DollarSign className="h-4 w-4 text-gray-500" />
-                          <span className="font-medium text-gray-900">{sessionCost.toFixed(2)}</span>
-                        </div>
-                      </div>
 
                       {/* Recurring Options */}
                       <div className="lg:col-span-2">
@@ -543,7 +450,7 @@ export default function NewSessionPage() {
                       </div>
                     </div>
                   </div>
-                </Card>
+                </div>
               </motion.div>
             )}
 
@@ -556,7 +463,7 @@ export default function NewSessionPage() {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-6"
               >
-                <Card className="bg-white/80 backdrop-blur-sm border-0">
+                <div className="bg-white border border-purple-200 rounded-lg shadow-sm">
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-6">
                       <h2 className="text-xl font-semibold text-gray-900">Lesson Plan (Optional)</h2>
@@ -670,7 +577,7 @@ export default function NewSessionPage() {
                       </div>
                     </div>
                   </div>
-                </Card>
+                </div>
               </motion.div>
             )}
 
@@ -683,7 +590,7 @@ export default function NewSessionPage() {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-6"
               >
-                <Card className="bg-white/80 backdrop-blur-sm border-0">
+                <div className="bg-white border border-purple-200 rounded-lg shadow-sm">
                   <div className="p-6">
                     <h2 className="text-xl font-semibold text-gray-900 mb-6">Review & Confirm</h2>
                     
@@ -732,20 +639,6 @@ export default function NewSessionPage() {
                             <div className="flex justify-between">
                               <span className="text-gray-600">Duration:</span>
                               <span className="font-medium text-gray-900">{duration} minutes</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">Type:</span>
-                              <span className="font-medium text-gray-900 capitalize">{sessionType.replace('-', ' ')}</span>
-                            </div>
-                            {sessionType === 'in-person' && (
-                              <div className="flex justify-between">
-                                <span className="text-gray-600">Location:</span>
-                                <span className="font-medium text-gray-900">{location}</span>
-                              </div>
-                            )}
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">Cost:</span>
-                              <span className="font-medium text-gray-900">${sessionCost.toFixed(2)}</span>
                             </div>
                             {isRecurring && (
                               <div className="flex justify-between">
@@ -813,7 +706,7 @@ export default function NewSessionPage() {
                       </div>
                     </div>
                   </div>
-                </Card>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

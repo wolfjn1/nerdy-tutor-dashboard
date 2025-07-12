@@ -17,19 +17,6 @@ const buttonVariants = cva(
         ghost: 'border-0 bg-transparent hover:bg-opacity-10 active:bg-opacity-20',
         solid: 'border-0 shadow-sm hover:shadow-md active:scale-[0.98]',
       },
-      gradientType: {
-        blue: 'bg-gradient-blue',
-        purple: 'bg-gradient-purple',
-        orange: 'bg-gradient-orange',
-        green: 'bg-gradient-green',
-        pink: 'bg-gradient-pink',
-        cyan: 'bg-gradient-cyan',
-        // Nerdy brand gradients
-        nerdy: 'bg-gradient-nerdy',
-        'yellow-pink': 'bg-gradient-yellow-pink',
-        'pink-cyan': 'bg-gradient-pink-cyan',
-        'orange-magenta': 'bg-gradient-orange-magenta',
-      },
       size: {
         sm: 'h-8 px-3 text-xs gap-1.5',
         md: 'h-9 px-4 text-sm gap-2',
@@ -40,7 +27,6 @@ const buttonVariants = cva(
     },
     defaultVariants: {
       variant: 'gradient',
-      gradientType: 'nerdy',
       size: 'md',
     },
   }
@@ -58,6 +44,7 @@ export interface ButtonProps
   pulse?: boolean
   glow?: boolean
   onXPGained?: (amount: number) => void
+  gradientType?: 'blue' | 'purple' | 'orange' | 'green' | 'pink' | 'cyan' | 'nerdy' | 'yellow-pink' | 'pink-cyan' | 'orange-magenta'
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -223,11 +210,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     }
 
     const combinedClasses = cn(
-      buttonVariants({ 
-        variant, 
-        gradientType: variant === 'gradient' ? gradientType : undefined, 
-        size 
-      }),
+      buttonVariants({ variant, size }),
       getGradientClasses(),
       getOutlineClasses(),
       getGhostClasses(),

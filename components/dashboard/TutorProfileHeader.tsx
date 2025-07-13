@@ -41,7 +41,7 @@ export const TutorProfileHeader: React.FC<TutorProfileHeaderProps> = ({
           <div className="relative">
             <Avatar
               src={tutor.avatar_url}
-              fallback={tutor.firstName && tutor.lastName ? `${tutor.firstName[0]}${tutor.lastName[0]}` : "TU"}
+              fallback={tutor.first_name && tutor.last_name ? `${tutor.first_name[0]}${tutor.last_name[0]}` : "TU"}
               size="2xl"
               className="ring-4 ring-white/30"
               animate={false}
@@ -54,7 +54,7 @@ export const TutorProfileHeader: React.FC<TutorProfileHeaderProps> = ({
           
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-slate-800 mb-1">
-              {tutor.firstName} {tutor.lastName}
+              {tutor.first_name} {tutor.last_name}
             </h1>
             <p className="text-slate-600 mb-2">Expert Tutor</p>
             <div className="flex items-center gap-2 mb-3">

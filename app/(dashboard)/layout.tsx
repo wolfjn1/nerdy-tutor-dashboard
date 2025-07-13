@@ -207,13 +207,13 @@ export default function DashboardLayout({
             <div className="flex items-center gap-3 mb-3">
               <Avatar
                 src={tutor?.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"}
-                fallback={tutor?.firstName && tutor?.lastName ? `${tutor.firstName[0]}${tutor.lastName[0]}` : "JD"}
+                fallback={tutor?.first_name && tutor?.last_name ? `${tutor.first_name[0]}${tutor.last_name[0]}` : "JD"}
                 size="sm"
                 className="ring-2 ring-pink-400/50 dark:ring-purple-500/50"
                 animate={false}
               />
               <div className="flex-1 min-w-0">
-                <div className="text-white font-medium text-sm">{tutor ? `${tutor.firstName} ${tutor.lastName}` : 'John Doe'}</div>
+                <div className="text-white font-medium text-sm">{tutor ? `${tutor.first_name} ${tutor.last_name}` : 'John Doe'}</div>
                 <div className="text-white/80 dark:text-purple-300 text-xs">Expert Tutor • Level 42</div>
               </div>
             </div>

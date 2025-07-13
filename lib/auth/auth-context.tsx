@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-browser'
 import { AuthStorageAdapter } from './storage-adapter'
 import { TokenAuthManager } from './token-auth'
+import { useTutorStore } from '@/lib/stores/tutorStore'
 
 interface AuthContextType {
   user: User | null
@@ -38,6 +39,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const storageAdapter = new AuthStorageAdapter()
   const tokenManager = new TokenAuthManager()
   const supabase = createClient()
+  
+  // Get setTutor and reset from the global store
+  const setTutorInStore = useTutorStore((state) => state.setTutor)
+  const resetStore = useTutorStore((state) => state.reset)
 
   // Fetch tutor profile when user changes
   const fetchTutorProfile = async (userId: string) => {
@@ -49,7 +54,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .single()
 
       if (error) throw error
+      
+      // Update both local state and global store
       setTutor(data)
+      if (data) {
+        setTutorInStore(data)
+      }
+      
       return data
     } catch (error) {
       console.error('Error fetching tutor profile:', error)
@@ -234,6 +245,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await tokenManager.clearTokens()
     setUser(null)
     setTutor(null)
+    resetStore() // Clear the tutor store
     router.push('/login')
   }
 

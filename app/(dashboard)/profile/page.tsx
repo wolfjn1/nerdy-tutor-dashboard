@@ -13,7 +13,7 @@ export default function ProfilePage() {
   if (!tutor) return null
 
   const profile = {
-    name: `${tutor.firstName} ${tutor.lastName}`,
+    name: `${tutor.first_name} ${tutor.last_name}`,
     email: tutor.email,
     phone: '+1 (555) 123-4567', // Using default as not in tutor data
     location: 'San Francisco, CA', // Using default as not in tutor data
@@ -66,7 +66,7 @@ export default function ProfilePage() {
               <div className="flex-shrink-0">
                 <Avatar
                   src={profile.avatar_url}
-                  fallback={tutor.firstName && tutor.lastName ? `${tutor.firstName[0]}${tutor.lastName[0]}` : "TU"}
+                  fallback={tutor.first_name && tutor.last_name ? `${tutor.first_name[0]}${tutor.last_name[0]}` : "TU"}
                   size="2xl"
                   className="border-4 border-purple-200 dark:border-purple-700"
                 />

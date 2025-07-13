@@ -1,8 +1,8 @@
 // User and Profile Types
 export interface TutorProfile {
   id: string
-  firstName: string
-  lastName: string
+  first_name: string
+  last_name: string
   email: string
   avatar_url?: string
   bio?: string

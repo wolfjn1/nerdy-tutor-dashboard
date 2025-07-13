@@ -20,8 +20,8 @@ export default function SettingsPage() {
   
   const [activeSection, setActiveSection] = useState('profile')
   const [profileData, setProfileData] = useState({
-    firstName: tutor?.firstName || 'John',
-    lastName: tutor?.lastName || 'Doe',
+    firstName: tutor?.first_name || 'John',
+    lastName: tutor?.last_name || 'Doe',
     email: tutor?.email || 'john.doe@example.com',
     phone: '+1 (555) 123-4567',
     bio: tutor?.bio || 'Expert tutor with 3+ years of experience in Mathematics, Physics, and Chemistry. Passionate about helping students achieve their academic goals.',
@@ -33,8 +33,8 @@ export default function SettingsPage() {
     if (!tutor) {
       setTutor({
         id: 'tutor-001',
-        firstName: profileData.firstName,
-        lastName: profileData.lastName,
+        first_name: profileData.firstName,
+        last_name: profileData.lastName,
         email: profileData.email,
         bio: profileData.bio,
         avatar_url: profileData.avatar_url,
@@ -97,8 +97,8 @@ export default function SettingsPage() {
     if (tutor) {
       setTutor({
         ...tutor,
-        firstName: profileData.firstName,
-        lastName: profileData.lastName,
+        first_name: profileData.firstName,
+        last_name: profileData.lastName,
         email: profileData.email,
         bio: profileData.bio,
         avatar_url: profileData.avatar_url
@@ -108,7 +108,7 @@ export default function SettingsPage() {
     setTimeout(() => {
       setIsSaving(false)
       success('Settings saved successfully!')
-    }, 1500)
+    }, 1000)
   }
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {

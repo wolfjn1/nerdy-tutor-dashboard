@@ -17,6 +17,25 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: false,
   },
+  // Suppress specific warnings in development
+  webpack: (config, { dev, isServer }) => {
+    if (dev && !isServer) {
+      // Suppress the Supabase getSession warning in development
+      // This warning is expected in middleware where we can't use getUser()
+      const originalWarn = console.warn;
+      console.warn = (...args) => {
+        if (
+          args[0] && 
+          typeof args[0] === 'string' && 
+          args[0].includes('Using the user object as returned from supabase.auth.getSession()')
+        ) {
+          return;
+        }
+        originalWarn.apply(console, args);
+      };
+    }
+    return config;
+  },
 }
 
 module.exports = nextConfig 

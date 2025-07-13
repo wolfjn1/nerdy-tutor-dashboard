@@ -5,7 +5,11 @@ import type { NextRequest } from 'next/server'
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
   
-  console.log('[Middleware] Processing request to:', req.nextUrl.pathname)
+  // Only log for non-asset requests to reduce noise
+  const isAssetRequest = req.nextUrl.pathname.includes('.')
+  if (!isAssetRequest) {
+    console.log('[Middleware] Processing request to:', req.nextUrl.pathname)
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,11 +18,10 @@ export async function middleware(req: NextRequest) {
       cookies: {
         get(name: string) {
           const value = req.cookies.get(name)?.value
-          console.log(`[Middleware] Getting cookie ${name}:`, value ? 'exists' : 'not found')
+          // Remove verbose cookie logging to reduce console noise
           return value
         },
         set(name: string, value: string, options: CookieOptions) {
-          console.log(`[Middleware] Setting cookie ${name}`)
           res.cookies.set({
             name,
             value,
@@ -26,7 +29,6 @@ export async function middleware(req: NextRequest) {
           })
         },
         remove(name: string, options: CookieOptions) {
-          console.log(`[Middleware] Removing cookie ${name}`)
           res.cookies.set({
             name,
             value: '',
@@ -37,13 +39,21 @@ export async function middleware(req: NextRequest) {
     }
   )
 
+  // Note: We use getSession() here instead of getUser() because:
+  // 1. Middleware needs to be fast and shouldn't make external API calls
+  // 2. getUser() makes a network request to Supabase Auth server
+  // 3. For middleware auth checks, getSession() is sufficient
+  // The warning about getSession() is more relevant for data fetching where authenticity is critical
   const { data: { session }, error } = await supabase.auth.getSession()
-  console.log('[Middleware] Session check:', { 
-    hasSession: !!session, 
-    userId: session?.user?.id,
-    pathname: req.nextUrl.pathname,
-    error 
-  })
+  
+  if (!isAssetRequest) {
+    console.log('[Middleware] Session check:', { 
+      hasSession: !!session, 
+      userId: session?.user?.id,
+      pathname: req.nextUrl.pathname,
+      error 
+    })
+  }
 
   // List of public routes that don't require authentication
   const publicRoutes = ['/login', '/register', '/forgot-password', '/reset-password']

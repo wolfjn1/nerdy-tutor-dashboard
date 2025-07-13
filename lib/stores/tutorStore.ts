@@ -95,6 +95,7 @@ export const useTutorStore = create<TutorState>()(
       
       // Actions
       setTutor: (tutor) => {
+        console.log('[TutorStore] Setting tutor:', tutor)
         set({ tutor })
       },
       

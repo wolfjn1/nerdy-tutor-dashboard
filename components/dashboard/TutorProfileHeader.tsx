@@ -60,7 +60,7 @@ export const TutorProfileHeader: React.FC<TutorProfileHeaderProps> = ({
             <div className="flex items-center gap-2 mb-3">
               <Star className="w-4 h-4 text-yellow-500 fill-current" />
               <span className="text-sm text-slate-600">
-                {tutor.rating} • {tutor.totalHours} hours taught
+                {tutor.rating} • {tutor.total_hours} hours taught
               </span>
             </div>
             <div className="flex flex-wrap gap-1">
@@ -93,13 +93,13 @@ export const TutorProfileHeader: React.FC<TutorProfileHeaderProps> = ({
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 flex-1">
           <div className="text-center p-3 rounded-lg flex flex-col items-center justify-center" style={{ background: 'linear-gradient(135deg, #fbbf24 0%, #f97316 100%)' }}>
             <div className="text-xl font-bold text-white">
-              {tutor.totalHours}
+              {tutor.total_hours}
             </div>
             <div className="text-xs text-white/90 font-medium">Total Hours</div>
           </div>
           <div className="text-center p-3 rounded-lg flex flex-col items-center justify-center" style={{ background: 'linear-gradient(135deg, #ec4899 0%, #06b6d4 100%)' }}>
             <div className="text-xl font-bold text-white">
-              ${(tutor.totalEarnings / 1000).toFixed(0)}k
+              ${(tutor.total_earnings / 1000).toFixed(0)}k
             </div>
             <div className="text-xs text-white/90 font-medium">Total Earned</div>
           </div>

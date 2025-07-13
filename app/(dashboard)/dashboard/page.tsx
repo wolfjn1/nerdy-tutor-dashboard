@@ -7,6 +7,9 @@ import { useTutorStore } from '@/lib/stores/tutorStore'
 export default function DashboardPage() {
   const { tutor } = useTutorStore()
   
+  // Debug log
+  console.log('[Dashboard] Tutor data:', tutor)
+  
   return (
     <div className="space-y-4">
       {/* Header Section */}

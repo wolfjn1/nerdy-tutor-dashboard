@@ -38,14 +38,14 @@ export default function SettingsPage() {
         email: profileData.email,
         bio: profileData.bio,
         avatar_url: profileData.avatar_url,
-        hourlyRate: 85,
+        hourly_rate: 85,
         subjects: ['Mathematics', 'Physics', 'Chemistry', 'Calculus'],
         availability: {},
         rating: 4.9,
-        totalEarnings: 15750,
-        totalHours: 185,
-        joinDate: new Date('2022-03-01'),
-        isVerified: true,
+        total_earnings: 15750,
+        total_hours: 185,
+        created_at: new Date('2022-03-01'),
+        is_verified: true,
         badges: ['expert', 'top-rated']
       })
     }

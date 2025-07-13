@@ -7,14 +7,18 @@ export interface TutorProfile {
   avatar_url?: string
   bio?: string
   subjects: string[]
-  hourlyRate: number
+  hourly_rate: number
   availability: Record<string, string[]> // day -> time slots
   rating: number
-  totalEarnings: number
-  totalHours: number
-  joinDate: Date
-  isVerified: boolean
+  total_earnings: number
+  total_hours: number
+  created_at?: Date
+  updated_at?: Date
+  is_verified: boolean
   badges: string[]
+  phone?: string
+  timezone?: string
+  language?: string
 }
 
 export interface Contact {

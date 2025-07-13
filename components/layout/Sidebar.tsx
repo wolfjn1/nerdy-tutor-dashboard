@@ -18,10 +18,12 @@ import {
   ChevronRight,
   Menu,
   X,
-  Search
+  Search,
+  LogOut
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Avatar, Badge } from '@/components/ui'
+import { useAuth } from '@/lib/auth/auth-context'
 
 interface SidebarItem {
   id: string
@@ -118,6 +120,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const [collapsed, setCollapsed] = useState(isCollapsed)
   const pathname = usePathname()
+  const { tutor, signOut } = useAuth()
 
   const handleToggle = () => {
     const newCollapsed = !collapsed
@@ -267,14 +270,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* User Profile */}
-      <div className="p-4 border-t border-white/10">
+      <div className="p-4 border-t border-white/10 space-y-2">
         <div className={cn(
           'flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors cursor-pointer',
           collapsed && 'justify-center'
         )}>
           <Avatar
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-            fallback="JD"
+            src={tutor?.avatar_url || undefined}
+            fallback={tutor ? `${tutor.first_name?.[0]}${tutor.last_name?.[0]}` : 'TU'}
             size="md"
             showOnlineStatus
             isOnline
@@ -291,15 +294,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 className="flex-1"
               >
                 <div className="text-sm font-medium text-white">
-                  John Doe
+                  {tutor ? `${tutor.first_name} ${tutor.last_name}` : 'Loading...'}
                 </div>
                 <div className="text-xs bg-gradient-nerdy bg-clip-text text-transparent">
-                  Expert Tutor Lv.42
+                  {tutor?.rating ? `${tutor.rating} ⭐ Tutor` : 'Expert Tutor'}
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
+        
+        {/* Logout Button */}
+        <button
+          onClick={() => signOut()}
+          className={cn(
+            'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200',
+            'hover:bg-red-500/20 text-red-400 cursor-pointer',
+            collapsed && 'justify-center'
+          )}
+        >
+          <LogOut className="w-5 h-5 flex-shrink-0" />
+          {!collapsed && (
+            <span className="font-medium text-sm">Logout</span>
+          )}
+        </button>
       </div>
     </motion.div>
   )

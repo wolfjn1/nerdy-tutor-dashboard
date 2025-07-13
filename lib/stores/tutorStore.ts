@@ -100,7 +100,7 @@ export const useTutorStore = create<TutorState>()(
       
       updateTutorAvatar: (avatarUrl) => {
         set((state) => ({
-          tutor: state.tutor ? { ...state.tutor, avatar: avatarUrl } : null
+          tutor: state.tutor ? { ...state.tutor, avatar_url: avatarUrl } : null
         }))
       },
       

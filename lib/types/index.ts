@@ -4,7 +4,7 @@ export interface TutorProfile {
   firstName: string
   lastName: string
   email: string
-  avatar?: string
+  avatar_url?: string
   bio?: string
   subjects: string[]
   hourlyRate: number

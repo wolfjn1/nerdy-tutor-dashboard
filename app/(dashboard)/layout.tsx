@@ -206,7 +206,7 @@ export default function DashboardLayout({
           <div className="flex-shrink-0 p-3 border-t border-white/20 dark:border-gray-700 bg-black/10 dark:bg-gray-800/50 backdrop-blur-sm">
             <div className="flex items-center gap-3 mb-3">
               <Avatar
-                src={tutor?.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"}
+                src={tutor?.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"}
                 fallback={tutor?.firstName && tutor?.lastName ? `${tutor.firstName[0]}${tutor.lastName[0]}` : "JD"}
                 size="sm"
                 className="ring-2 ring-pink-400/50 dark:ring-purple-500/50"

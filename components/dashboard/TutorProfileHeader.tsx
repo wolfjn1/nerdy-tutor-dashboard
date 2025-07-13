@@ -40,7 +40,7 @@ export const TutorProfileHeader: React.FC<TutorProfileHeaderProps> = ({
         <div className="flex items-center gap-4">
           <div className="relative">
             <Avatar
-              src={tutor.avatar}
+              src={tutor.avatar_url}
               fallback={tutor.firstName && tutor.lastName ? `${tutor.firstName[0]}${tutor.lastName[0]}` : "TU"}
               size="2xl"
               className="ring-4 ring-white/30"

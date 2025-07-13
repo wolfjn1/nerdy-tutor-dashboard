@@ -25,7 +25,7 @@ export default function SettingsPage() {
     email: tutor?.email || 'john.doe@example.com',
     phone: '+1 (555) 123-4567',
     bio: tutor?.bio || 'Expert tutor with 3+ years of experience in Mathematics, Physics, and Chemistry. Passionate about helping students achieve their academic goals.',
-    avatar: tutor?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
+    avatar_url: tutor?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
   })
 
   // Initialize tutor if not set
@@ -37,7 +37,7 @@ export default function SettingsPage() {
         lastName: profileData.lastName,
         email: profileData.email,
         bio: profileData.bio,
-        avatar: profileData.avatar,
+        avatar_url: profileData.avatar_url,
         hourlyRate: 85,
         subjects: ['Mathematics', 'Physics', 'Chemistry', 'Calculus'],
         availability: {},
@@ -101,7 +101,7 @@ export default function SettingsPage() {
         lastName: profileData.lastName,
         email: profileData.email,
         bio: profileData.bio,
-        avatar: profileData.avatar
+        avatar_url: profileData.avatar_url
       })
     }
     
@@ -131,7 +131,7 @@ export default function SettingsPage() {
     const reader = new FileReader()
     reader.onloadend = () => {
       const base64String = reader.result as string
-      setProfileData({ ...profileData, avatar: base64String })
+      setProfileData({ ...profileData, avatar_url: base64String })
       updateTutorAvatar(base64String)
       success('Profile picture updated!')
     }
@@ -148,7 +148,7 @@ export default function SettingsPage() {
       {/* Avatar Upload */}
       <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
         <Avatar
-          src={profileData.avatar}
+          src={profileData.avatar_url}
           fallback={profileData.firstName && profileData.lastName ? `${profileData.firstName[0]}${profileData.lastName[0]}` : "JD"}
           size="2xl"
           className="border-4 border-gray-200"

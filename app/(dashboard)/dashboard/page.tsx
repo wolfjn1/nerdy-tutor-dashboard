@@ -10,8 +10,29 @@ export default function DashboardPage() {
   // Debug log
   console.log('[Dashboard] Tutor data:', tutor)
   
+  // Temporary fix: Clear cache button
+  const clearCacheAndReload = () => {
+    localStorage.removeItem('tutor-store')
+    window.location.reload()
+  }
+  
   return (
     <div className="space-y-4">
+      {/* Temporary cache clear button */}
+      {!tutor && (
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+          <p className="text-sm text-yellow-800 dark:text-yellow-200 mb-2">
+            If you're seeing "undefined undefined", click below to clear cache:
+          </p>
+          <button
+            onClick={clearCacheAndReload}
+            className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md text-sm font-medium"
+          >
+            Clear Cache & Reload
+          </button>
+        </div>
+      )}
+      
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div className="flex items-center gap-6">

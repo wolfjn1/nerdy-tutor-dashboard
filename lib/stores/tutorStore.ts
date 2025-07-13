@@ -245,6 +245,7 @@ export const useTutorStore = create<TutorState>()(
     }),
     {
       name: 'tutor-store',
+      version: 2, // Increment this to clear old data
       partialize: (state) => ({
         tutor: state.tutor,
         students: state.students,
@@ -257,7 +258,28 @@ export const useTutorStore = create<TutorState>()(
         achievements: state.achievements,
         xpActivities: state.xpActivities,
         ui: state.ui
-      })
+      }),
+      migrate: (persistedState: any, version: number) => {
+        if (version !== 2) {
+          // Clear old data when version changes
+          console.log('[TutorStore] Clearing old store data due to version mismatch')
+          return {
+            tutor: null,
+            students: [],
+            sessions: [],
+            totalXP: 0,
+            level: 1,
+            levelProgress: 0,
+            xpForNextLevel: 100,
+            streak: 0,
+            achievements: [],
+            xpActivities: [],
+            ui: defaultUIState,
+            analytics: null
+          }
+        }
+        return persistedState as TutorState
+      }
     }
   )
 ) 

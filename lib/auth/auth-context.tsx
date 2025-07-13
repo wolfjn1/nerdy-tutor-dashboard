@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [storageWarning, setStorageWarning] = useState<string | null>(null)
   const router = useRouter()
   const storageAdapter = new AuthStorageAdapter()
-  const tokenManager = new TokenAuthManager(storageAdapter)
+  const tokenManager = new TokenAuthManager()
   const supabase = createClient()
 
   // Fetch tutor profile when user changes

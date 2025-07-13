@@ -1,10 +1,17 @@
-// Storage adapter for authentication - handles cookie failures gracefully
+// Storage adapter to handle different storage methods
 export class AuthStorageAdapter {
   private storageType: 'cookie' | 'localStorage' | 'sessionStorage' | 'memory' = 'cookie'
   private memoryStorage: Map<string, string> = new Map()
+  private static hasLoggedWarning = false
 
   constructor() {
-    this.detectBestStorage()
+    // Only detect storage in browser environment
+    if (typeof window !== 'undefined') {
+      this.detectBestStorage()
+    } else {
+      // Server-side: default to memory storage without warnings
+      this.storageType = 'memory'
+    }
   }
 
   private detectBestStorage() {
@@ -17,20 +24,29 @@ export class AuthStorageAdapter {
     // Check if localStorage is available
     if (this.testLocalStorage()) {
       this.storageType = 'localStorage'
-      console.warn('Cookies unavailable, falling back to localStorage')
+      if (!AuthStorageAdapter.hasLoggedWarning) {
+        console.warn('Cookies unavailable, falling back to localStorage')
+        AuthStorageAdapter.hasLoggedWarning = true
+      }
       return
     }
 
     // Check if sessionStorage is available
     if (this.testSessionStorage()) {
       this.storageType = 'sessionStorage'
-      console.warn('Cookies and localStorage unavailable, falling back to sessionStorage')
+      if (!AuthStorageAdapter.hasLoggedWarning) {
+        console.warn('Cookies and localStorage unavailable, falling back to sessionStorage')
+        AuthStorageAdapter.hasLoggedWarning = true
+      }
       return
     }
 
     // Fall back to memory storage
     this.storageType = 'memory'
-    console.warn('All storage methods unavailable, using memory storage (will not persist)')
+    if (!AuthStorageAdapter.hasLoggedWarning) {
+      console.warn('All storage methods unavailable, using memory storage (will not persist)')
+      AuthStorageAdapter.hasLoggedWarning = true
+    }
   }
 
   private testCookies(): boolean {

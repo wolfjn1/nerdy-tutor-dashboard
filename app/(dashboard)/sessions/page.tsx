@@ -217,12 +217,12 @@ export default function SessionsPage() {
 
   const getStatusColor = (status: Session['status']) => {
     switch (status) {
-      case 'scheduled': return 'bg-blue-100 text-blue-800 border-blue-200'
-      case 'in_progress': return 'bg-green-100 text-green-800 border-green-200'
-      case 'completed': return 'bg-gray-100 text-gray-800 border-gray-200'
-      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200'
-      case 'no_show': return 'bg-orange-100 text-orange-800 border-orange-200'
-      default: return 'bg-gray-100 text-gray-800 border-gray-200'
+      case 'scheduled': return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800'
+      case 'in_progress': return 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800'
+      case 'completed': return 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'
+      case 'cancelled': return 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800'
+      case 'no_show': return 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800'
+      default: return 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'
     }
   }
 
@@ -249,25 +249,25 @@ export default function SessionsPage() {
 
     return (
       <Modal isOpen={isOpen} onClose={onClose} size="lg">
-        <div className="bg-white rounded-xl p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-6">
           {/* Header */}
           <div className="mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Session Details</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Session Details</h2>
           </div>
 
           {/* Student Info */}
-          <div className="flex items-center gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center gap-3 mb-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
             <Avatar
               src={session.student.avatar}
               fallback={`${session.student.firstName[0]}${session.student.lastName[0]}`}
               size="lg"
-              className="border-2 border-purple-200"
+              className="border-2 border-purple-200 dark:border-purple-700"
             />
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 {session.student.firstName} {session.student.lastName}
               </h3>
-              <p className="text-sm text-gray-600">{session.student.grade} • {session.subject}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{session.student.grade} • {session.subject}</p>
               <Badge 
                 variant="secondary" 
                 className={cn('mt-1 text-xs', getStatusColor(session.status))}
@@ -283,21 +283,21 @@ export default function SessionsPage() {
           {/* Session Details */}
           <div className="space-y-2 mb-4 text-sm">
             <div>
-              <span className="font-medium text-gray-500">Date & Time:</span>
-              <span className="ml-2 text-gray-900">
+              <span className="font-medium text-gray-500 dark:text-gray-400">Date & Time:</span>
+              <span className="ml-2 text-gray-900 dark:text-gray-100">
                 {formatDate(session.date)} at {formatTime(session.date)}
               </span>
             </div>
 
             <div>
-              <span className="font-medium text-gray-500">Duration:</span>
-              <span className="ml-2 text-gray-900">{formatDuration(session.duration)}</span>
+              <span className="font-medium text-gray-500 dark:text-gray-400">Duration:</span>
+              <span className="ml-2 text-gray-900 dark:text-gray-100">{formatDuration(session.duration)}</span>
             </div>
 
             {session.notes && (
               <div>
-                <span className="font-medium text-gray-500">Notes:</span>
-                <span className="ml-2 text-gray-900">{session.notes}</span>
+                <span className="font-medium text-gray-500 dark:text-gray-400">Notes:</span>
+                <span className="ml-2 text-gray-900 dark:text-gray-100">{session.notes}</span>
               </div>
             )}
           </div>
@@ -352,7 +352,7 @@ export default function SessionsPage() {
       className="group"
       onClick={() => router.push(`/sessions/${session.id}`)}
     >
-      <Card className="h-full hover:shadow-lg transition-shadow duration-200 border-0 bg-white/80 backdrop-blur-sm cursor-pointer">
+      <Card className="h-full hover:shadow-lg transition-shadow duration-200 border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm cursor-pointer">
         <div className="p-4">
           {/* Header */}
           <div className="flex items-center justify-between mb-3">
@@ -363,10 +363,10 @@ export default function SessionsPage() {
                 size="md"
               />
               <div>
-                <h3 className="font-semibold text-gray-900 text-sm">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
                   {session.student.firstName} {session.student.lastName}
                 </h3>
-                <p className="text-xs text-gray-500">{session.subject}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{session.subject}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -386,7 +386,7 @@ export default function SessionsPage() {
           </div>
 
           {/* Time and Duration */}
-          <div className="flex items-center gap-4 mb-3 text-sm text-gray-600">
+          <div className="flex items-center gap-4 mb-3 text-sm text-gray-600 dark:text-gray-400">
             <div className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
               <span>{formatTime(session.date)}</span>
@@ -399,7 +399,7 @@ export default function SessionsPage() {
 
           {/* Notes */}
           {session.notes && (
-            <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
               {session.notes}
             </p>
           )}
@@ -410,15 +410,15 @@ export default function SessionsPage() {
               {session.rating && (
                 <>
                   <Star className="h-3 w-3 text-yellow-500 fill-current" />
-                  <span className="text-xs text-gray-600">{session.rating}</span>
+                  <span className="text-xs text-gray-600 dark:text-gray-400">{session.rating}</span>
                 </>
               )}
             </div>
             <div className="flex items-center gap-1">
               {session.earnings && (
                 <>
-                  <DollarSign className="h-3 w-3 text-green-600" />
-                  <span className="text-xs text-gray-600">${session.earnings}</span>
+                  <DollarSign className="h-3 w-3 text-green-600 dark:text-green-400" />
+                  <span className="text-xs text-gray-600 dark:text-gray-400">${session.earnings}</span>
                 </>
               )}
             </div>
@@ -434,12 +434,12 @@ export default function SessionsPage() {
     
     return (
       <div className={cn(
-        'border border-gray-200 min-h-[120px] p-2 bg-white/50',
-        !isCurrentMonth && 'bg-gray-50/50 text-gray-400'
+        'border border-gray-200 dark:border-gray-700 min-h-[120px] p-2 bg-white/50 dark:bg-gray-800/50',
+        !isCurrentMonth && 'bg-gray-50/50 dark:bg-gray-900/50 text-gray-400 dark:text-gray-600'
       )}>
         <div className={cn(
           'text-sm font-medium mb-2',
-          isToday && 'text-purple-600'
+          isToday && 'text-purple-600 dark:text-purple-400'
         )}>
           {date.getDate()}
         </div>
@@ -463,7 +463,7 @@ export default function SessionsPage() {
             </div>
           ))}
           {sessions.length > 3 && (
-            <div className="text-xs text-gray-500 font-medium">
+            <div className="text-xs text-gray-500 dark:text-gray-400 font-medium">
               +{sessions.length - 3} more
             </div>
           )}
@@ -488,38 +488,43 @@ export default function SessionsPage() {
     // Get color for session based on status
     const getSessionColor = (status: Session['status']) => {
       switch (status) {
-        case 'scheduled': return 'bg-blue-500 hover:bg-blue-600 text-white'
-        case 'in_progress': return 'bg-green-500 hover:bg-green-600 text-white'
-        case 'completed': return 'bg-gray-400 hover:bg-gray-500 text-white'
-        case 'cancelled': return 'bg-red-400 hover:bg-red-500 text-white'
-        case 'no_show': return 'bg-orange-400 hover:bg-orange-500 text-white'
-        default: return 'bg-gray-400 hover:bg-gray-500 text-white'
+        case 'scheduled': return 'bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-600 dark:hover:bg-blue-700'
+        case 'in_progress': return 'bg-green-500 hover:bg-green-600 text-white dark:bg-green-600 dark:hover:bg-green-700'
+        case 'completed': return 'bg-gray-400 hover:bg-gray-500 text-white dark:bg-gray-600 dark:hover:bg-gray-700'
+        case 'cancelled': return 'bg-red-400 hover:bg-red-500 text-white dark:bg-red-600 dark:hover:bg-red-700'
+        case 'no_show': return 'bg-orange-400 hover:bg-orange-500 text-white dark:bg-orange-600 dark:hover:bg-orange-700'
+        default: return 'bg-gray-400 hover:bg-gray-500 text-white dark:bg-gray-600 dark:hover:bg-gray-700'
       }
     }
     
     return (
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-        {/* Header with days */}
-        <div className="grid grid-cols-8 bg-gray-50 border-b border-gray-200">
-          <div className="p-2 text-center">
-            <div className="text-xs font-medium text-gray-500">Time</div>
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="grid grid-cols-8 border-b border-gray-200 dark:border-gray-700">
+          {/* Time Column Header */}
+          <div className="p-3 text-xs font-medium text-gray-600 dark:text-gray-400 border-r border-gray-200 dark:border-gray-700">
+            Time
           </div>
-          {weekDays.map((day) => {
+          
+          {/* Day Headers */}
+          {weekDays.map((day, index) => {
             const isToday = day.toDateString() === new Date().toDateString()
             return (
-              <div key={day.toISOString()} className={cn(
-                "p-2 text-center border-l border-gray-200",
-                isToday && "bg-purple-50"
-              )}>
+              <div 
+                key={index} 
+                className={cn(
+                  "p-3 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0",
+                  isToday && "bg-purple-50 dark:bg-purple-900/20"
+                )}
+              >
                 <div className={cn(
                   "text-xs font-medium",
-                  isToday ? "text-purple-600" : "text-gray-900"
+                  isToday ? "text-purple-700 dark:text-purple-400" : "text-gray-600 dark:text-gray-400"
                 )}>
                   {day.toLocaleDateString('en-US', { weekday: 'short' })}
                 </div>
                 <div className={cn(
                   "text-lg font-semibold",
-                  isToday ? "text-purple-600" : "text-gray-700"
+                  isToday ? "text-purple-900 dark:text-purple-300" : "text-gray-900 dark:text-gray-100"
                 )}>
                   {day.getDate()}
                 </div>
@@ -528,48 +533,49 @@ export default function SessionsPage() {
           })}
         </div>
         
-        {/* Time slots with sessions */}
-        <div className="max-h-[450px] overflow-y-auto">
+        {/* Time Grid */}
+        <div className="overflow-y-auto max-h-[600px]">
           {hours.map((hour) => (
-            <div key={hour} className="grid grid-cols-8 border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
-              <div className="p-2 text-right pr-3 text-xs text-gray-500 font-medium">
-                {hour === 12 ? '12:00 PM' : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`}
+            <div key={hour} className="grid grid-cols-8 border-b border-gray-200 dark:border-gray-700">
+              {/* Time Label */}
+              <div className="p-3 text-xs text-gray-600 dark:text-gray-400 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
+                {new Date(2025, 0, 1, hour, 0).toLocaleTimeString('en-US', { 
+                  hour: 'numeric', 
+                  hour12: true 
+                })}
               </div>
-              {weekDays.map((day) => {
-                const daySessions = getSessionsForDayHour(day, hour)
+              
+              {/* Session Slots */}
+              {weekDays.map((day, dayIndex) => {
+                const sessions = getSessionsForDayHour(day, hour)
                 const isToday = day.toDateString() === new Date().toDateString()
                 
                 return (
                   <div 
-                    key={day.toISOString()} 
+                    key={dayIndex} 
                     className={cn(
-                      "p-1 border-l border-gray-100 min-h-[50px] relative",
-                      isToday && "bg-purple-50/30"
+                      "p-1 min-h-[50px] border-r border-gray-200 dark:border-gray-700 last:border-r-0 relative",
+                      isToday && "bg-purple-50/50 dark:bg-purple-900/10"
                     )}
                   >
-                    {daySessions.map((session, index) => (
+                    {sessions.map((session) => (
                       <div
                         key={session.id}
                         className={cn(
-                          "absolute left-1 right-1 p-1.5 rounded-md cursor-pointer shadow-sm transition-all duration-200",
-                          getSessionColor(session.status),
-                          index > 0 && "top-8" // Stack multiple sessions
+                          "absolute inset-x-1 p-2 rounded text-xs font-medium cursor-pointer transition-all duration-200 shadow-sm",
+                          getSessionColor(session.status)
                         )}
-                        style={{ top: index * 35 }}
+                        style={{
+                          height: `${(session.duration / 60) * 50}px`,
+                          minHeight: '40px'
+                        }}
                         onClick={() => {
                           setSelectedSession(session)
                           setShowSessionModal(true)
                         }}
                       >
-                        <div className="text-xs font-medium truncate">
-                          {session.student.firstName} {session.student.lastName[0]}.
-                        </div>
-                        <div className="text-xs opacity-90 truncate">
-                          {session.subject}
-                        </div>
-                        <div className="text-xs opacity-80">
-                          {formatTime(session.date)}
-                        </div>
+                        <div className="truncate">{session.student.firstName}</div>
+                        <div className="truncate opacity-75">{session.subject}</div>
                       </div>
                     ))}
                   </div>
@@ -578,26 +584,24 @@ export default function SessionsPage() {
             </div>
           ))}
         </div>
-
-        {/* Legend */}
-        <div className="bg-gray-50 border-t border-gray-200 p-2">
-          <div className="flex items-center justify-center gap-4 text-xs">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-blue-500 rounded"></div>
-              <span className="text-gray-600">Scheduled</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-green-500 rounded"></div>
-              <span className="text-gray-600">In Progress</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-gray-400 rounded"></div>
-              <span className="text-gray-600">Completed</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-red-400 rounded"></div>
-              <span className="text-gray-600">Cancelled</span>
-            </div>
+        
+        {/* Status Legend */}
+        <div className="p-3 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-700 flex items-center gap-4 text-xs">
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 bg-blue-500 dark:bg-blue-600 rounded"></div>
+            <span className="text-gray-600 dark:text-gray-400">Scheduled</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 bg-green-500 dark:bg-green-600 rounded"></div>
+            <span className="text-gray-600 dark:text-gray-400">In Progress</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 bg-gray-400 dark:bg-gray-600 rounded"></div>
+            <span className="text-gray-600 dark:text-gray-400">Completed</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 bg-red-400 dark:bg-red-600 rounded"></div>
+            <span className="text-gray-600 dark:text-gray-400">Cancelled</span>
           </div>
         </div>
       </div>
@@ -642,13 +646,14 @@ export default function SessionsPage() {
     <div className="min-h-screen bg-gradient-nerdy-bg-light">
       <div className="max-w-7xl mx-auto p-4">
         {/* Header */}
-        <div className="mb-2">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">
+        <div className="p-4 sm:p-6 lg:p-8">
+          {/* Header */}
+          <div className="mb-2">
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">
                 My Sessions
               </h1>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Schedule and manage your tutoring sessions
               </p>
             </div>
@@ -665,7 +670,7 @@ export default function SessionsPage() {
         </div>
 
         {/* Controls */}
-        <div className="bg-white rounded-xl border border-gray-200 p-3 mb-2">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-3 mb-2">
           <div className="flex flex-col lg:flex-row gap-4">
             {/* View Controls */}
             <div className="flex items-center gap-2">
@@ -737,20 +742,20 @@ export default function SessionsPage() {
             {/* Search and Filters */}
             <div className="flex-1 flex gap-2">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
                 <input
                   type="text"
                   placeholder="Search sessions..."
                   value={searchTerm}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="pl-10 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
                 />
               </div>
               
               <select
                 value={statusFilter}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
               >
                 <option value="all">All Status</option>
                 <option value="scheduled">Scheduled</option>
@@ -762,7 +767,7 @@ export default function SessionsPage() {
               <select
                 value={subjectFilter}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSubjectFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
               >
                 <option value="all">All Subjects</option>
                 {uniqueSubjects.map(subject => (
@@ -776,7 +781,7 @@ export default function SessionsPage() {
         {/* Current Date Display */}
         {viewMode === 'calendar' && (
           <div className="mb-3">
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               {calendarView === 'week' && (
                 <>
                   {formatDate(startOfWeek(currentDate))} - {formatDate(endOfWeek(currentDate))}
@@ -824,9 +829,9 @@ export default function SessionsPage() {
               animate={{ opacity: 1 }}
               className="text-center py-12"
             >
-              <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No sessions found</h3>
-              <p className="text-gray-500">Try adjusting your search or filters</p>
+              <Calendar className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No sessions found</h3>
+              <p className="text-gray-500 dark:text-gray-400">Try adjusting your search or filters</p>
             </motion.div>
           )}
         </div>

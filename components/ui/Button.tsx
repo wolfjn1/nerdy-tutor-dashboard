@@ -13,7 +13,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         gradient: 'text-white border-0 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]',
-        outline: 'border-2 bg-transparent hover:bg-opacity-10 active:bg-opacity-20',
+        outline: 'border-2 bg-transparent active:bg-opacity-20',
         ghost: 'border-0 bg-transparent hover:bg-opacity-10 active:bg-opacity-20',
         solid: 'border-0 shadow-sm hover:shadow-md active:scale-[0.98]',
       },
@@ -51,7 +51,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       className,
-      variant,
+      variant = 'gradient',
       gradientType,
       size,
       children,
@@ -92,120 +92,127 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     }
 
     const getGradientClasses = () => {
-      if (variant !== 'gradient' || !gradientType) return ''
+      if (variant !== 'gradient') return ''
       
       const baseClasses = 'relative overflow-hidden'
+      const type = gradientType || 'nerdy' // Default to 'nerdy' if no gradientType is provided
       
-      switch (gradientType) {
+      switch (type) {
         case 'nerdy':
-          return `${baseClasses} bg-gradient-nerdy hover:shadow-lg nerdy-glow`
+          return `${baseClasses} bg-gradient-nerdy animate-gradient-nerdy hover:shadow-lg nerdy-glow text-white`
         case 'yellow-pink':
-          return `${baseClasses} bg-gradient-yellow-pink hover:shadow-lg`
+          return `${baseClasses} bg-gradient-yellow-pink hover:shadow-lg text-white`
         case 'pink-cyan':
-          return `${baseClasses} bg-gradient-pink-cyan hover:shadow-lg`
+          return `${baseClasses} bg-gradient-pink-cyan hover:shadow-lg text-white`
         case 'orange-magenta':
-          return `${baseClasses} bg-gradient-orange-magenta hover:shadow-lg`
+          return `${baseClasses} bg-gradient-orange-magenta hover:shadow-lg text-white`
         case 'blue':
-          return `${baseClasses} bg-gradient-blue hover:from-blue-600 hover:to-blue-700`
+          return `${baseClasses} bg-gradient-blue hover:from-blue-600 hover:to-blue-700 text-white`
         case 'purple':
-          return `${baseClasses} bg-gradient-purple hover:from-purple-600 hover:to-purple-700`
+          return `${baseClasses} bg-gradient-purple hover:from-purple-600 hover:to-purple-700 text-white`
         case 'orange':
-          return `${baseClasses} bg-gradient-orange hover:from-orange-600 hover:to-orange-700`
+          return `${baseClasses} bg-gradient-orange hover:from-orange-600 hover:to-orange-700 text-white`
         case 'green':
-          return `${baseClasses} bg-gradient-green hover:from-green-600 hover:to-green-700`
+          return `${baseClasses} bg-gradient-green hover:from-green-600 hover:to-green-700 text-white`
         case 'pink':
-          return `${baseClasses} bg-gradient-pink hover:from-pink-600 hover:to-pink-700`
+          return `${baseClasses} bg-gradient-pink hover:from-pink-600 hover:to-pink-700 text-white`
         case 'cyan':
-          return `${baseClasses} bg-gradient-cyan hover:from-cyan-600 hover:to-cyan-700`
+          return `${baseClasses} bg-gradient-cyan hover:from-cyan-600 hover:to-cyan-700 text-white`
         default:
-          return `${baseClasses} bg-gradient-nerdy`
+          return `${baseClasses} bg-gradient-nerdy animate-gradient-nerdy text-white`
       }
     }
 
     const getOutlineClasses = () => {
       if (variant !== 'outline') return ''
       
-      switch (gradientType) {
+      const type = gradientType || 'nerdy' // Default to 'nerdy' if no gradientType is provided
+      
+      switch (type) {
         case 'nerdy':
-          return 'border-nerdy-pink text-nerdy-pink hover:bg-nerdy-pink'
+          return 'border-nerdy-pink text-nerdy-pink hover:!bg-nerdy-pink hover:!bg-opacity-100 hover:!text-white dark:border-pink-400 dark:text-pink-400 dark:hover:!bg-pink-400 transition-all'
         case 'yellow-pink':
-          return 'border-nerdy-yellow text-nerdy-yellow hover:bg-nerdy-yellow'
+          return 'border-nerdy-yellow text-nerdy-yellow hover:bg-nerdy-yellow hover:bg-opacity-100 hover:text-white dark:border-yellow-400 dark:text-yellow-400 dark:hover:bg-yellow-400 transition-all'
         case 'pink-cyan':
-          return 'border-nerdy-cyan text-nerdy-cyan hover:bg-nerdy-cyan'
+          return 'border-nerdy-cyan text-nerdy-cyan hover:bg-nerdy-cyan hover:bg-opacity-100 hover:text-white dark:border-cyan-400 dark:text-cyan-400 dark:hover:bg-cyan-400 transition-all'
         case 'orange-magenta':
-          return 'border-nerdy-magenta text-nerdy-magenta hover:bg-nerdy-magenta'
+          return 'border-nerdy-magenta text-nerdy-magenta hover:bg-nerdy-magenta hover:bg-opacity-100 hover:text-white dark:border-pink-500 dark:text-pink-500 dark:hover:bg-pink-500 transition-all'
         case 'blue':
-          return 'border-blue-500 text-blue-500 hover:bg-blue-500'
+          return 'border-blue-500 text-blue-500 hover:bg-blue-500 hover:bg-opacity-100 hover:text-white dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-400 transition-all'
         case 'purple':
-          return 'border-purple-500 text-purple-500 hover:bg-purple-500'
+          return 'border-purple-500 text-purple-500 hover:bg-purple-500 hover:bg-opacity-100 hover:text-white dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-400 transition-all'
         case 'orange':
-          return 'border-orange-500 text-orange-500 hover:bg-orange-500'
+          return 'border-orange-500 text-orange-500 hover:bg-orange-500 hover:bg-opacity-100 hover:text-white dark:border-orange-400 dark:text-orange-400 dark:hover:bg-orange-400 transition-all'
         case 'green':
-          return 'border-green-500 text-green-500 hover:bg-green-500'
+          return 'border-green-500 text-green-500 hover:bg-green-500 hover:bg-opacity-100 hover:text-white dark:border-green-400 dark:text-green-400 dark:hover:bg-green-400 transition-all'
         case 'pink':
-          return 'border-pink-500 text-pink-500 hover:bg-pink-500'
+          return 'border-pink-500 text-pink-500 hover:bg-pink-500 hover:bg-opacity-100 hover:text-white dark:border-pink-400 dark:text-pink-400 dark:hover:bg-pink-400 transition-all'
         case 'cyan':
-          return 'border-cyan-500 text-cyan-500 hover:bg-cyan-500'
+          return 'border-cyan-500 text-cyan-500 hover:bg-cyan-500 hover:bg-opacity-100 hover:text-white dark:border-cyan-400 dark:text-cyan-400 dark:hover:bg-cyan-400 transition-all'
         default:
-          return 'border-nerdy-pink text-nerdy-pink hover:bg-nerdy-pink'
+          return 'border-nerdy-pink text-nerdy-pink hover:bg-nerdy-pink hover:bg-opacity-100 hover:text-white dark:border-pink-400 dark:text-pink-400 dark:hover:bg-pink-400 transition-all'
       }
     }
 
     const getGhostClasses = () => {
       if (variant !== 'ghost') return ''
       
-      switch (gradientType) {
+      const type = gradientType || 'nerdy' // Default to 'nerdy' if no gradientType is provided
+      
+      switch (type) {
         case 'nerdy':
-          return 'text-white hover:bg-white/10'
+          return 'text-white hover:bg-white/10 dark:text-gray-200 dark:hover:bg-gray-700'
         case 'yellow-pink':
-          return 'text-nerdy-yellow hover:bg-nerdy-yellow/10'
+          return 'text-nerdy-yellow hover:bg-nerdy-yellow/10 dark:text-yellow-400 dark:hover:bg-yellow-400/10'
         case 'pink-cyan':
-          return 'text-nerdy-cyan hover:bg-nerdy-cyan/10'
+          return 'text-nerdy-cyan hover:bg-nerdy-cyan/10 dark:text-cyan-400 dark:hover:bg-cyan-400/10'
         case 'orange-magenta':
-          return 'text-nerdy-magenta hover:bg-nerdy-magenta/10'
+          return 'text-nerdy-magenta hover:bg-nerdy-magenta/10 dark:text-pink-500 dark:hover:bg-pink-500/10'
         case 'blue':
-          return 'text-blue-500 hover:bg-blue-500'
+          return 'text-blue-500 hover:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-400/10'
         case 'purple':
-          return 'text-purple-500 hover:bg-purple-500'
+          return 'text-purple-500 hover:bg-purple-500/10 dark:text-purple-400 dark:hover:bg-purple-400/10'
         case 'orange':
-          return 'text-orange-500 hover:bg-orange-500'
+          return 'text-orange-500 hover:bg-orange-500/10 dark:text-orange-400 dark:hover:bg-orange-400/10'
         case 'green':
-          return 'text-green-500 hover:bg-green-500'
+          return 'text-green-500 hover:bg-green-500/10 dark:text-green-400 dark:hover:bg-green-400/10'
         case 'pink':
-          return 'text-pink-500 hover:bg-pink-500'
+          return 'text-pink-500 hover:bg-pink-500/10 dark:text-pink-400 dark:hover:bg-pink-400/10'
         case 'cyan':
-          return 'text-cyan-500 hover:bg-cyan-500'
+          return 'text-cyan-500 hover:bg-cyan-500/10 dark:text-cyan-400 dark:hover:bg-cyan-400/10'
         default:
-          return 'text-white hover:bg-white/10'
+          return 'text-white hover:bg-white/10 dark:text-gray-200 dark:hover:bg-gray-700'
       }
     }
 
     const getSolidClasses = () => {
       if (variant !== 'solid') return ''
       
-      switch (gradientType) {
+      const type = gradientType || 'nerdy' // Default to 'nerdy' if no gradientType is provided
+      
+      switch (type) {
         case 'nerdy':
-          return 'bg-nerdy-purple text-white hover:bg-nerdy-navy'
+          return 'bg-nerdy-purple text-white hover:bg-nerdy-navy dark:bg-purple-600 dark:hover:bg-purple-700'
         case 'yellow-pink':
-          return 'bg-nerdy-yellow text-white hover:bg-nerdy-orange'
+          return 'bg-nerdy-yellow text-white hover:bg-nerdy-orange dark:bg-yellow-600 dark:hover:bg-yellow-700'
         case 'pink-cyan':
-          return 'bg-nerdy-pink text-white hover:bg-nerdy-cyan'
+          return 'bg-nerdy-pink text-white hover:bg-nerdy-cyan dark:bg-pink-600 dark:hover:bg-pink-700'
         case 'orange-magenta':
-          return 'bg-nerdy-orange text-white hover:bg-nerdy-magenta'
+          return 'bg-nerdy-orange text-white hover:bg-nerdy-magenta dark:bg-orange-600 dark:hover:bg-orange-700'
         case 'blue':
-          return 'bg-blue-500 text-white hover:bg-blue-600'
+          return 'bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
         case 'purple':
-          return 'bg-purple-500 text-white hover:bg-purple-600'
+          return 'bg-purple-500 text-white hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700'
         case 'orange':
-          return 'bg-orange-500 text-white hover:bg-orange-600'
+          return 'bg-orange-500 text-white hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700'
         case 'green':
-          return 'bg-green-500 text-white hover:bg-green-600'
+          return 'bg-green-500 text-white hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700'
         case 'pink':
-          return 'bg-pink-500 text-white hover:bg-pink-600'
+          return 'bg-pink-500 text-white hover:bg-pink-600 dark:bg-pink-600 dark:hover:bg-pink-700'
         case 'cyan':
-          return 'bg-cyan-500 text-white hover:bg-cyan-600'
+          return 'bg-cyan-500 text-white hover:bg-cyan-600 dark:bg-cyan-600 dark:hover:bg-cyan-700'
         default:
-          return 'bg-nerdy-purple text-white hover:bg-nerdy-navy'
+          return 'bg-nerdy-purple text-white hover:bg-nerdy-navy dark:bg-purple-600 dark:hover:bg-purple-700'
       }
     }
 

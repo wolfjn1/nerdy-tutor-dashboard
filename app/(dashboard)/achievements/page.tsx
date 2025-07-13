@@ -74,10 +74,10 @@ export default function AchievementsPage() {
         animate={{ opacity: 1, y: 0 }}
         className="text-center"
       >
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           Achievements 🏆
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-400">
           Track your progress and unlock rewards
         </p>
       </motion.div>
@@ -89,25 +89,25 @@ export default function AchievementsPage() {
         transition={{ delay: 0.1 }}
         className="grid grid-cols-1 md:grid-cols-3 gap-4"
       >
-        <div className="bg-white rounded-xl border border-purple-200 p-4 shadow-sm text-center">
-          <div className="text-3xl font-bold text-purple-600 mb-2">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-purple-200 dark:border-purple-800 p-4 shadow-sm text-center">
+          <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
             {earnedAchievements.length}
           </div>
-          <div className="text-sm text-gray-600">Achievements Earned</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">Achievements Earned</div>
         </div>
 
-        <div className="bg-white rounded-xl border border-green-200 p-4 shadow-sm text-center">
-          <div className="text-3xl font-bold text-green-600 mb-2">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-green-200 dark:border-green-800 p-4 shadow-sm text-center">
+          <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
             {totalXP}
           </div>
-          <div className="text-sm text-gray-600">XP from Achievements</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">XP from Achievements</div>
         </div>
 
-        <div className="bg-white rounded-xl border border-blue-200 p-4 shadow-sm text-center">
-          <div className="text-3xl font-bold text-blue-600 mb-2">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-blue-200 dark:border-blue-800 p-4 shadow-sm text-center">
+          <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
             42
           </div>
-          <div className="text-sm text-gray-600">Current Level</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">Current Level</div>
         </div>
       </motion.div>
 
@@ -128,10 +128,10 @@ export default function AchievementsPage() {
               transition={{ delay: index * 0.1 }}
               whileHover={{ y: -4 }}
             >
-              <div className={`bg-white rounded-xl border shadow-sm p-6 h-full transition-all duration-300 ${
+              <div className={`bg-white dark:bg-gray-800 rounded-xl border shadow-sm p-6 h-full transition-all duration-300 ${
                 achievement.earned 
-                  ? 'border-gray-200 hover:shadow-lg' 
-                  : 'border-gray-100 bg-gray-50 opacity-75'
+                  ? 'border-gray-200 dark:border-gray-700 hover:shadow-lg' 
+                  : 'border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 opacity-75'
               }`}>
                 <div className={`w-12 h-12 ${achievement.color} rounded-lg flex items-center justify-center mb-4 ${
                   !achievement.earned && 'opacity-50'
@@ -141,31 +141,31 @@ export default function AchievementsPage() {
                 
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className={`text-lg font-semibold ${
-                    achievement.earned ? 'text-gray-900' : 'text-gray-500'
+                    achievement.earned ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-600'
                   }`}>
                     {achievement.title}
                   </h3>
                   {achievement.earned && (
-                    <Badge variant="success" size="sm" className="bg-green-100 text-green-700 border-green-200">
+                    <Badge variant="success" size="sm" className="bg-green-100 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800">
                       Earned
                     </Badge>
                   )}
                 </div>
                 
                 <p className={`text-sm mb-4 ${
-                  achievement.earned ? 'text-gray-600' : 'text-gray-400'
+                  achievement.earned ? 'text-gray-600 dark:text-gray-400' : 'text-gray-400 dark:text-gray-600'
                 }`}>
                   {achievement.description}
                 </p>
                 
                 <div className="flex items-center justify-between">
                   <div className={`text-sm font-medium ${
-                    achievement.earned ? 'text-purple-600' : 'text-gray-400'
+                    achievement.earned ? 'text-purple-600 dark:text-purple-400' : 'text-gray-400 dark:text-gray-600'
                   }`}>
                     +{achievement.xp} XP
                   </div>
                   {achievement.earned && (
-                    <div className="text-green-600 font-medium">
+                    <div className="text-green-600 dark:text-green-400 font-medium">
                       ✓ Completed
                     </div>
                   )}

@@ -302,8 +302,8 @@ export default function OpportunitiesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Tutoring Opportunities</h1>
-          <p className="text-gray-600 mt-1">Find your next perfect student match</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Tutoring Opportunities</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Find your next perfect student match</p>
         </div>
         <Button variant="gradient" gradientType="nerdy" onClick={() => setShowPreferencesModal(true)}>
           <Target className="w-4 h-4 mr-2" />
@@ -313,68 +313,68 @@ export default function OpportunitiesPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" style={{ opacity: '1 !important', transform: 'none !important' }}>
-        <div className="bg-white rounded-xl border border-blue-200 p-4 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-blue-200 dark:border-blue-800 p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-blue-600" />
+            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{stats.newThisWeek}</div>
-              <div className="text-sm text-gray-600">New This Week</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">{stats.newThisWeek}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">New This Week</div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-purple-200 p-4 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-purple-200 dark:border-purple-800 p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-              <Users className="w-5 h-5 text-purple-600" />
+            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+              <Users className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{stats.totalOpen}</div>
-              <div className="text-sm text-gray-600">Total Open</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">{stats.totalOpen}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Total Open</div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-green-200 p-4 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-green-200 dark:border-green-800 p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-              <CheckCircle className="w-5 h-5 text-green-600" />
+            <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+              <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{stats.interestedCount}</div>
-              <div className="text-sm text-gray-600">Interested</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">{stats.interestedCount}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Interested</div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-yellow-200 p-4 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-yellow-200 dark:border-yellow-800 p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-yellow-600" />
+            <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center">
+              <Calendar className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{stats.interviewScheduled}</div>
-              <div className="text-sm text-gray-600">Interviews</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">{stats.interviewScheduled}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Interviews</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Search */}
           <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-4 h-4" />
               <input
                 type="text"
                 placeholder="Search by student, subject, or keywords..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
               />
             </div>
           </div>
@@ -384,7 +384,7 @@ export default function OpportunitiesPage() {
             <select
               value={filters.urgency}
               onChange={(e) => setFilters({ ...filters, urgency: e.target.value })}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             >
               <option value="all">All Urgency</option>
               <option value="high">High Urgency</option>
@@ -395,7 +395,7 @@ export default function OpportunitiesPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             >
               <option value="matchScore">Best Match</option>
               <option value="payRate">Highest Pay</option>
@@ -416,28 +416,28 @@ export default function OpportunitiesPage() {
       </div>
 
       {/* Results count and pagination controls */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
             Showing {startIndex + 1}-{Math.min(endIndex, filteredOpportunities.length)} of {filteredOpportunities.length} opportunities
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Show:</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">Show:</span>
               <select
                 value={itemsPerPage}
                 onChange={(e) => {
                   setItemsPerPage(Number(e.target.value))
                   setCurrentPage(1)
                 }}
-                className="px-3 py-1 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
               >
                 <option value="5">5</option>
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="50">50</option>
               </select>
-              <span className="text-sm text-gray-600">per page</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">per page</span>
             </div>
           </div>
         </div>
@@ -446,14 +446,14 @@ export default function OpportunitiesPage() {
       {/* Opportunities List */}
       <div className="space-y-4">
         {paginatedOpportunities.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-            <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No opportunities found</h3>
-            <p className="text-gray-600">Try adjusting your filters or search terms</p>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
+            <Search className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No opportunities found</h3>
+            <p className="text-gray-600 dark:text-gray-400">Try adjusting your filters or search terms</p>
           </div>
         ) : (
           paginatedOpportunities.map((opportunity) => (
-            <div key={opportunity.id} className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-lg transition-all duration-300" style={{ opacity: '1 !important', transform: 'none !important' }}>
+            <div key={opportunity.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm hover:shadow-lg transition-all duration-300" style={{ opacity: '1 !important', transform: 'none !important' }}>
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-start gap-4">
                   <Avatar
@@ -463,14 +463,14 @@ export default function OpportunitiesPage() {
                     animate={false}
                   />
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900">{opportunity.studentName}</h3>
-                    <p className="text-gray-600">{opportunity.subject}</p>
-                    <p className="text-sm text-gray-500">{opportunity.studentLevel}</p>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{opportunity.studentName}</h3>
+                    <p className="text-gray-600 dark:text-gray-400">{opportunity.subject}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-500">{opportunity.studentLevel}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   {opportunity.interested && (
-                    <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200" animate={false}>
+                    <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800" animate={false}>
                       Responded Interested
                     </Badge>
                   )}
@@ -485,7 +485,7 @@ export default function OpportunitiesPage() {
                     <Star className="w-4 h-4" />
                     <span className="text-sm font-bold">{opportunity.matchScore}%</span>
                     {showMatchTooltip === opportunity.id && (
-                      <div className="absolute z-10 bottom-full mb-2 right-0 bg-gray-900 text-white text-xs rounded-lg px-3 py-2 w-64 shadow-lg">
+                      <div className="absolute z-10 bottom-full mb-2 right-0 bg-gray-900 dark:bg-gray-950 text-white text-xs rounded-lg px-3 py-2 w-64 shadow-lg">
                         <div className="font-semibold mb-1">Match Score Factors:</div>
                         <div className="space-y-1">
                           <div>• Your subject expertise alignment</div>
@@ -494,7 +494,7 @@ export default function OpportunitiesPage() {
                           <div>• Pay rate vs. your preferences</div>
                           <div>• Past success with similar students</div>
                         </div>
-                        <div className="absolute bottom-0 right-4 transform translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
+                        <div className="absolute bottom-0 right-4 transform translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900 dark:bg-gray-950"></div>
                       </div>
                     )}
                   </div>
@@ -504,33 +504,33 @@ export default function OpportunitiesPage() {
               {/* Details Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                 <div className="flex items-center gap-2 text-sm">
-                  <DollarSign className="w-4 h-4 text-gray-400" />
-                  <span className="text-gray-900 font-medium">${opportunity.payRate}/hr</span>
-                  <span className="text-gray-500">• {opportunity.budget}</span>
+                  <DollarSign className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                  <span className="text-gray-900 dark:text-gray-100 font-medium">${opportunity.payRate}/hr</span>
+                  <span className="text-gray-500 dark:text-gray-400">• {opportunity.budget}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <Clock className="w-4 h-4 text-gray-400" />
-                  <span className="text-gray-700">{opportunity.duration} min • {opportunity.frequency}</span>
+                  <Clock className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                  <span className="text-gray-700 dark:text-gray-300">{opportunity.duration} min • {opportunity.frequency}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <Calendar className="w-4 h-4 text-gray-400" />
-                  <span className="text-gray-700">Starts {new Date(opportunity.startDate).toLocaleDateString()}</span>
+                  <Calendar className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                  <span className="text-gray-700 dark:text-gray-300">Starts {new Date(opportunity.startDate).toLocaleDateString()}</span>
                 </div>
               </div>
 
               {/* Student Needs */}
-              <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                <p className="text-sm text-gray-700">
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 mb-4">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
                   <span className="font-medium">Student needs:</span> {opportunity.needs}
                 </p>
               </div>
 
               {/* Preferred Times */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">Preferred times:</p>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preferred times:</p>
                 <div className="flex flex-wrap gap-2">
                   {opportunity.preferredTimes.map((time, i) => (
-                    <Badge key={i} variant="secondary" size="sm" className="bg-purple-50 text-purple-700 border-purple-200" animate={false}>
+                    <Badge key={i} variant="secondary" size="sm" className="bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800" animate={false}>
                       {time}
                     </Badge>
                   ))}
@@ -540,7 +540,7 @@ export default function OpportunitiesPage() {
               {/* Tags */}
               <div className="flex flex-wrap gap-2 mb-4">
                 {opportunity.tags.map((tag, i) => (
-                  <span key={i} className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+                  <span key={i} className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">
                     {tag}
                   </span>
                 ))}
@@ -570,7 +570,7 @@ export default function OpportunitiesPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
           <div className="flex justify-center items-center gap-2">
             <Button
               variant="outline"
@@ -628,7 +628,7 @@ export default function OpportunitiesPage() {
         {selectedOpportunity && (
           <div className="space-y-6">
             {/* Student Info Header */}
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
               <div className="flex items-start gap-4">
                 <Avatar
                   src={selectedOpportunity.studentAvatar}
@@ -637,8 +637,8 @@ export default function OpportunitiesPage() {
                   animate={false}
                 />
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900">{selectedOpportunity.studentName}</h3>
-                  <p className="text-gray-600">{selectedOpportunity.studentLevel} • {selectedOpportunity.subject}</p>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{selectedOpportunity.studentName}</h3>
+                  <p className="text-gray-600 dark:text-gray-400">{selectedOpportunity.studentLevel} • {selectedOpportunity.subject}</p>
                   <div className="flex items-center gap-3 mt-2">
                     <Badge variant="secondary" className={getUrgencyColor(selectedOpportunity.urgency)} animate={false}>
                       {selectedOpportunity.urgency} urgency
@@ -656,61 +656,61 @@ export default function OpportunitiesPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-3">
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wider">Compensation</p>
-                  <p className="text-lg font-semibold text-gray-900">${selectedOpportunity.payRate}/hour</p>
-                  <p className="text-sm text-gray-600">{selectedOpportunity.budget}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Compensation</p>
+                  <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">${selectedOpportunity.payRate}/hour</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{selectedOpportunity.budget}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wider">Schedule</p>
-                  <p className="text-sm font-medium text-gray-900">{selectedOpportunity.duration} minutes</p>
-                  <p className="text-sm text-gray-600">{selectedOpportunity.frequency}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Schedule</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{selectedOpportunity.duration} minutes</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{selectedOpportunity.frequency}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wider">Start Date</p>
-                  <p className="text-sm font-medium text-gray-900">{new Date(selectedOpportunity.startDate).toLocaleDateString()}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Start Date</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{new Date(selectedOpportunity.startDate).toLocaleDateString()}</p>
                 </div>
               </div>
               <div className="space-y-3">
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wider">Current Grade</p>
-                  <p className="text-lg font-semibold text-gray-900">{selectedOpportunity.additionalInfo.currentGrade}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Current Grade</p>
+                  <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{selectedOpportunity.additionalInfo.currentGrade}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wider">Previous Tutors</p>
-                  <p className="text-sm font-medium text-gray-900">{selectedOpportunity.additionalInfo.previousTutors}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Previous Tutors</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{selectedOpportunity.additionalInfo.previousTutors}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wider">Platform</p>
-                  <p className="text-sm font-medium text-gray-900">{selectedOpportunity.additionalInfo.preferredPlatform}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Platform</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{selectedOpportunity.additionalInfo.preferredPlatform}</p>
                 </div>
               </div>
             </div>
 
             {/* Detailed Needs */}
             <div>
-              <h4 className="text-sm font-semibold text-gray-900 mb-2">Student Needs</h4>
-              <p className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3">{selectedOpportunity.needs}</p>
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Student Needs</h4>
+              <p className="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">{selectedOpportunity.needs}</p>
             </div>
 
             {/* Learning Style & Goals */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <h4 className="text-sm font-semibold text-gray-900 mb-2">Learning Style</h4>
-                <p className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3">{selectedOpportunity.additionalInfo.learningStyle}</p>
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Learning Style</h4>
+                <p className="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">{selectedOpportunity.additionalInfo.learningStyle}</p>
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-gray-900 mb-2">Goals</h4>
-                <p className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3">{selectedOpportunity.additionalInfo.goals}</p>
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Goals</h4>
+                <p className="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">{selectedOpportunity.additionalInfo.goals}</p>
               </div>
             </div>
 
             {/* Availability */}
             <div>
-              <h4 className="text-sm font-semibold text-gray-900 mb-2">Availability</h4>
-              <p className="text-sm text-gray-700 mb-2">{selectedOpportunity.additionalInfo.availability}</p>
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Availability</h4>
+              <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">{selectedOpportunity.additionalInfo.availability}</p>
               <div className="flex flex-wrap gap-2">
                 {selectedOpportunity.preferredTimes.map((time, i) => (
-                  <Badge key={i} variant="secondary" size="sm" className="bg-purple-50 text-purple-700 border-purple-200" animate={false}>
+                  <Badge key={i} variant="secondary" size="sm" className="bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800" animate={false}>
                     {time}
                   </Badge>
                 ))}
@@ -719,19 +719,19 @@ export default function OpportunitiesPage() {
 
             {/* Requirements */}
             <div>
-              <h4 className="text-sm font-semibold text-gray-900 mb-2">Requirements</h4>
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Requirements</h4>
               <ul className="space-y-1">
                 {selectedOpportunity.requirements.map((req, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-gray-700">{req}</span>
+                    <CheckCircle className="w-4 h-4 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">{req}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
             {/* Actions */}
-            <div className="flex gap-3 pt-4 border-t border-gray-200">
+            <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
               {selectedOpportunity.interested ? (
                 <Button variant="solid" className="flex-1" disabled>
                   <CheckCircle className="w-4 h-4 mr-2" />
@@ -762,7 +762,7 @@ export default function OpportunitiesPage() {
         <div className="space-y-6">
           {/* Subjects */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 mb-3">Preferred Subjects</h4>
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Preferred Subjects</h4>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {['Algebra', 'Calculus', 'Statistics', 'Linear Algebra', 'SAT Math', 'AP Math', 'Geometry', 'Trigonometry', 'Pre-Calculus'].map((subject) => (
                 <label key={subject} className="flex items-center gap-2">
@@ -776,9 +776,9 @@ export default function OpportunitiesPage() {
                         setPreferences({ ...preferences, subjects: preferences.subjects.filter(s => s !== subject) })
                       }
                     }}
-                    className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                    className="rounded border-gray-300 dark:border-gray-600 text-purple-600 focus:ring-purple-500 dark:focus:ring-purple-400"
                   />
-                  <span className="text-sm text-gray-700">{subject}</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{subject}</span>
                 </label>
               ))}
             </div>
@@ -786,32 +786,32 @@ export default function OpportunitiesPage() {
 
           {/* Pay Rate */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 mb-3">Hourly Rate Range</h4>
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Hourly Rate Range</h4>
             <div className="flex items-center gap-4">
               <div className="flex-1">
-                <label className="text-xs text-gray-600">Minimum</label>
+                <label className="text-xs text-gray-600 dark:text-gray-400">Minimum</label>
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-600">$</span>
+                  <span className="text-gray-600 dark:text-gray-400">$</span>
                   <input
                     type="number"
                     value={preferences.minPayRate}
                     onChange={(e) => setPreferences({ ...preferences, minPayRate: parseInt(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
                   />
-                  <span className="text-gray-600">/hr</span>
+                  <span className="text-gray-600 dark:text-gray-400">/hr</span>
                 </div>
               </div>
               <div className="flex-1">
-                <label className="text-xs text-gray-600">Maximum</label>
+                <label className="text-xs text-gray-600 dark:text-gray-400">Maximum</label>
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-600">$</span>
+                  <span className="text-gray-600 dark:text-gray-400">$</span>
                   <input
                     type="number"
                     value={preferences.maxPayRate}
                     onChange={(e) => setPreferences({ ...preferences, maxPayRate: parseInt(e.target.value) || 200 })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
                   />
-                  <span className="text-gray-600">/hr</span>
+                  <span className="text-gray-600 dark:text-gray-400">/hr</span>
                 </div>
               </div>
             </div>
@@ -819,7 +819,7 @@ export default function OpportunitiesPage() {
 
           {/* Preferred Times */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 mb-3">Preferred Times</h4>
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Preferred Times</h4>
             <div className="grid grid-cols-2 gap-3">
               {Object.entries({
                 mornings: 'Mornings (6 AM - 12 PM)',
@@ -840,9 +840,9 @@ export default function OpportunitiesPage() {
                         }
                       })
                     }}
-                    className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                    className="rounded border-gray-300 dark:border-gray-600 text-purple-600 focus:ring-purple-500 dark:focus:ring-purple-400"
                   />
-                  <span className="text-sm text-gray-700">{label}</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{label}</span>
                 </label>
               ))}
             </div>
@@ -850,7 +850,7 @@ export default function OpportunitiesPage() {
 
           {/* Student Levels */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 mb-3">Student Levels</h4>
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Student Levels</h4>
             <div className="grid grid-cols-2 gap-3">
               {['Middle School', 'High School', 'College', 'Graduate', 'Adult Learner'].map((level) => (
                 <label key={level} className="flex items-center gap-2">
@@ -864,9 +864,9 @@ export default function OpportunitiesPage() {
                         setPreferences({ ...preferences, studentLevels: preferences.studentLevels.filter(l => l !== level) })
                       }
                     }}
-                    className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                    className="rounded border-gray-300 dark:border-gray-600 text-purple-600 focus:ring-purple-500 dark:focus:ring-purple-400"
                   />
-                  <span className="text-sm text-gray-700">{level}</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{level}</span>
                 </label>
               ))}
             </div>
@@ -874,7 +874,7 @@ export default function OpportunitiesPage() {
 
           {/* Max Students */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 mb-3">Maximum Active Students</h4>
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Maximum Active Students</h4>
             <div className="flex items-center gap-4">
               <input
                 type="range"
@@ -884,7 +884,7 @@ export default function OpportunitiesPage() {
                 onChange={(e) => setPreferences({ ...preferences, maxStudents: parseInt(e.target.value) })}
                 className="flex-1"
               />
-              <span className="text-sm font-medium text-gray-900 w-8">{preferences.maxStudents}</span>
+              <span className="text-sm font-medium text-gray-900 dark:text-gray-100 w-8">{preferences.maxStudents}</span>
             </div>
           </div>
 

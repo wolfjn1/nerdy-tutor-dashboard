@@ -198,7 +198,7 @@ export default function StudentsPage() {
         onClick={() => router.push(`/students/${student.id}`)}
         className="hover:-translate-y-1 transition-transform duration-200"
       >
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer h-[440px] flex flex-col justify-between">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer h-[440px] flex flex-col justify-between">
           <div className="flex-1">
             {/* Header */}
             <div className="flex items-center gap-3 mb-4">
@@ -206,14 +206,14 @@ export default function StudentsPage() {
                 src={student.avatar}
                 fallback={`${student.firstName[0]}${student.lastName[0]}`}
                 size="lg"
-                className="border-2 border-purple-200"
+                className="border-2 border-purple-200 dark:border-purple-700"
                 animate={false}
               />
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-gray-900">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                   {student.firstName} {student.lastName}
                 </h3>
-                <p className="text-sm text-gray-600">Grade {student.grade}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Grade {student.grade}</p>
               </div>
             </div>
 
@@ -221,12 +221,12 @@ export default function StudentsPage() {
             <div className="mb-4">
               <div className="flex flex-wrap gap-1">
                 {student.subjects.slice(0, 2).map(subject => (
-                  <Badge key={subject} variant="secondary" className="text-xs bg-purple-100 text-purple-700 border-purple-200" animate={false}>
+                  <Badge key={subject} variant="secondary" className="text-xs bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800" animate={false}>
                     {subject}
                   </Badge>
                 ))}
                 {student.subjects.length > 2 && (
-                  <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-700 border-gray-200" animate={false}>
+                  <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600" animate={false}>
                     +{student.subjects.length - 2}
                   </Badge>
                 )}
@@ -237,10 +237,10 @@ export default function StudentsPage() {
             <div className="space-y-3 mb-4">
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-600">Performance</span>
-                  <span className="text-gray-900 font-medium">{student.progress.performance}%</span>
+                  <span className="text-gray-600 dark:text-gray-400">Performance</span>
+                  <span className="text-gray-900 dark:text-gray-100 font-medium">{student.progress.performance}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div 
                     className={`h-2 rounded-full transition-all duration-500 ${getProgressColor(student.progress.performance)}`}
                     style={{ width: `${student.progress.performance}%` }}
@@ -250,10 +250,10 @@ export default function StudentsPage() {
               
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-600">Attendance</span>
-                  <span className="text-gray-900 font-medium">{student.progress.attendance}%</span>
+                  <span className="text-gray-600 dark:text-gray-400">Attendance</span>
+                  <span className="text-gray-900 dark:text-gray-100 font-medium">{student.progress.attendance}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div 
                     className={`h-2 rounded-full transition-all duration-500 ${getProgressColor(student.progress.attendance)}`}
                     style={{ width: `${student.progress.attendance}%` }}
@@ -265,32 +265,32 @@ export default function StudentsPage() {
             {/* Stats */}
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div className="text-center">
-                <div className="text-lg font-semibold text-gray-900">{student.stats.completedSessions}</div>
-                <div className="text-xs text-gray-600">Sessions</div>
+                <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">{student.stats.completedSessions}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Sessions</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-semibold text-gray-900 flex items-center justify-center gap-1">
+                <div className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-1">
                   {student.stats.avgRating > 0 ? student.stats.avgRating : '-'}
                   {student.stats.avgRating > 0 && <Star className="h-3 w-3 text-yellow-500 fill-current" />}
                 </div>
-                <div className="text-xs text-gray-600">Rating</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Rating</div>
               </div>
             </div>
 
             {/* Next Session or Warning */}
             <div className="mb-4">
               {student.stats.nextSession ? (
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                   <Calendar className="h-4 w-4" />
                   <span>Next: {formatDate(student.stats.nextSession)}</span>
                 </div>
               ) : needsSessionScheduled ? (
                 <div className="flex items-center gap-2 text-sm">
-                  <Clock className="h-4 w-4 text-red-500" />
-                  <span className="font-bold text-red-600">No session scheduled</span>
+                  <Clock className="h-4 w-4 text-red-500 dark:text-red-400" />
+                  <span className="font-bold text-red-600 dark:text-red-400">No session scheduled</span>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 text-sm text-gray-500">
+                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-500">
                   <Clock className="h-4 w-4" />
                   <span>No upcoming sessions</span>
                 </div>
@@ -357,10 +357,10 @@ export default function StudentsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-1 lg:mb-2">
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1 lg:mb-2">
             My Students
           </h1>
-          <p className="text-sm lg:text-base text-gray-600">
+          <p className="text-sm lg:text-base text-gray-600 dark:text-gray-400">
             Manage your student roster and track their progress
           </p>
         </div>
@@ -370,7 +370,7 @@ export default function StudentsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
         <div className="flex gap-2">
           <Button
             variant={activeTab === 'current' ? 'gradient' : 'outline'}
@@ -398,68 +398,68 @@ export default function StudentsPage() {
 
       {/* Stats Cards - Simple approach like dashboard */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-purple-200 p-4 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-purple-200 dark:border-purple-800 p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-              <Users className="w-5 h-5 text-purple-600" />
+            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+              <Users className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">12</div>
-              <div className="text-sm text-gray-600">{activeTab === 'current' ? 'Current' : 'Previous'} Students</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">12</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{activeTab === 'current' ? 'Current' : 'Previous'} Students</div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-green-200 p-4 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-green-200 dark:border-green-800 p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-green-600" />
+            <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">87%</div>
-              <div className="text-sm text-gray-600">Avg Performance</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">87%</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Avg Performance</div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-blue-200 p-4 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-blue-200 dark:border-blue-800 p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-blue-600" />
+            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+              <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">10</div>
-              <div className="text-sm text-gray-600">{activeTab === 'current' ? 'With Scheduled Sessions' : 'Total Completed Sessions'}</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">10</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{activeTab === 'current' ? 'With Scheduled Sessions' : 'Total Completed Sessions'}</div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-yellow-200 p-4 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-yellow-200 dark:border-yellow-800 p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-              <Star className="w-5 h-5 text-yellow-600" />
+            <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center">
+              <Star className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">4.6</div>
-              <div className="text-sm text-gray-600">Avg Rating</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">4.6</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Avg Rating</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Search */}
           <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
               <input
                 type="text"
                 placeholder="Search students..."
                 value={searchTerm}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-                className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="pl-10 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
               />
             </div>
           </div>
@@ -469,7 +469,7 @@ export default function StudentsPage() {
             <select
               value={selectedSubject}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedSubject(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             >
               <option value="all">All Subjects</option>
               {uniqueSubjects.map(subject => (
@@ -480,7 +480,7 @@ export default function StudentsPage() {
             <select
               value={selectedGrade}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedGrade(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             >
               <option value="all">All Grades</option>
               {uniqueGrades.map(grade => (
@@ -491,7 +491,7 @@ export default function StudentsPage() {
             <select
               value={sortBy}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSortBy(e.target.value as 'name' | 'performance' | 'nextSession')}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             >
               <option value="name">Sort by Name</option>
               <option value="performance">Sort by Performance</option>
@@ -500,14 +500,14 @@ export default function StudentsPage() {
 
             {/* Only show for current students tab */}
             {activeTab === 'current' && (
-              <label className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white cursor-pointer hover:bg-gray-50">
+              <label className="flex items-center gap-2 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600">
                 <input
                   type="checkbox"
                   checked={showNoScheduledSessions}
                   onChange={(e) => setShowNoScheduledSessions(e.target.checked)}
-                  className="w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
+                  className="w-4 h-4 text-purple-600 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-purple-500 dark:focus:ring-purple-400"
                 />
-                <span className="text-gray-700 whitespace-nowrap">No scheduled sessions</span>
+                <span className="text-gray-700 dark:text-gray-300 whitespace-nowrap">No scheduled sessions</span>
               </label>
             )}
           </div>
@@ -523,9 +523,9 @@ export default function StudentsPage() {
 
       {filteredStudents.length === 0 && (
         <div className="text-center py-12">
-          <Users className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No {activeTab} students found</h3>
-          <p className="text-gray-500">Try adjusting your search or filters</p>
+          <Users className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No {activeTab} students found</h3>
+          <p className="text-gray-500 dark:text-gray-400">Try adjusting your search or filters</p>
         </div>
       )}
     </div>

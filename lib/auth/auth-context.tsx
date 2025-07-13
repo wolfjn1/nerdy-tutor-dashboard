@@ -1,9 +1,10 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase-browser'
+import { AuthStorageAdapter } from './storage-adapter'
 import { TokenAuthManager } from './token-auth'
 
 interface AuthContextType {
@@ -34,7 +35,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
   const [storageWarning, setStorageWarning] = useState<string | null>(null)
   const router = useRouter()
-  const tokenManager = new TokenAuthManager()
+  const storageAdapter = new AuthStorageAdapter()
+  const tokenManager = new TokenAuthManager(storageAdapter)
+  const supabase = createClient()
 
   // Fetch tutor profile when user changes
   const fetchTutorProfile = async (userId: string) => {
@@ -156,6 +159,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error
 
       if (data.user) {
+        setUser(data.user)  // Set the user state
         await fetchTutorProfile(data.user.id)
         
         // Store tokens for fallback

@@ -180,7 +180,7 @@ export default function NewSessionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-nerdy-bg-light">
+    <div className="min-h-screen bg-gradient-nerdy-bg-light dark:bg-gray-900">
       <div className="max-w-4xl mx-auto p-6">
         {/* Header */}
         <motion.div
@@ -193,7 +193,7 @@ export default function NewSessionPage() {
               variant="ghost" 
               size="sm" 
               onClick={() => router.push('/sessions')}
-              className="text-gray-600 hover:text-gray-900"
+              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Sessions
@@ -202,10 +202,10 @@ export default function NewSessionPage() {
 
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                 Schedule New Session
               </h1>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-400">
                 Create a new tutoring session with your students
               </p>
             </div>
@@ -218,14 +218,14 @@ export default function NewSessionPage() {
                     'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors',
                     step >= stepNumber 
                       ? 'bg-purple-600 text-white' 
-                      : 'bg-gray-200 text-gray-600'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                   )}>
                     {stepNumber}
                   </div>
                   {stepNumber < 3 && (
                     <div className={cn(
                       'w-8 h-0.5 mx-2 transition-colors',
-                      step > stepNumber ? 'bg-purple-600' : 'bg-gray-200'
+                      step > stepNumber ? 'bg-purple-600' : 'bg-gray-200 dark:bg-gray-700'
                     )} />
                   )}
                 </div>
@@ -250,19 +250,19 @@ export default function NewSessionPage() {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-6"
               >
-                <div className="bg-white border border-purple-200 rounded-lg shadow-sm">
+                <div className="bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-800 rounded-lg shadow-sm">
                   <div className="p-6">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-6">Session Details</h2>
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">Session Details</h2>
                     
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Student Selection */}
                       <div className="lg:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Select Student *
                         </label>
                         <div className="relative">
                           <div className="relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
                             <input
                               type="text"
                               placeholder="Search students by name or subject..."
@@ -274,21 +274,21 @@ export default function NewSessionPage() {
                               }}
                               onFocus={() => setShowStudentDropdown(true)}
                               className={cn(
-                                'pl-10 w-full px-3 py-3 border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500',
-                                errors.student ? 'border-red-300' : 'border-gray-300'
+                                'pl-10 w-full px-3 py-3 border rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400',
+                                errors.student ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-600'
                               )}
                             />
                           </div>
                           
                           {/* Student Dropdown */}
                           {showStudentDropdown && (
-                            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                            <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                               {filteredStudents.length > 0 ? (
                                 filteredStudents.map((student) => (
                                   <button
                                     key={student.id}
                                     onClick={() => handleStudentSelect(student)}
-                                    className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                                    className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0"
                                   >
                                     <Avatar
                                       src={student.avatar}
@@ -296,17 +296,17 @@ export default function NewSessionPage() {
                                       size="sm"
                                     />
                                     <div className="flex-1">
-                                      <div className="font-medium text-gray-900">
+                                      <div className="font-medium text-gray-900 dark:text-gray-100">
                                         {student.firstName} {student.lastName}
                                       </div>
-                                      <div className="text-sm text-gray-500">
+                                      <div className="text-sm text-gray-500 dark:text-gray-400">
                                         Grade {student.grade} • {student.subjects.join(', ')}
                                       </div>
                                     </div>
                                   </button>
                                 ))
                               ) : (
-                                <div className="px-4 py-3 text-center text-gray-500">
+                                <div className="px-4 py-3 text-center text-gray-500 dark:text-gray-400">
                                   No students found
                                 </div>
                               )}
@@ -314,21 +314,21 @@ export default function NewSessionPage() {
                           )}
                         </div>
                         {errors.student && (
-                          <p className="mt-1 text-sm text-red-600">{errors.student}</p>
+                          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.student}</p>
                         )}
                       </div>
 
                       {/* Subject Selection */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Subject *
                         </label>
                         <select
                           value={subject}
                           onChange={(e) => setSubject(e.target.value)}
                           className={cn(
-                            'w-full px-3 py-3 border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500',
-                            errors.subject ? 'border-red-300' : 'border-gray-300'
+                            'w-full px-3 py-3 border rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400',
+                            errors.subject ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-600'
                           )}
                         >
                           <option value="">Select a subject</option>
@@ -337,19 +337,19 @@ export default function NewSessionPage() {
                           ))}
                         </select>
                         {errors.subject && (
-                          <p className="mt-1 text-sm text-red-600">{errors.subject}</p>
+                          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.subject}</p>
                         )}
                       </div>
 
                       {/* Duration */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Duration (minutes)
                         </label>
                         <select
                           value={duration}
                           onChange={(e) => setDuration(parseInt(e.target.value))}
-                          className="w-full px-3 py-3 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          className="w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
                         >
                           <option value={30}>30 minutes</option>
                           <option value={45}>45 minutes</option>
@@ -361,7 +361,7 @@ export default function NewSessionPage() {
 
                       {/* Date */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Date *
                         </label>
                         <input
@@ -370,18 +370,18 @@ export default function NewSessionPage() {
                           onChange={(e) => setSessionDate(e.target.value)}
                           min={getMinDate()}
                           className={cn(
-                            'w-full px-3 py-3 border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500',
-                            errors.date ? 'border-red-300' : 'border-gray-300'
+                            'w-full px-3 py-3 border rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400',
+                            errors.date ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-600'
                           )}
                         />
                         {errors.date && (
-                          <p className="mt-1 text-sm text-red-600">{errors.date}</p>
+                          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.date}</p>
                         )}
                       </div>
 
                       {/* Time */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Time *
                         </label>
                         <input
@@ -390,12 +390,12 @@ export default function NewSessionPage() {
                           onChange={(e) => setSessionTime(e.target.value)}
                           min={sessionDate ? getMinTime() : '08:00'}
                           className={cn(
-                            'w-full px-3 py-3 border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500',
-                            errors.time ? 'border-red-300' : 'border-gray-300'
+                            'w-full px-3 py-3 border rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400',
+                            errors.time ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-600'
                           )}
                         />
                         {errors.time && (
-                          <p className="mt-1 text-sm text-red-600">{errors.time}</p>
+                          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.time}</p>
                         )}
                       </div>
 
@@ -409,9 +409,9 @@ export default function NewSessionPage() {
                             id="recurring"
                             checked={isRecurring}
                             onChange={(e) => setIsRecurring(e.target.checked)}
-                            className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                            className="w-4 h-4 text-purple-600 border-gray-300 dark:border-gray-600 rounded focus:ring-purple-500 dark:focus:ring-purple-400"
                           />
-                          <label htmlFor="recurring" className="text-sm font-medium text-gray-700">
+                          <label htmlFor="recurring" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Make this a recurring session
                           </label>
                         </div>
@@ -419,13 +419,13 @@ export default function NewSessionPage() {
                         {isRecurring && (
                           <div className="grid grid-cols-2 gap-4 mt-4">
                             <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Repeat Pattern
                               </label>
                               <select
                                 value={recurringPattern}
                                 onChange={(e) => setRecurringPattern(e.target.value as any)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
                               >
                                 <option value="weekly">Weekly</option>
                                 <option value="biweekly">Bi-weekly</option>
@@ -434,7 +434,7 @@ export default function NewSessionPage() {
                             </div>
                             
                             <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 End Date
                               </label>
                               <input
@@ -442,7 +442,7 @@ export default function NewSessionPage() {
                                 value={recurringEnd}
                                 onChange={(e) => setRecurringEnd(e.target.value)}
                                 min={sessionDate}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
                               />
                             </div>
                           </div>
@@ -463,10 +463,10 @@ export default function NewSessionPage() {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-6"
               >
-                <div className="bg-white border border-purple-200 rounded-lg shadow-sm">
+                <div className="bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-800 rounded-lg shadow-sm">
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-xl font-semibold text-gray-900">Lesson Plan (Optional)</h2>
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Lesson Plan (Optional)</h2>
                       <Badge variant="secondary" className="text-xs">
                         You can add this later
                       </Badge>
@@ -475,7 +475,7 @@ export default function NewSessionPage() {
                     <div className="space-y-6">
                       {/* Lesson Title */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Lesson Title
                         </label>
                         <input
@@ -483,30 +483,30 @@ export default function NewSessionPage() {
                           placeholder="e.g., Introduction to Quadratic Equations"
                           value={lessonTitle}
                           onChange={(e) => setLessonTitle(e.target.value)}
-                          className="w-full px-3 py-3 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          className="w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
                         />
                       </div>
 
                       {/* Learning Objectives */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Learning Objectives
                         </label>
                         <div className="space-y-2">
                           {objectives.map((objective, index) => (
                             <div key={index} className="flex items-center gap-2">
-                              <Target className="h-4 w-4 text-purple-500 flex-shrink-0" />
+                              <Target className="h-4 w-4 text-purple-500 dark:text-purple-400 flex-shrink-0" />
                               <input
                                 type="text"
                                 placeholder="What will the student learn?"
                                 value={objective}
                                 onChange={(e) => updateObjective(index, e.target.value)}
-                                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
                               />
                               {objectives.length > 1 && (
                                 <button
                                   onClick={() => removeObjective(index)}
-                                  className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                                  className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"
                                 >
                                   <X className="h-4 w-4" />
                                 </button>
@@ -515,37 +515,37 @@ export default function NewSessionPage() {
                           ))}
                           <button
                             onClick={addObjective}
-                            className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700 transition-colors"
+                            className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors"
                           >
                             <Plus className="h-4 w-4" />
                             Add objective
                           </button>
                         </div>
                         {errors.objectives && (
-                          <p className="mt-1 text-sm text-red-600">{errors.objectives}</p>
+                          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.objectives}</p>
                         )}
                       </div>
 
                       {/* Materials */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Materials Needed
                         </label>
                         <div className="space-y-2">
                           {materials.map((material, index) => (
                             <div key={index} className="flex items-center gap-2">
-                              <BookOpen className="h-4 w-4 text-purple-500 flex-shrink-0" />
+                              <BookOpen className="h-4 w-4 text-purple-500 dark:text-purple-400 flex-shrink-0" />
                               <input
                                 type="text"
                                 placeholder="e.g., Calculator, textbook, worksheets"
                                 value={material}
                                 onChange={(e) => updateMaterial(index, e.target.value)}
-                                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
                               />
                               {materials.length > 1 && (
                                 <button
                                   onClick={() => removeMaterial(index)}
-                                  className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                                  className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"
                                 >
                                   <X className="h-4 w-4" />
                                 </button>
@@ -554,7 +554,7 @@ export default function NewSessionPage() {
                           ))}
                           <button
                             onClick={addMaterial}
-                            className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700 transition-colors"
+                            className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors"
                           >
                             <Plus className="h-4 w-4" />
                             Add material
@@ -564,7 +564,7 @@ export default function NewSessionPage() {
 
                       {/* Session Notes */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Session Notes
                         </label>
                         <textarea
@@ -572,7 +572,7 @@ export default function NewSessionPage() {
                           value={sessionNotes}
                           onChange={(e) => setSessionNotes(e.target.value)}
                           rows={4}
-                          className="w-full px-3 py-3 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                          className="w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 resize-none"
                         />
                       </div>
                     </div>
@@ -590,14 +590,14 @@ export default function NewSessionPage() {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-6"
               >
-                <div className="bg-white border border-purple-200 rounded-lg shadow-sm">
+                <div className="bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-800 rounded-lg shadow-sm">
                   <div className="p-6">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-6">Review & Confirm</h2>
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">Review & Confirm</h2>
                     
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Session Summary */}
                       <div>
-                        <h3 className="font-semibold text-gray-900 mb-4">Session Details</h3>
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Session Details</h3>
                         <div className="space-y-3">
                           <div className="flex items-center gap-3">
                             {selectedStudent && (
@@ -608,10 +608,10 @@ export default function NewSessionPage() {
                                   size="sm"
                                 />
                                 <div>
-                                  <div className="font-medium text-gray-900">
+                                  <div className="font-medium text-gray-900 dark:text-gray-100">
                                     {selectedStudent.firstName} {selectedStudent.lastName}
                                   </div>
-                                  <div className="text-sm text-gray-500">Grade {selectedStudent.grade}</div>
+                                  <div className="text-sm text-gray-500 dark:text-gray-400">Grade {selectedStudent.grade}</div>
                                 </div>
                               </>
                             )}
@@ -619,12 +619,12 @@ export default function NewSessionPage() {
                           
                           <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
-                              <span className="text-gray-600">Subject:</span>
-                              <span className="font-medium text-gray-900">{subject}</span>
+                              <span className="text-gray-600 dark:text-gray-400">Subject:</span>
+                              <span className="font-medium text-gray-900 dark:text-gray-100">{subject}</span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-gray-600">Date:</span>
-                              <span className="font-medium text-gray-900">
+                              <span className="text-gray-600 dark:text-gray-400">Date:</span>
+                              <span className="font-medium text-gray-900 dark:text-gray-100">
                                 {new Date(sessionDate).toLocaleDateString('en-US', {
                                   weekday: 'long',
                                   month: 'long',
@@ -633,17 +633,17 @@ export default function NewSessionPage() {
                               </span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-gray-600">Time:</span>
-                              <span className="font-medium text-gray-900">{sessionTime}</span>
+                              <span className="text-gray-600 dark:text-gray-400">Time:</span>
+                              <span className="font-medium text-gray-900 dark:text-gray-100">{sessionTime}</span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-gray-600">Duration:</span>
-                              <span className="font-medium text-gray-900">{duration} minutes</span>
+                              <span className="text-gray-600 dark:text-gray-400">Duration:</span>
+                              <span className="font-medium text-gray-900 dark:text-gray-100">{duration} minutes</span>
                             </div>
                             {isRecurring && (
                               <div className="flex justify-between">
-                                <span className="text-gray-600">Recurring:</span>
-                                <span className="font-medium text-gray-900 capitalize">
+                                <span className="text-gray-600 dark:text-gray-400">Recurring:</span>
+                                <span className="font-medium text-gray-900 dark:text-gray-100 capitalize">
                                   {recurringPattern} until {recurringEnd}
                                 </span>
                               </div>
@@ -654,18 +654,18 @@ export default function NewSessionPage() {
 
                       {/* Lesson Plan Summary */}
                       <div>
-                        <h3 className="font-semibold text-gray-900 mb-4">Lesson Plan</h3>
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Lesson Plan</h3>
                         {lessonTitle ? (
                           <div className="space-y-3">
                             <div>
-                              <div className="font-medium text-gray-900 mb-1">{lessonTitle}</div>
+                              <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">{lessonTitle}</div>
                               {objectives.filter(obj => obj.trim()).length > 0 && (
                                 <div>
-                                  <div className="text-sm text-gray-600 mb-1">Objectives:</div>
-                                  <ul className="text-sm text-gray-700 space-y-1">
+                                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Objectives:</div>
+                                  <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
                                     {objectives.filter(obj => obj.trim()).map((objective, index) => (
                                       <li key={index} className="flex items-start gap-2">
-                                        <Target className="h-3 w-3 text-purple-500 mt-0.5 flex-shrink-0" />
+                                        <Target className="h-3 w-3 text-purple-500 dark:text-purple-400 mt-0.5 flex-shrink-0" />
                                         {objective}
                                       </li>
                                     ))}
@@ -674,7 +674,7 @@ export default function NewSessionPage() {
                               )}
                               {materials.filter(mat => mat.trim()).length > 0 && (
                                 <div className="mt-2">
-                                  <div className="text-sm text-gray-600 mb-1">Materials:</div>
+                                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Materials:</div>
                                   <div className="flex flex-wrap gap-1">
                                     {materials.filter(mat => mat.trim()).map((material, index) => (
                                       <Badge key={index} variant="secondary" size="sm">
@@ -687,18 +687,18 @@ export default function NewSessionPage() {
                             </div>
                           </div>
                         ) : (
-                          <p className="text-sm text-gray-500 italic">No lesson plan added</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 italic">No lesson plan added</p>
                         )}
                       </div>
                     </div>
 
                     {/* Submit Warning */}
-                    <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg">
                       <div className="flex items-start gap-3">
-                        <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                        <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
                         <div>
-                          <div className="font-medium text-blue-900">Ready to schedule?</div>
-                          <div className="text-sm text-blue-700 mt-1">
+                          <div className="font-medium text-blue-900 dark:text-blue-100">Ready to schedule?</div>
+                          <div className="text-sm text-blue-700 dark:text-blue-300 mt-1">
                             The student and their parent will receive a notification about this session. 
                             You can always edit the details later if needed.
                           </div>

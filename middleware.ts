@@ -4,6 +4,8 @@ import type { NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
+  
+  console.log('[Middleware] Processing request to:', req.nextUrl.pathname)
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -11,9 +13,12 @@ export async function middleware(req: NextRequest) {
     {
       cookies: {
         get(name: string) {
-          return req.cookies.get(name)?.value
+          const value = req.cookies.get(name)?.value
+          console.log(`[Middleware] Getting cookie ${name}:`, value ? 'exists' : 'not found')
+          return value
         },
         set(name: string, value: string, options: CookieOptions) {
+          console.log(`[Middleware] Setting cookie ${name}`)
           res.cookies.set({
             name,
             value,
@@ -21,6 +26,7 @@ export async function middleware(req: NextRequest) {
           })
         },
         remove(name: string, options: CookieOptions) {
+          console.log(`[Middleware] Removing cookie ${name}`)
           res.cookies.set({
             name,
             value: '',
@@ -31,7 +37,13 @@ export async function middleware(req: NextRequest) {
     }
   )
 
-  const { data: { session } } = await supabase.auth.getSession()
+  const { data: { session }, error } = await supabase.auth.getSession()
+  console.log('[Middleware] Session check:', { 
+    hasSession: !!session, 
+    userId: session?.user?.id,
+    pathname: req.nextUrl.pathname,
+    error 
+  })
 
   // List of public routes that don't require authentication
   const publicRoutes = ['/login', '/register', '/forgot-password', '/reset-password']

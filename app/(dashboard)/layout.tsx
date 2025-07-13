@@ -18,10 +18,9 @@ import {
   Plus,
   Zap
 } from 'lucide-react'
-import { Button, NotificationBell, useToastHelpers, Avatar } from '@/components/ui'
+import { Button, NotificationBell, useToastHelpers, Avatar, StorageWarning } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useTutorStore } from '@/lib/stores/tutorStore'
-import { StorageWarning } from '@/components/ui/StorageWarning'
 
 interface NavItem {
   id: string
@@ -128,7 +127,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-nerdy-bg-light flex">
+    <div className="min-h-screen bg-gradient-nerdy-bg-light dark:bg-gray-900 flex">
       {/* Mobile sidebar backdrop */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -136,7 +135,7 @@ export default function DashboardLayout({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            className="fixed inset-0 bg-black/50 dark:bg-black/70 z-40 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         )}
@@ -148,23 +147,23 @@ export default function DashboardLayout({
         animate={{
           x: isLargeScreen ? 0 : (sidebarOpen ? 0 : -320),
         }}
-        className="fixed left-0 top-0 bottom-0 w-80 h-screen bg-gradient-to-b from-purple-600 via-purple-700 to-purple-800 shadow-xl z-50 lg:w-64"
+        className="fixed left-0 top-0 bottom-0 w-80 h-screen bg-gradient-to-b from-purple-600 via-purple-700 to-purple-800 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 shadow-xl z-50 lg:w-64 dark:border-r dark:border-gray-700"
       >
         <div className="flex flex-col h-full">
           {/* Logo and Close Button */}
-          <div className="flex-shrink-0 flex items-center justify-between p-6 border-b border-white/20">
+          <div className="flex-shrink-0 flex items-center justify-between p-6 border-b border-white/20 dark:border-gray-700">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-white/20 dark:bg-purple-600/20 flex items-center justify-center">
                 <span className="text-white font-bold text-xl">N</span>
               </div>
               <div>
                 <div className="text-white font-bold text-lg">Nerdy</div>
-                <div className="text-white/80 text-sm">Live+AI™</div>
+                <div className="text-white/80 dark:text-purple-300 text-sm">Live+AI™</div>
               </div>
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-2 text-white/80 hover:text-white transition-colors"
+              className="lg:hidden p-2 text-white/80 hover:text-white dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -184,17 +183,17 @@ export default function DashboardLayout({
                   className={cn(
                     'flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 group',
                     isActive 
-                      ? 'bg-pink-500/30 text-white shadow-lg backdrop-blur-sm border border-pink-400/30' 
-                      : 'text-white/80 hover:bg-pink-500/20 hover:text-white'
+                      ? 'bg-pink-500/30 text-white shadow-lg backdrop-blur-sm border border-pink-400/30 dark:bg-purple-600/30 dark:border-purple-500/30' 
+                      : 'text-white/80 hover:bg-pink-500/20 hover:text-white dark:text-gray-300 dark:hover:bg-gray-700/50 dark:hover:text-gray-100'
                   )}
                 >
                   <Icon className="w-4 h-4 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm">{item.label}</div>
-                    <div className="text-xs opacity-70 leading-tight">{item.description}</div>
+                    <div className="text-xs opacity-70 leading-tight dark:opacity-60">{item.description}</div>
                   </div>
                   {item.badge && (
-                    <div className="bg-white/20 text-white px-2 py-1 rounded-full text-xs font-medium">
+                    <div className="bg-white/20 dark:bg-purple-600/30 text-white px-2 py-1 rounded-full text-xs font-medium">
                       {item.badge}
                     </div>
                   )}
@@ -204,18 +203,18 @@ export default function DashboardLayout({
           </nav>
 
           {/* User Section */}
-          <div className="flex-shrink-0 p-3 border-t border-white/20 bg-black/10 backdrop-blur-sm">
+          <div className="flex-shrink-0 p-3 border-t border-white/20 dark:border-gray-700 bg-black/10 dark:bg-gray-800/50 backdrop-blur-sm">
             <div className="flex items-center gap-3 mb-3">
               <Avatar
                 src={tutor?.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"}
                 fallback={tutor?.firstName && tutor?.lastName ? `${tutor.firstName[0]}${tutor.lastName[0]}` : "JD"}
                 size="sm"
-                className="ring-2 ring-pink-400/50"
+                className="ring-2 ring-pink-400/50 dark:ring-purple-500/50"
                 animate={false}
               />
               <div className="flex-1 min-w-0">
                 <div className="text-white font-medium text-sm">{tutor ? `${tutor.firstName} ${tutor.lastName}` : 'John Doe'}</div>
-                <div className="text-white/80 text-xs">Expert Tutor • Level 42</div>
+                <div className="text-white/80 dark:text-purple-300 text-xs">Expert Tutor • Level 42</div>
               </div>
             </div>
             
@@ -223,7 +222,7 @@ export default function DashboardLayout({
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full border-white/30 text-white hover:bg-white/10"
+                className="w-full border-white/30 text-white hover:bg-white/10 dark:border-purple-500/30 dark:text-purple-300 dark:hover:bg-purple-600/20"
                 leftIcon={<Settings className="w-4 h-4" />}
               >
                 Settings
@@ -239,19 +238,19 @@ export default function DashboardLayout({
         <StorageWarning />
         
         {/* Header */}
-        <header className="bg-white/60 backdrop-blur-sm border-b border-white/30 sticky top-0 z-30">
+        <header className="bg-white/60 dark:bg-gray-800/90 backdrop-blur-sm border-b border-white/30 dark:border-gray-700 sticky top-0 z-30">
           <div className="flex items-center justify-between px-4 lg:px-6 py-3 lg:py-4">
             <div className="flex items-center gap-4">
               {/* Mobile menu button */}
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 text-gray-600 hover:text-gray-800 transition-colors"
+                className="lg:hidden p-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
               >
                 <Menu className="w-5 h-5" />
               </button>
               
               {/* Page title will be added by individual pages */}
-              <div className="text-xl font-bold text-slate-800">
+              <div className="text-xl font-bold text-slate-800 dark:text-gray-100">
                 {navigation.find(item => item.href === pathname)?.label || 'Dashboard'}
               </div>
             </div>
@@ -281,7 +280,7 @@ export default function DashboardLayout({
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-auto p-4 lg:p-6">
+        <main className="flex-1 overflow-auto p-4 lg:p-6 dark:bg-gray-900">
           {children}
         </main>
       </div>

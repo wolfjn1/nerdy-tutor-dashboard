@@ -2,10 +2,10 @@
 
 import React from 'react'
 import { Calendar, Clock, TrendingUp, Users, DollarSign, Target, BookOpen, Trophy } from 'lucide-react'
-import { useAuth } from '@/lib/auth/auth-context'
+import { useTutorStore } from '@/lib/stores/tutorStore'
 
 export default function DashboardPage() {
-  const { tutor } = useAuth()
+  const { tutor } = useTutorStore()
   
   return (
     <div className="space-y-4">

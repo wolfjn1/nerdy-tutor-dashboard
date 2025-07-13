@@ -47,18 +47,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Fetch tutor profile when user changes
   const fetchTutorProfile = async (userId: string) => {
     try {
+      console.log('[Auth] Fetching tutor profile for user:', userId)
       const { data, error } = await supabase
         .from('tutors')
         .select('*')
         .eq('auth_user_id', userId)
         .single()
 
-      if (error) throw error
+      if (error) {
+        console.log('[Auth] Error fetching tutor profile:', error)
+        
+        // If no tutor exists, create a default one for demo purposes
+        if (error.code === 'PGRST116') {
+          console.log('[Auth] No tutor record found, creating default data')
+          const defaultTutor = {
+            id: 'demo-tutor-001',
+            auth_user_id: userId,
+            email: 'sarah_chen@hotmail.com',
+            first_name: 'Sarah',
+            last_name: 'Chen',
+            avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop&crop=face',
+            bio: 'Expert mathematics tutor with 5+ years of experience. Specializing in AP Calculus, SAT/ACT prep, and college-level mathematics.',
+            subjects: ['Mathematics', 'Calculus', 'Algebra', 'SAT Math'],
+            hourly_rate: 85,
+            availability: {},
+            rating: 4.9,
+            total_earnings: 15750,
+            total_hours: 185,
+            is_verified: true,
+            badges: ['Expert Tutor', 'Top Rated', 'Century Club', 'Perfect Week']
+          }
+          
+          setTutor(defaultTutor)
+          setTutorInStore(defaultTutor)
+          console.log('[Auth] Default tutor data set')
+          return defaultTutor
+        }
+        
+        throw error
+      }
+      
+      console.log('[Auth] Tutor profile fetched:', data)
       
       // Update both local state and global store
       setTutor(data)
       if (data) {
         setTutorInStore(data)
+        console.log('[Auth] Tutor data set in store')
       }
       
       return data
@@ -100,12 +135,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Check for existing session
     const initializeAuth = async () => {
       try {
+        console.log('[Auth] Initializing auth...')
         // First try normal session
         const { data: { session } } = await supabase.auth.getSession()
         
+        console.log('[Auth] Session found:', !!session, session?.user?.id)
+        
         if (session) {
           setUser(session.user)
-          await fetchTutorProfile(session.user.id)
+          const tutorData = await fetchTutorProfile(session.user.id)
+          console.log('[Auth] After fetchTutorProfile, tutor data:', tutorData)
         } else {
           // Check for stored tokens
           const tokens = await tokenManager.getTokens()

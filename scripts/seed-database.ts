@@ -1,5 +1,9 @@
 import { createClient } from '@supabase/supabase-js'
 import { faker } from '@faker-js/faker'
+import * as dotenv from 'dotenv'
+
+// Load environment variables from .env.local
+dotenv.config({ path: '.env.local' })
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -705,7 +709,7 @@ async function createAchievementsAndNotifications(tutors: any[]) {
         id: faker.string.uuid(),
         tutor_id: tutor.id,
         achievement_id: achievement.id,
-        progress: unlocked ? progress : faker.number.int({ min: 1, max: progress - 1 }),
+        progress: unlocked ? progress : faker.number.int({ min: 1, max: Math.max(1, progress - 1) }),
         unlocked_at: unlocked ? faker.date.past({ years: 0.5 }).toISOString() : null
       })
       

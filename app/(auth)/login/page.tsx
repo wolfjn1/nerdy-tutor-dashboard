@@ -249,7 +249,7 @@ export default function LoginPage() {
                   variant="outline"
                   className="w-full"
                   onClick={() => {
-                    setEmail('sarah.chen@example.com')
+                    setEmail('sarah_chen@hotmail.com')
                     setPassword('demo123')
                     setShowMagicLink(false)
                   }}
@@ -257,7 +257,7 @@ export default function LoginPage() {
                   Use Demo Account
                 </Button>
                 <p className="text-xs text-center text-gray-500">
-                  Demo: sarah.chen@example.com / demo123
+                  Demo: sarah_chen@hotmail.com / demo123
                 </p>
               </div>
 

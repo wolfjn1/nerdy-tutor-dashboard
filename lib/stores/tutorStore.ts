@@ -49,6 +49,7 @@ interface TutorState {
   
   addXP: (amount: number, source: string, studentId?: string, sessionId?: string) => void
   updateStreak: () => void
+  setStreak: (streak: number) => void
   unlockAchievement: (id: string) => void
   
   setUIState: (updates: Partial<UIState>) => void
@@ -180,6 +181,10 @@ export const useTutorStore = create<TutorState>()(
         
         const newStreak = calculateStreak(sessionDates)
         set({ streak: newStreak })
+      },
+      
+      setStreak: (streak: number) => {
+        set({ streak })
       },
       
       unlockAchievement: (id) => {

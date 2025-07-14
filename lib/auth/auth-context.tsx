@@ -83,8 +83,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           // Also set gamification data
           const setGamificationData = useTutorStore.getState().setGamificationData
+          const setStreak = useTutorStore.getState().setStreak
+          
           // Set level 42 with 25% progress (128662 XP total)
           setGamificationData(128662)
+          
+          // Set streak to 21 days
+          setStreak(21)
           
           console.log('[Auth] Default tutor data set with gamification')
           return defaultTutor

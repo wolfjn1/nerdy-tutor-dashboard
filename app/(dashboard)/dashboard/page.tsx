@@ -2,27 +2,56 @@
 
 import React from 'react'
 import { Calendar, Clock, TrendingUp, Users, DollarSign, Target, BookOpen, Trophy } from 'lucide-react'
-import { useTutorStore } from '@/lib/stores/tutorStore'
+import { useHydratedStore } from '@/lib/hooks/useHydratedStore'
+import { useAuth } from '@/lib/auth/auth-context'
+
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default function DashboardPage() {
-  const { tutor } = useTutorStore()
+  const { tutor, isHydrated } = useHydratedStore()
+  const { loading: authLoading } = useAuth()
   
   // Debug log
   console.log('[Dashboard] Tutor data:', tutor)
+  console.log('[Dashboard] Auth loading:', authLoading)
+  console.log('[Dashboard] Store hydrated:', isHydrated)
   
   // Temporary fix: Clear cache button
   const clearCacheAndReload = () => {
     localStorage.removeItem('tutor-store')
+    // Also clear any service worker caches
+    if ('caches' in window) {
+      caches.keys().then(names => {
+        names.forEach(name => caches.delete(name))
+      })
+    }
     window.location.reload()
+  }
+  
+  // Show loading skeleton while store is hydrating or auth is initializing
+  if (!isHydrated || (authLoading && !tutor)) {
+    return (
+      <div className="space-y-4 animate-pulse">
+        <div className="flex items-center gap-6">
+          <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700" />
+          <div>
+            <div className="h-8 w-64 bg-gray-200 dark:bg-gray-700 rounded mb-2" />
+            <div className="h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded" />
+          </div>
+        </div>
+      </div>
+    )
   }
   
   return (
     <div className="space-y-4">
       {/* Temporary cache clear button */}
-      {!tutor && (
+      {!tutor && !authLoading && (
         <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
           <p className="text-sm text-yellow-800 dark:text-yellow-200 mb-2">
-            If you're seeing "undefined undefined", click below to clear cache:
+            If you're seeing loading issues, click below to clear cache:
           </p>
           <button
             onClick={clearCacheAndReload}
@@ -46,7 +75,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-              Welcome back, {tutor ? `${tutor.first_name} ${tutor.last_name}` : 'Loading...'}! 👋
+              Welcome back, {tutor ? `${tutor.first_name} ${tutor.last_name}` : 'there'}! 👋
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
               Here's your tutoring overview for today

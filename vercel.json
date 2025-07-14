@@ -1,1 +1,20 @@
-{"framework": "nextjs", "buildCommand": "npm run build", "installCommand": "npm ci --no-optional"}
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "installCommand": "npm ci --no-optional",
+  "headers": [
+    {
+      "source": "/dashboard(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, must-revalidate"
+        },
+        {
+          "key": "Pragma",
+          "value": "no-cache"
+        }
+      ]
+    }
+  ]
+}

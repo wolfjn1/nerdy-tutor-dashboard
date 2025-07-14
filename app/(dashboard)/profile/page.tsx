@@ -20,13 +20,13 @@ export default function ProfilePage() {
     avatar_url: tutor.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
     level: level,
     title: 'Expert Tutor',
-    joinDate: tutor.joinDate ? new Date(tutor.joinDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'March 2022',
+    joinDate: tutor.created_at ? new Date(tutor.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'March 2022',
     subjects: tutor.subjects,
     stats: {
       totalSessions: 245, // Using default as not calculated
       rating: tutor.rating,
       students: students.filter(s => s.isActive).length,
-      earnings: tutor.totalEarnings
+      earnings: tutor.total_earnings
     }
   }
 

@@ -18,6 +18,11 @@ export default function DashboardPage() {
   console.log('[Dashboard] Tutor data:', tutor)
   console.log('[Dashboard] Auth loading:', authLoading)
   console.log('[Dashboard] Mounted:', mounted)
+  console.log('[Dashboard] Environment:', {
+    NODE_ENV: process.env.NODE_ENV,
+    hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+    hasSupabaseKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  })
   
   // Temporary fix: Clear cache button
   const clearCacheAndReload = () => {

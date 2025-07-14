@@ -52,6 +52,7 @@ interface TutorState {
   unlockAchievement: (id: string) => void
   
   setUIState: (updates: Partial<UIState>) => void
+  setGamificationData: (xp: number) => void
   
   // Getters
   getActiveStudents: () => Student[]
@@ -195,6 +196,20 @@ export const useTutorStore = create<TutorState>()(
         set((state) => ({
           ui: { ...state.ui, ...updates }
         }))
+      },
+      
+      // Add this new function to set gamification data directly
+      setGamificationData: (xp: number) => {
+        const level = calculateLevelFromXP(xp)
+        const levelProgress = calculateLevelProgress(xp, level)
+        const xpForNextLevel = calculateXPForNextLevel(level)
+        
+        set({
+          totalXP: xp,
+          level,
+          levelProgress,
+          xpForNextLevel
+        })
       },
       
       // Getters

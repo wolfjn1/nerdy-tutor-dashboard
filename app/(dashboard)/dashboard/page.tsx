@@ -112,13 +112,29 @@ export default function DashboardPage() {
           
           <div className="flex-1 max-w-md">
             <div className="flex justify-between text-sm mb-2">
-              <span>{totalXP || 2450} / {xpForNextLevel || 3000} XP</span>
+              <span>{(() => {
+                // Calculate XP within current level
+                let remainingXP = totalXP || 0
+                for (let i = 1; i < (level || 1); i++) {
+                  // XP formula: level * 100 + (level - 1) * 50
+                  remainingXP -= (i * 100 + (i - 1) * 50)
+                }
+                return remainingXP
+              })()} / {xpForNextLevel || 100} XP</span>
               <span>to next level</span>
             </div>
             <div className="w-full bg-white/20 rounded-full h-3">
               <div 
                 className="bg-gradient-to-r from-yellow-300 to-yellow-500 h-3 rounded-full transition-all duration-500"
-                style={{ width: `${((totalXP || 2450) / (xpForNextLevel || 3000)) * 100}%` }}
+                style={{ width: `${(() => {
+                  // Calculate progress within current level
+                  let remainingXP = totalXP || 0
+                  for (let i = 1; i < (level || 1); i++) {
+                    remainingXP -= (i * 100 + (i - 1) * 50)
+                  }
+                  const progress = (remainingXP / (xpForNextLevel || 100)) * 100
+                  return Math.min(100, Math.max(0, progress))
+                })()}%` }}
               />
             </div>
             

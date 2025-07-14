@@ -80,7 +80,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           setTutor(defaultTutor)
           setTutorInStore(defaultTutor)
-          console.log('[Auth] Default tutor data set')
+          
+          // Also set gamification data
+          const addXP = useTutorStore.getState().addXP
+          // Set level 42 with appropriate XP (2450 total)
+          addXP(2450, 'initial_setup')
+          
+          console.log('[Auth] Default tutor data set with gamification')
           return defaultTutor
         }
         

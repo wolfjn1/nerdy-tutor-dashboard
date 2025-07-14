@@ -1,40 +1,28 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        port: '',
-        pathname: '/**',
-      },
-    ],
+    domains: ['images.unsplash.com'],
   },
-  typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
-    ignoreBuildErrors: false,
+  // Ensure environment variables are available
+  env: {
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   },
-  // Suppress specific warnings in development
-  webpack: (config, { dev, isServer }) => {
-    if (dev && !isServer) {
-      // Suppress the Supabase getSession warning in development
-      // This warning is expected in middleware where we can't use getUser()
-      const originalWarn = console.warn;
-      console.warn = (...args) => {
-        if (
-          args[0] && 
-          typeof args[0] === 'string' && 
-          args[0].includes('Using the user object as returned from supabase.auth.getSession()')
-        ) {
-          return;
-        }
-        originalWarn.apply(console, args);
-      };
+  webpack: (config, { isServer }) => {
+    // Suppress specific warnings
+    config.infrastructureLogging = {
+      level: 'error',
     }
-    return config;
+    
+    // Ignore specific warnings
+    config.ignoreWarnings = [
+      { module: /node_modules/ },
+      { message: /Using the user object as returned from supabase/ },
+    ]
+    
+    return config
   },
 }
 

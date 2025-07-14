@@ -18,8 +18,9 @@ import {
   Plus,
   Zap
 } from 'lucide-react'
-import { Button, NotificationBell, useToastHelpers, Avatar, StorageWarning } from '@/components/ui'
+import { Avatar, Button, NotificationBell, useToastHelpers } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { StorageWarning } from '@/lib/auth/StorageWarning'
 import { useTutorStore } from '@/lib/stores/tutorStore'
 
 interface NavItem {
@@ -85,6 +86,7 @@ export default function DashboardLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isLargeScreen, setIsLargeScreen] = useState(false)
+  const { tutor, level } = useTutorStore()
 
   React.useEffect(() => {
     const checkScreenSize = () => {
@@ -214,7 +216,7 @@ export default function DashboardLayout({
               />
               <div className="flex-1 min-w-0">
                 <div className="text-white font-medium text-sm">{tutor ? `${tutor.first_name} ${tutor.last_name}` : 'John Doe'}</div>
-                <div className="text-white/80 dark:text-purple-300 text-xs">Expert Tutor • Level 42</div>
+                <div className="text-white/80 dark:text-purple-300 text-xs">Expert Tutor • Level {level}</div>
               </div>
             </div>
             

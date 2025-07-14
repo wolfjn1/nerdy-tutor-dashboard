@@ -76,7 +76,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-              Welcome back, {tutor ? `${tutor.first_name} ${tutor.last_name}` : 'there'}! 👋
+              Welcome back{tutor ? `, ${tutor.first_name} ${tutor.last_name}` : ''}! 👋
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
               Here's your tutoring overview for today

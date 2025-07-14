@@ -1,18 +1,78 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Calendar, Clock, TrendingUp, Users, DollarSign, Target, BookOpen, Trophy } from 'lucide-react'
 import { useTutorStore } from '@/lib/stores/tutorStore'
 import { useAuth } from '@/lib/auth/auth-context'
+import { 
+  getTodaysSessions, 
+  getTodaysEarnings, 
+  getActiveStudentsCount, 
+  getSuccessRate,
+  getUpcomingSessions,
+  getRequiredActions,
+  getQuickActions
+} from '@/lib/api/dashboard'
+import { format } from 'date-fns'
 
 export default function DashboardPage() {
   const { tutor, level, totalXP, xpForNextLevel, streak, students, sessions } = useTutorStore()
   const { loading: authLoading } = useAuth()
   const [mounted, setMounted] = React.useState(false)
   
+  // Dashboard data state
+  const [todaysSessions, setTodaysSessions] = useState<number>(0)
+  const [todaysEarnings, setTodaysEarnings] = useState<number>(0)
+  const [activeStudentsCount, setActiveStudentsCount] = useState<number>(0)
+  const [successRate, setSuccessRate] = useState<number>(0)
+  const [upcomingSessions, setUpcomingSessions] = useState<any[]>([])
+  const [requiredActions, setRequiredActions] = useState<any[]>([])
+  const [dataLoading, setDataLoading] = useState(true)
+  
   React.useEffect(() => {
     setMounted(true)
   }, [])
+  
+  // Fetch dashboard data
+  useEffect(() => {
+    async function fetchDashboardData() {
+      if (!tutor?.id) return
+      
+      setDataLoading(true)
+      try {
+        const [
+          sessionsData,
+          earnings,
+          activeCount,
+          rate,
+          upcoming,
+          actions
+        ] = await Promise.all([
+          getTodaysSessions(tutor.id),
+          getTodaysEarnings(tutor.id),
+          getActiveStudentsCount(tutor.id),
+          getSuccessRate(tutor.id),
+          getUpcomingSessions(tutor.id, 3),
+          getRequiredActions(tutor.id)
+        ])
+        
+        setTodaysSessions(sessionsData.length)
+        setTodaysEarnings(earnings)
+        setActiveStudentsCount(activeCount)
+        setSuccessRate(rate)
+        setUpcomingSessions(upcoming)
+        setRequiredActions(actions)
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error)
+      } finally {
+        setDataLoading(false)
+      }
+    }
+    
+    if (mounted && tutor?.id) {
+      fetchDashboardData()
+    }
+  }, [mounted, tutor?.id])
   
   // Debug log
   console.log('[Dashboard] Tutor data:', tutor)
@@ -36,7 +96,7 @@ export default function DashboardPage() {
     window.location.reload()
   }
   
-  // Show loading skeleton only during initial mount or while auth is loading
+  // Show loading skeleton while store is hydrating or auth is initializing
   if (!mounted) {
     return (
       <div className="space-y-4 animate-pulse">
@@ -163,11 +223,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                {sessions.filter(s => {
-                  const sessionDate = new Date(s.date)
-                  const today = new Date()
-                  return sessionDate.toDateString() === today.toDateString()
-                }).length || 3}
+                {dataLoading ? '...' : todaysSessions}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Sessions Today</div>
             </div>
@@ -181,11 +237,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                ${sessions.filter(s => {
-                  const sessionDate = new Date(s.date)
-                  const today = new Date()
-                  return sessionDate.toDateString() === today.toDateString() && s.status === 'completed'
-                }).reduce((sum, s) => sum + (s.earnings || 85), 0) || 425}
+                ${dataLoading ? '...' : todaysEarnings.toFixed(0)}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Today's Earnings</div>
             </div>
@@ -199,7 +251,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                {students.filter(s => s.isActive).length || 12}
+                {dataLoading ? '...' : activeStudentsCount}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Active Students</div>
             </div>
@@ -209,116 +261,136 @@ export default function DashboardPage() {
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-pink-200 dark:border-pink-800 p-4 shadow-sm">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-pink-100 dark:bg-pink-900/30 rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-pink-600 dark:text-pink-400" />
+              <Target className="w-5 h-5 text-pink-600 dark:text-pink-400" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">94%</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                {dataLoading ? '...' : successRate}%
+              </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Success Rate</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Next Session - Compact */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
-          <Clock className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-          Next Session
-        </h2>
-        
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-600 dark:from-pink-600 dark:to-purple-700 rounded-full flex items-center justify-center text-white font-bold text-sm">
-              SC
-            </div>
-            <div>
-              <div className="font-semibold text-gray-900 dark:text-gray-100">Sarah Chen</div>
-              <div className="text-gray-600 dark:text-gray-400 flex items-center gap-2 text-sm">
-                <BookOpen className="w-4 h-4" />
-                AP Calculus
-              </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                7/6/2025 at 14:00
-              </div>
-            </div>
+      {/* Next Session Card */}
+      {upcomingSessions.length > 0 && (
+        <div className="bg-gradient-to-r from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-700 rounded-xl p-6 text-white shadow-lg">
+          <div className="flex items-center gap-2 mb-4">
+            <Clock className="w-5 h-5" />
+            <h2 className="text-lg font-semibold">Next Session</h2>
           </div>
-          <div className="flex gap-2 sm:ml-auto">
-            <button className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm">
-              Reschedule
-            </button>
-            <button className="px-3 py-2 bg-gradient-to-r from-pink-500 to-purple-600 dark:from-pink-600 dark:to-purple-700 text-white rounded-lg hover:from-pink-600 hover:to-purple-700 dark:hover:from-pink-700 dark:hover:to-purple-800 transition-all duration-200 shadow-lg text-sm">
-              Start Session
-            </button>
+          
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+                {upcomingSessions[0].students?.first_name?.[0]}{upcomingSessions[0].students?.last_name?.[0]}
+              </div>
+              <div>
+                <div className="font-medium">{upcomingSessions[0].students?.first_name} {upcomingSessions[0].students?.last_name}</div>
+                <div className="text-sm text-gray-300">
+                  {upcomingSessions[0].subject} • {format(new Date(upcomingSessions[0].scheduled_at), 'MMM d, h:mm a')}
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex gap-2">
+              <button className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium transition-colors">
+                Reschedule
+              </button>
+              <button className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 rounded-lg text-sm font-medium transition-colors">
+                Start Session
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Three Column Layout - All Above Fold */}
+      {/* Actions Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Required Actions */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
-            <Target className="w-5 h-5 text-pink-500 dark:text-pink-400" />
-            Required Actions
-          </h3>
-          <div className="space-y-2">
-            <div className="p-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg cursor-pointer hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
-              <div className="text-sm font-medium text-red-800 dark:text-red-400">Sign new contract</div>
-              <div className="text-xs text-red-600 dark:text-red-500">Due March 15th</div>
-            </div>
-            <div className="p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg cursor-pointer hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors">
-              <div className="text-sm font-medium text-yellow-800 dark:text-yellow-400">Invoice pending</div>
-              <div className="text-xs text-yellow-600 dark:text-yellow-500">Sarah Chen (3/10)</div>
-            </div>
-            <div className="p-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
-              <div className="text-sm font-medium text-blue-800 dark:text-blue-400">Message student</div>
-              <div className="text-xs text-blue-600 dark:text-blue-500">Follow up with Marcus</div>
-            </div>
+        <div className="bg-gradient-to-br from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-700 rounded-xl p-6 text-white shadow-lg">
+          <div className="flex items-center gap-2 mb-4">
+            <Target className="w-5 h-5 text-red-400" />
+            <h2 className="text-lg font-semibold">Required Actions</h2>
+          </div>
+          
+          <div className="space-y-3">
+            {dataLoading ? (
+              <div className="text-gray-400 text-sm">Loading...</div>
+            ) : requiredActions.length > 0 ? (
+              requiredActions.slice(0, 3).map((action) => (
+                <div 
+                  key={action.id} 
+                  className={`p-3 rounded-lg border ${
+                    action.urgency === 'high' 
+                      ? 'border-red-500/50 bg-red-500/10' 
+                      : 'border-yellow-500/50 bg-yellow-500/10'
+                  }`}
+                >
+                  <div className="font-medium text-sm">{action.title}</div>
+                  <div className="text-xs text-gray-300 mt-1">{action.description}</div>
+                </div>
+              ))
+            ) : (
+              <div className="text-gray-400 text-sm">No actions required</div>
+            )}
           </div>
         </div>
 
         {/* Today's Schedule */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Today's Schedule</h3>
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-100 dark:border-purple-800">
-              <div className="w-1.5 h-6 bg-purple-500 dark:bg-purple-400 rounded-full"></div>
-              <div>
-                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Sarah Chen</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">2:00 PM - AP Calculus</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 p-2 bg-pink-50 dark:bg-pink-900/20 rounded-lg border border-pink-100 dark:border-pink-800">
-              <div className="w-1.5 h-6 bg-pink-500 dark:bg-pink-400 rounded-full"></div>
-              <div>
-                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Marcus Johnson</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">4:30 PM - SAT Math</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600">
-              <div className="w-1.5 h-6 bg-gray-400 dark:bg-gray-500 rounded-full"></div>
-              <div>
-                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Emma Wilson</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">6:00 PM - Chemistry</div>
-              </div>
-            </div>
+        <div className="bg-gradient-to-br from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-700 rounded-xl p-6 text-white shadow-lg">
+          <h2 className="text-lg font-semibold mb-4">Today's Schedule</h2>
+          
+          <div className="space-y-3">
+            {dataLoading ? (
+              <div className="text-gray-400 text-sm">Loading...</div>
+            ) : upcomingSessions.length > 0 ? (
+              upcomingSessions.map((session) => (
+                <div key={session.id} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+                  <div className="w-1.5 h-12 bg-purple-500 rounded-full" />
+                  <div className="flex-1">
+                    <div className="font-medium text-sm">
+                      {session.students?.first_name} {session.students?.last_name}
+                    </div>
+                    <div className="text-xs text-gray-300">
+                      {format(new Date(session.scheduled_at), 'h:mm a')} - {session.subject}
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-gray-400 text-sm">No sessions scheduled today</div>
+            )}
           </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
-            <Target className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-            Quick Actions
-          </h3>
-          <div className="space-y-2">
-            <button className="w-full p-3 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-              <div className="font-semibold text-gray-900 dark:text-gray-100 text-sm mb-1">AI Lesson Builder</div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">Create lesson plans</div>
+        <div className="bg-gradient-to-br from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-700 rounded-xl p-6 text-white shadow-lg">
+          <div className="flex items-center gap-2 mb-4">
+            <Target className="w-5 h-5 text-purple-400" />
+            <h2 className="text-lg font-semibold">Quick Actions</h2>
+          </div>
+          
+          <div className="space-y-3">
+            <button className="w-full p-4 bg-white/10 hover:bg-white/20 rounded-lg text-left transition-colors">
+              <div className="flex items-center gap-3">
+                <BookOpen className="w-5 h-5 text-purple-400" />
+                <div>
+                  <div className="font-medium">AI Lesson Builder</div>
+                  <div className="text-xs text-gray-300">Create lesson plans</div>
+                </div>
+              </div>
             </button>
-            <button className="w-full p-3 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-              <div className="font-semibold text-gray-900 dark:text-gray-100 text-sm mb-1">AI Study Assistant</div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">Generate problems</div>
+            
+            <button className="w-full p-4 bg-white/10 hover:bg-white/20 rounded-lg text-left transition-colors">
+              <div className="flex items-center gap-3">
+                <TrendingUp className="w-5 h-5 text-purple-400" />
+                <div>
+                  <div className="font-medium">AI Study Assistant</div>
+                  <div className="text-xs text-gray-300">Generate problems</div>
+                </div>
+              </div>
             </button>
           </div>
         </div>

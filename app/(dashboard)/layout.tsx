@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import { Avatar, Button, NotificationBell, useToastHelpers } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import { StorageWarning } from '@/lib/auth/StorageWarning'
+import { StorageWarning } from '@/components/ui/StorageWarning'
 import { useTutorStore } from '@/lib/stores/tutorStore'
 
 interface NavItem {
@@ -118,7 +118,6 @@ export default function DashboardLayout({
   
   const pathname = usePathname()
   const { success, info } = useToastHelpers()
-  const { tutor } = useTutorStore()
 
   const markAsRead = (id: string) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))

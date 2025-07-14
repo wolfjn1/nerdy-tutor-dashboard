@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { 
   Search, 
@@ -20,25 +20,12 @@ import {
 } from 'lucide-react'
 import { Card, Button, Badge, Avatar } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import studentsData from '@/lib/mock-data/students.json'
-import sessionsData from '@/lib/mock-data/sessions.json'
-import { Student, Session } from '@/lib/types'
+import { getStudents, getStudentStats, StudentData } from '@/lib/api/students'
+import { getSessions } from '@/lib/api/sessions'
+import { useTutorStore } from '@/lib/stores/tutorStore'
+import { useAuth } from '@/lib/auth/auth-context'
 
-// Type the imported data and convert dates
-const students = studentsData.map(student => ({
-  ...student,
-  nextSession: student.nextSession ? new Date(student.nextSession) : undefined,
-  createdAt: new Date(student.createdAt)
-})) as Student[]
-
-const sessions = sessionsData.map(session => ({
-  ...session,
-  date: new Date(session.date),
-  createdAt: new Date(session.createdAt),
-  updatedAt: new Date(session.updatedAt)
-})) as Session[]
-
-interface StudentWithStats extends Student {
+interface StudentWithStats extends StudentData {
   stats: {
     totalSessions: number
     completedSessions: number
@@ -47,10 +34,17 @@ interface StudentWithStats extends Student {
     lastSession?: Date
     totalEarnings: number
   }
+  progress: {
+    attendance: number
+    performance: number
+    engagement: number
+  }
 }
 
 export default function StudentsPage() {
   const router = useRouter()
+  const { tutor } = useTutorStore()
+  const { loading: authLoading } = useAuth()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedSubject, setSelectedSubject] = useState<string>('all')
   const [selectedGrade, setSelectedGrade] = useState<string>('all')
@@ -58,34 +52,68 @@ export default function StudentsPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [activeTab, setActiveTab] = useState<'current' | 'previous'>('current')
   const [showNoScheduledSessions, setShowNoScheduledSessions] = useState(false)
+  
+  // Data fetching state
+  const [students, setStudents] = useState<StudentData[]>([])
+  const [sessions, setSessions] = useState<any[]>([])
+  const [studentStats, setStudentStats] = useState<any>(null)
+  const [dataLoading, setDataLoading] = useState(true)
+
+  // Fetch students data
+  useEffect(() => {
+    async function fetchData() {
+      if (!tutor?.id) return
+      
+      setDataLoading(true)
+      try {
+        const [studentsData, sessionsData, stats] = await Promise.all([
+          getStudents(tutor.id),
+          getSessions(tutor.id),
+          getStudentStats(tutor.id)
+        ])
+        
+        setStudents(studentsData)
+        setSessions(sessionsData)
+        setStudentStats(stats)
+      } catch (error) {
+        console.error('Error fetching students data:', error)
+      } finally {
+        setDataLoading(false)
+      }
+    }
+    
+    if (tutor?.id) {
+      fetchData()
+    }
+  }, [tutor?.id])
 
   // Process students with session stats
   const studentsWithStats = useMemo((): StudentWithStats[] => {
     return students.map(student => {
-      const studentSessions = sessions.filter(s => s.studentId === student.id)
+      const studentSessions = sessions.filter(s => s.student_id === student.id)
       const completedSessions = studentSessions.filter(s => s.status === 'completed')
-      const upcomingSessions = studentSessions.filter(s => s.status === 'scheduled')
+      const upcomingSessions = studentSessions.filter(s => ['scheduled', 'confirmed'].includes(s.status))
       
       const avgRating = completedSessions.length > 0 
         ? completedSessions.reduce((sum, s) => sum + (s.rating || 0), 0) / completedSessions.length
         : 0
       
-      const totalEarnings = completedSessions.reduce((sum, s) => sum + (s.earnings || 0), 0)
+      const totalEarnings = completedSessions.reduce((sum, s) => sum + (Number(s.earnings) || 0), 0)
       
-      // Respect the student's nextSession from JSON, but also check for scheduled sessions
+      // Get next session
       let nextSession: Date | undefined = undefined
-      if (student.nextSession) {
-        nextSession = student.nextSession
+      if (student.next_session) {
+        nextSession = new Date(student.next_session)
       } else {
         const nextScheduledSession = upcomingSessions
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0]
+          .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())[0]
         if (nextScheduledSession) {
-          nextSession = new Date(nextScheduledSession.date)
+          nextSession = new Date(nextScheduledSession.scheduled_at)
         }
       }
       
       const lastSession = completedSessions
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
+        .sort((a, b) => new Date(b.scheduled_at).getTime() - new Date(a.scheduled_at).getTime())[0]
 
       return {
         ...student,
@@ -94,12 +122,17 @@ export default function StudentsPage() {
           completedSessions: completedSessions.length,
           avgRating: Math.round(avgRating * 10) / 10,
           nextSession,
-          lastSession: lastSession ? new Date(lastSession.date) : undefined,
+          lastSession: lastSession ? new Date(lastSession.scheduled_at) : undefined,
           totalEarnings
+        },
+        progress: {
+          attendance: student.attendance_rate || 0,
+          performance: student.performance_rate || 0,
+          engagement: student.engagement_rate || 0
         }
       }
     })
-  }, [])
+  }, [students, sessions])
 
   // Get unique subjects and grades for filtering
   const uniqueSubjects = useMemo(() => {
@@ -108,32 +141,30 @@ export default function StudentsPage() {
       student.subjects.forEach(subject => subjects.add(subject))
     })
     return Array.from(subjects).sort()
-  }, [])
+  }, [students])
 
   const uniqueGrades = useMemo(() => {
     const grades = new Set<string>()
     students.forEach(student => {
-      grades.add(student.grade.toString())
+      if (student.grade) grades.add(student.grade.toString())
     })
     return Array.from(grades).sort((a, b) => parseInt(a) - parseInt(b))
-  }, [])
+  }, [students])
 
   // Filter and sort students
   const filteredStudents = useMemo(() => {
     let filtered = studentsWithStats.filter(student => {
       // Filter by tab (current vs previous)
-      // Current students: Active students (regardless of session status)
-      // Previous students: Inactive students or completed relationships
-      const isCurrent = student.isActive
+      const isCurrent = student.is_active
       const matchesTab = activeTab === 'current' ? isCurrent : !isCurrent
       
       const matchesSearch = 
-        student.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        student.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        student.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         student.subjects.some(subject => subject.toLowerCase().includes(searchTerm.toLowerCase()))
       
       const matchesSubject = selectedSubject === 'all' || student.subjects.includes(selectedSubject)
-      const matchesGrade = selectedGrade === 'all' || student.grade.toString() === selectedGrade
+      const matchesGrade = selectedGrade === 'all' || student.grade?.toString() === selectedGrade
       
       // New filter for students without scheduled sessions
       const matchesNoScheduledSessions = !showNoScheduledSessions || 
@@ -146,7 +177,7 @@ export default function StudentsPage() {
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'name':
-          return `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`)
+          return `${a.first_name} ${a.last_name}`.localeCompare(`${b.first_name} ${b.last_name}`)
         case 'performance':
           return b.progress.performance - a.progress.performance
         case 'nextSession':
@@ -181,15 +212,15 @@ export default function StudentsPage() {
 
   const StudentCard = ({ student }: { student: StudentWithStats }) => {
     // Check if student is active but has no upcoming session
-    const needsSessionScheduled = student.isActive && !student.stats.nextSession
+    const needsSessionScheduled = student.is_active && !student.stats.nextSession
     
     // Debug warning banner logic
-    if (student.firstName === 'Mia' || student.firstName === 'Benjamin') {
-      console.log(`DEBUG ${student.firstName}:`, {
-        isActive: student.isActive,
+    if (student.first_name === 'Mia' || student.first_name === 'Benjamin') {
+      console.log(`DEBUG ${student.first_name}:`, {
+        isActive: student.is_active,
         nextSession: student.stats.nextSession,
         needsSessionScheduled,
-        originalNextSession: student.nextSession
+        originalNextSession: student.next_session
       })
     }
     
@@ -203,15 +234,15 @@ export default function StudentsPage() {
             {/* Header */}
             <div className="flex items-center gap-3 mb-4">
               <Avatar
-                src={student.avatar}
-                fallback={`${student.firstName[0]}${student.lastName[0]}`}
+                src={student.avatar_url}
+                fallback={`${student.first_name[0]}${student.last_name[0]}`}
                 size="lg"
                 className="border-2 border-purple-200 dark:border-purple-700"
                 animate={false}
               />
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-                  {student.firstName} {student.lastName}
+                  {student.first_name} {student.last_name}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Grade {student.grade}</p>
               </div>
@@ -315,8 +346,8 @@ export default function StudentsPage() {
   }
 
   // Get counts for tabs
-  const currentStudentsCount = studentsWithStats.filter(s => s.isActive).length
-  const previousStudentsCount = studentsWithStats.filter(s => !s.isActive).length
+  const currentStudentsCount = studentsWithStats.filter(s => s.is_active).length
+  const previousStudentsCount = studentsWithStats.filter(s => !s.is_active).length
 
   // Debug: Force cache clear
   console.log('Students page loaded at:', new Date().toISOString())
@@ -332,8 +363,8 @@ export default function StudentsPage() {
 
   // Calculate total stats for display - simplified and direct
   const relevantStudents = activeTab === 'current' 
-    ? studentsWithStats.filter(s => s.isActive)
-    : studentsWithStats.filter(s => !s.isActive)
+    ? studentsWithStats.filter(s => s.is_active)
+    : studentsWithStats.filter(s => !s.is_active)
   
   const totalCount = relevantStudents.length
   const avgPerformance = relevantStudents.length > 0 

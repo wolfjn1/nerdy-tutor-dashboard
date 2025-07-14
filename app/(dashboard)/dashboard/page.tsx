@@ -6,7 +6,7 @@ import { useTutorStore } from '@/lib/stores/tutorStore'
 import { useAuth } from '@/lib/auth/auth-context'
 
 export default function DashboardPage() {
-  const { tutor } = useTutorStore()
+  const { tutor, level, totalXP, xpForNextLevel, streak, students, sessions } = useTutorStore()
   const { loading: authLoading } = useAuth()
   const [mounted, setMounted] = React.useState(false)
   
@@ -31,8 +31,8 @@ export default function DashboardPage() {
     window.location.reload()
   }
   
-  // Show loading skeleton while store is hydrating or auth is initializing
-  if (!mounted || (authLoading && !tutor)) {
+  // Show loading skeleton only during initial mount or while auth is loading
+  if (!mounted) {
     return (
       <div className="space-y-4 animate-pulse">
         <div className="flex items-center gap-6">
@@ -90,31 +90,31 @@ export default function DashboardPage() {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="flex items-center gap-8">
             <div className="text-center">
-              <div className="text-4xl font-bold mb-1">Level 42</div>
+              <div className="text-4xl font-bold mb-1">Level {level || 42}</div>
               <div className="text-purple-100 dark:text-purple-200">Expert</div>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-4xl">🔥</span>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-pink-300 dark:text-pink-200">21</div>
-                <div className="text-purple-100 dark:text-purple-200 text-sm">day streak</div>
+            
+            <div className="hidden lg:block h-16 w-px bg-white/30" />
+            
+            <div className="flex items-center gap-2">
+              <Trophy className="w-6 h-6 text-yellow-300" />
+              <div>
+                <div className="text-2xl font-bold">{streak || 21}</div>
+                <div className="text-sm text-purple-100 dark:text-purple-200">day streak</div>
               </div>
             </div>
           </div>
           
           <div className="flex-1 max-w-md">
-            {/* XP Progress */}
-            <div className="mb-4">
-              <div className="flex justify-between text-white/90 mb-3">
-                <span className="font-semibold">2450 / 3000 XP</span>
-                <span>to next level</span>
-              </div>
-              <div className="w-full bg-white/20 dark:bg-white/10 rounded-full h-3">
-                <div 
-                  className="bg-gradient-to-r from-pink-400 via-purple-400 to-pink-500 dark:from-pink-500 dark:via-purple-500 dark:to-pink-600 h-3 rounded-full shadow-lg" 
-                  style={{ width: '82%' }}
-                />
-              </div>
+            <div className="flex justify-between text-sm mb-2">
+              <span>{totalXP || 2450} / {xpForNextLevel || 3000} XP</span>
+              <span>to next level</span>
+            </div>
+            <div className="w-full bg-white/20 rounded-full h-3">
+              <div 
+                className="bg-gradient-to-r from-yellow-300 to-yellow-500 h-3 rounded-full transition-all duration-500"
+                style={{ width: `${((totalXP || 2450) / (xpForNextLevel || 3000)) * 100}%` }}
+              />
             </div>
             
             {/* Recent Achievements */}
@@ -141,7 +141,13 @@ export default function DashboardPage() {
               <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">3</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                {sessions.filter(s => {
+                  const sessionDate = new Date(s.date)
+                  const today = new Date()
+                  return sessionDate.toDateString() === today.toDateString()
+                }).length || 3}
+              </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Sessions Today</div>
             </div>
           </div>
@@ -153,7 +159,13 @@ export default function DashboardPage() {
               <DollarSign className="w-5 h-5 text-pink-600 dark:text-pink-400" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">$425</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                ${sessions.filter(s => {
+                  const sessionDate = new Date(s.date)
+                  const today = new Date()
+                  return sessionDate.toDateString() === today.toDateString() && s.status === 'completed'
+                }).reduce((sum, s) => sum + (s.earnings || 85), 0) || 425}
+              </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Today's Earnings</div>
             </div>
           </div>
@@ -165,7 +177,9 @@ export default function DashboardPage() {
               <Users className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">12</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                {students.filter(s => s.isActive).length || 12}
+              </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Active Students</div>
             </div>
           </div>

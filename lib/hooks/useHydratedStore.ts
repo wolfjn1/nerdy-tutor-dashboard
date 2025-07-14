@@ -3,7 +3,11 @@ import { useTutorStore } from '@/lib/stores/tutorStore'
 
 export function useHydratedStore() {
   const [isHydrated, setIsHydrated] = useState(false)
-  const store = useTutorStore()
+  const tutor = useTutorStore((state) => state.tutor)
+  const students = useTutorStore((state) => state.students)
+  const sessions = useTutorStore((state) => state.sessions)
+  const level = useTutorStore((state) => state.level)
+  const totalXP = useTutorStore((state) => state.totalXP)
 
   useEffect(() => {
     // This ensures the store is hydrated on the client
@@ -11,7 +15,11 @@ export function useHydratedStore() {
   }, [])
 
   return {
-    ...store,
+    tutor,
+    students,
+    sessions,
+    level,
+    totalXP,
     isHydrated
   }
 } 

@@ -2,21 +2,22 @@
 
 import React from 'react'
 import { Calendar, Clock, TrendingUp, Users, DollarSign, Target, BookOpen, Trophy } from 'lucide-react'
-import { useHydratedStore } from '@/lib/hooks/useHydratedStore'
+import { useTutorStore } from '@/lib/stores/tutorStore'
 import { useAuth } from '@/lib/auth/auth-context'
 
-// Force dynamic rendering to prevent static generation issues
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-
 export default function DashboardPage() {
-  const { tutor, isHydrated } = useHydratedStore()
+  const { tutor } = useTutorStore()
   const { loading: authLoading } = useAuth()
+  const [mounted, setMounted] = React.useState(false)
+  
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
   
   // Debug log
   console.log('[Dashboard] Tutor data:', tutor)
   console.log('[Dashboard] Auth loading:', authLoading)
-  console.log('[Dashboard] Store hydrated:', isHydrated)
+  console.log('[Dashboard] Mounted:', mounted)
   
   // Temporary fix: Clear cache button
   const clearCacheAndReload = () => {
@@ -31,7 +32,7 @@ export default function DashboardPage() {
   }
   
   // Show loading skeleton while store is hydrating or auth is initializing
-  if (!isHydrated || (authLoading && !tutor)) {
+  if (!mounted || (authLoading && !tutor)) {
     return (
       <div className="space-y-4 animate-pulse">
         <div className="flex items-center gap-6">

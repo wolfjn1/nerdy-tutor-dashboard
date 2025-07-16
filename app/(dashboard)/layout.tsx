@@ -24,7 +24,7 @@ import { AuthDebug } from '@/components/debug/AuthDebug'
 import { StorageWarning } from '@/components/ui/StorageWarning'
 import { cn } from '@/lib/utils'
 import { useTutorStore } from '@/lib/stores/tutorStore'
-import { useAuth } from '@/lib/auth/simple-auth-context'
+import { SimpleAuthProvider, useAuth } from '@/lib/auth/simple-auth-context'
 import { getStudents } from '@/lib/api/students'
 import { getUpcomingSessions } from '@/lib/api/dashboard'
 import { useRouter } from 'next/navigation'
@@ -38,11 +38,7 @@ interface NavItem {
   description: string
 }
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+function DashboardContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
   const { tutor, user, loading } = useAuth()
@@ -421,5 +417,17 @@ export default function DashboardLayout({
         <AuthDebug />
       )}
     </div>
+  )
+}
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <SimpleAuthProvider>
+      <DashboardContent>{children}</DashboardContent>
+    </SimpleAuthProvider>
   )
 } 

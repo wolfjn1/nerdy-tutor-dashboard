@@ -100,7 +100,10 @@ export async function middleware(req: NextRequest) {
       '/auth-status',
       '/final-test',
       '/api/test-auth',
-      '/api/force-logout'
+      '/api/force-logout',
+      '/simple-test',
+      '/no-auth-dashboard',
+      '/debug-auth'
     ]
     const isPublicRoute = publicRoutes.some(route => req.nextUrl.pathname.startsWith(route))
     

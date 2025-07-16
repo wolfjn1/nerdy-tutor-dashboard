@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { SimpleAuthProvider } from '@/lib/auth/simple-auth-context'
 import { ToastProvider } from '@/components/ui'
 import { ThemeProvider } from '@/lib/theme-context'
 
@@ -22,9 +21,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider>
           <ToastProvider>
-            <SimpleAuthProvider>
-              {children}
-            </SimpleAuthProvider>
+            {children}
           </ToastProvider>
         </ThemeProvider>
       </body>

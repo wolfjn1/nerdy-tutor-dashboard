@@ -89,6 +89,7 @@ export async function middleware(req: NextRequest) {
     '/clear-all',
     '/auth-test',
     '/auth-status',
+    '/final-test',
     '/api/test-auth',
     '/api/force-logout'
   ]

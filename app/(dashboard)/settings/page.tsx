@@ -12,11 +12,15 @@ import { Button, Badge, Avatar, Modal, ThemeToggle } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useTutorStore } from '@/lib/stores/tutorStore'
 import { useToastHelpers } from '@/components/ui'
+import { useAuth } from '@/lib/auth/auth-context'
+import { useRouter } from 'next/navigation'
 
 export default function SettingsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { tutor, setTutor, updateTutorAvatar } = useTutorStore()
   const { success, error } = useToastHelpers()
+  const { signOut } = useAuth()
+  const router = useRouter()
   
   const [activeSection, setActiveSection] = useState('profile')
   const [profileData, setProfileData] = useState({
@@ -50,7 +54,18 @@ export default function SettingsPage() {
       })
     }
   }, [tutor, setTutor, profileData])
-  
+
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      success('Signed out successfully')
+      router.push('/login')
+    } catch (err) {
+      error('Failed to sign out')
+      console.error('Sign out error:', err)
+    }
+  }
+
   const [notifications, setNotifications] = useState({
     emailNewStudent: true,
     emailSessionReminder: true,
@@ -641,7 +656,10 @@ export default function SettingsPage() {
           </div>
         </button>
 
-        <button className="w-full p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-left">
+        <button 
+          onClick={handleSignOut}
+          className="w-full p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-left"
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <LogOut className="w-5 h-5 text-gray-400" />

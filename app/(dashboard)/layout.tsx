@@ -171,18 +171,45 @@ export default function DashboardLayout({
     setNotifications(prev => prev.filter(n => n.id !== id))
   }
 
-  // If user is logged in but has no tutor profile, redirect to login
-  if (!loading && user && !tutor) {
-    console.log('[Dashboard Layout] User has no tutor profile, redirecting to login')
-    router.push('/login')
-    return null
-  }
-
   // Show loading state while checking auth
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-nerdy-bg-light dark:bg-gray-900 flex items-center justify-center">
         <div className="text-purple-600 dark:text-purple-400">Loading...</div>
+      </div>
+    )
+  }
+
+  // If no user at all, redirect to login
+  if (!user) {
+    router.push('/login')
+    return null
+  }
+
+  // If user is logged in but has no tutor profile, show a message instead of redirecting
+  // This prevents infinite redirect loops
+  if (user && !tutor) {
+    return (
+      <div className="min-h-screen bg-gradient-nerdy-bg-light dark:bg-gray-900 flex items-center justify-center">
+        <div className="max-w-md text-center space-y-4 p-8">
+          <h1 className="text-2xl font-bold text-purple-900 dark:text-purple-400">Profile Setup Required</h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Your account doesn't have a tutor profile yet. Please contact support or try logging in with the demo account.
+          </p>
+          <div className="space-y-2">
+            <button
+              onClick={() => {
+                router.push('/clear-session')
+              }}
+              className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              Sign Out and Try Again
+            </button>
+            <p className="text-sm text-gray-500">
+              Demo account: sarah_chen@hotmail.com / demo123
+            </p>
+          </div>
+        </div>
       </div>
     )
   }

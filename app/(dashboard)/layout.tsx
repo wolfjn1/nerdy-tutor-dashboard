@@ -24,7 +24,7 @@ import { AuthDebug } from '@/components/debug/AuthDebug'
 import { StorageWarning } from '@/components/ui/StorageWarning'
 import { cn } from '@/lib/utils'
 import { useTutorStore } from '@/lib/stores/tutorStore'
-import { useAuth } from '@/lib/auth/auth-context'
+import { useAuth } from '@/lib/auth/simple-auth-context'
 import { getStudents } from '@/lib/api/students'
 import { getUpcomingSessions } from '@/lib/api/dashboard'
 import { useRouter } from 'next/navigation'
@@ -45,7 +45,7 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname()
   const router = useRouter()
-  const { tutor, user, loading, refreshAuth } = useAuth()
+  const { tutor, user, loading } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   
   // Add timeout to refresh auth if loading takes too long
@@ -53,14 +53,13 @@ export default function DashboardLayout({
     if (loading) {
       const timeout = setTimeout(() => {
         console.log('[Dashboard] Loading timeout, attempting refresh...')
-        if (refreshAuth) {
-          refreshAuth()
-        }
+        // The refreshAuth function is no longer available from useAuth,
+        // so this block is effectively removed.
       }, 10000) // 10 second timeout
       
       return () => clearTimeout(timeout)
     }
-  }, [loading, refreshAuth])
+  }, [loading])
 
   // Dynamic counts
   const [studentCount, setStudentCount] = useState<number>(0)

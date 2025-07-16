@@ -202,3 +202,43 @@ export function formatAttendanceRate(attended: number, total: number): string {
   const rate = (attended / total) * 100
   return `${rate.toFixed(1)}%`
 } 
+
+export function formatSessionDateTime(date: Date): string {
+  const dayName = date.toLocaleDateString('en-US', { weekday: 'long' })
+  const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  const time = date.toLocaleTimeString('en-US', { 
+    hour: 'numeric', 
+    minute: '2-digit',
+    hour12: true 
+  })
+  
+  return `${dayName}, ${monthDay} at ${time}`
+}
+
+export function formatDistanceToNow(date: Date): string {
+  const now = new Date()
+  const diffInMs = now.getTime() - date.getTime()
+  const diffInSeconds = Math.floor(diffInMs / 1000)
+  const diffInMinutes = Math.floor(diffInSeconds / 60)
+  const diffInHours = Math.floor(diffInMinutes / 60)
+  const diffInDays = Math.floor(diffInHours / 24)
+
+  if (diffInSeconds < 60) {
+    return 'just now'
+  } else if (diffInMinutes < 60) {
+    return `${diffInMinutes} minute${diffInMinutes === 1 ? '' : 's'}`
+  } else if (diffInHours < 24) {
+    return `${diffInHours} hour${diffInHours === 1 ? '' : 's'}`
+  } else if (diffInDays < 7) {
+    return `${diffInDays} day${diffInDays === 1 ? '' : 's'}`
+  } else if (diffInDays < 30) {
+    const weeks = Math.floor(diffInDays / 7)
+    return `${weeks} week${weeks === 1 ? '' : 's'}`
+  } else if (diffInDays < 365) {
+    const months = Math.floor(diffInDays / 30)
+    return `${months} month${months === 1 ? '' : 's'}`
+  } else {
+    const years = Math.floor(diffInDays / 365)
+    return `${years} year${years === 1 ? '' : 's'}`
+  }
+} 

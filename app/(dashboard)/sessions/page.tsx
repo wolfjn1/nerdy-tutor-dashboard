@@ -1,72 +1,62 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { 
   Calendar, 
   Clock, 
   Users, 
-  MapPin, 
   DollarSign,
   Plus,
-  Filter,
   Search,
   ChevronLeft,
   ChevronRight,
-  Grid,
   List,
   Video,
-  Phone,
-  MessageCircle,
   CheckCircle,
   AlertCircle,
   XCircle,
-  Star,
-  Settings,
   MoreHorizontal,
-  Edit,
-  Trash2,
-  Copy,
   ExternalLink,
-  X
+  Loader
 } from 'lucide-react'
 import { Card, Button, Badge, Avatar, Modal } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import studentsData from '@/lib/mock-data/students.json'
-import sessionsData from '@/lib/mock-data/sessions.json'
-import { Student, Session } from '@/lib/types'
+import { useAuth } from '@/lib/auth/auth-context'
+import { getSessions } from '@/lib/api/sessions'
+import { getStudents } from '@/lib/api/students'
 
-// Type the imported data and convert dates
-const students = studentsData.map(student => ({
-  ...student,
-  nextSession: student.nextSession ? new Date(student.nextSession) : undefined,
-  createdAt: new Date(student.createdAt)
-})) as Student[]
+// Define today as July 14, 2025 for calendar sync
+const TODAY = new Date(2025, 6, 14) // Month is 0-indexed, so 6 = July
 
-// Convert UTC dates to local timezone
-const convertUTCToLocal = (utcDate: Date | string): Date => {
-  const date = new Date(utcDate)
-  return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+interface SessionWithStudent {
+  id: string
+  tutor_id: string
+  student_id: string
+  subject: string
+  scheduled_at: string
+  duration_minutes: number
+  status: 'scheduled' | 'completed' | 'cancelled' | 'no_show'
+  price: number
+  notes?: string
+  created_at: string
+  students?: {
+    id: string
+    first_name: string
+    last_name: string
+    grade: string
+    avatar_url?: string
+  }
 }
 
-const sessions = sessionsData.map(session => ({
-  ...session,
-  date: new Date(session.date),
-  createdAt: new Date(session.createdAt),
-  updatedAt: new Date(session.updatedAt)
-})) as Session[]
-
-interface SessionWithStudent extends Session {
-  student: Student
-}
-
-type ViewMode = 'calendar' | 'list' | 'week' | 'month'
-type CalendarView = 'day' | 'week' | 'month'
+type ViewMode = 'calendar' | 'list'
+type CalendarView = 'week' | 'month'
 
 export default function SessionsPage() {
   const router = useRouter()
-  const [currentDate, setCurrentDate] = useState(new Date('2025-01-08')) // Set to current week with sessions
+  const { tutor } = useAuth()
+  const [currentDate, setCurrentDate] = useState(TODAY)
   const [viewMode, setViewMode] = useState<ViewMode>('calendar')
   const [calendarView, setCalendarView] = useState<CalendarView>('week')
   const [selectedSession, setSelectedSession] = useState<SessionWithStudent | null>(null)
@@ -74,53 +64,62 @@ export default function SessionsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [subjectFilter, setSubjectFilter] = useState<string>('all')
+  
+  // Data states
+  const [sessions, setSessions] = useState<SessionWithStudent[]>([])
+  const [students, setStudents] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  // Combine sessions with student data
-  const sessionsWithStudents = useMemo((): SessionWithStudent[] => {
-    return sessions.map(session => {
-      const student = students.find(s => s.id === session.studentId)
-      return {
-        ...session,
-        student: student || {
-          id: 'unknown',
-          firstName: 'Unknown',
-          lastName: 'Student',
-          subjects: [],
-          grade: 'N/A',
-          progress: { attendance: 0, performance: 0, engagement: 0 },
-          totalSessions: 0,
-          completedSessions: 0,
-          createdAt: new Date(),
-          isActive: false,
-          parentContact: { email: '', phone: '', name: '', relationship: 'parent' as const },
-          notes: '',
-          tags: []
-        }
+  // Fetch data
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!tutor?.id) return
+      
+      setLoading(true)
+      setError(null)
+      
+      try {
+        const [sessionsData, studentsData] = await Promise.all([
+          getSessions(tutor.id),
+          getStudents(tutor.id)
+        ])
+        
+        setSessions(sessionsData)
+        setStudents(studentsData)
+      } catch (err) {
+        console.error('Error fetching sessions:', err)
+        setError('Failed to load sessions')
+      } finally {
+        setLoading(false)
       }
-    })
-  }, [])
+    }
+    
+    fetchData()
+  }, [tutor?.id])
 
   // Filter sessions
   const filteredSessions = useMemo(() => {
-    return sessionsWithStudents.filter(session => {
-      const matchesSearch = 
-        session.student.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        session.student.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    return sessions.filter(session => {
+      const matchesSearch = session.students && (
+        session.students.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        session.students.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         session.subject.toLowerCase().includes(searchTerm.toLowerCase())
+      )
       
       const matchesStatus = statusFilter === 'all' || session.status === statusFilter
       const matchesSubject = subjectFilter === 'all' || session.subject === subjectFilter
       
       return matchesSearch && matchesStatus && matchesSubject
     })
-  }, [sessionsWithStudents, searchTerm, statusFilter, subjectFilter])
+  }, [sessions, searchTerm, statusFilter, subjectFilter])
 
   // Get unique subjects for filtering
   const uniqueSubjects = useMemo(() => {
     const subjects = new Set<string>()
     sessions.forEach(session => subjects.add(session.subject))
     return Array.from(subjects).sort()
-  }, [])
+  }, [sessions])
 
   // Calendar functions
   const startOfWeek = (date: Date) => {
@@ -169,9 +168,7 @@ export default function SessionsPage() {
   const navigateCalendar = (direction: 'prev' | 'next') => {
     const newDate = new Date(currentDate)
     
-    if (calendarView === 'day') {
-      newDate.setDate(newDate.getDate() + (direction === 'next' ? 1 : -1))
-    } else if (calendarView === 'week') {
+    if (calendarView === 'week') {
       newDate.setDate(newDate.getDate() + (direction === 'next' ? 7 : -7))
     } else if (calendarView === 'month') {
       newDate.setMonth(newDate.getMonth() + (direction === 'next' ? 1 : -1))
@@ -181,13 +178,13 @@ export default function SessionsPage() {
   }
 
   const goToToday = () => {
-    setCurrentDate(new Date())
+    setCurrentDate(TODAY)
   }
 
   // Get sessions for a specific date
   const getSessionsForDate = (date: Date) => {
     return filteredSessions.filter(session => {
-      const sessionDate = new Date(session.date)
+      const sessionDate = new Date(session.scheduled_at)
       return sessionDate.toDateString() === date.toDateString()
     })
   }
@@ -202,8 +199,9 @@ export default function SessionsPage() {
     })
   }
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
+  const formatTime = (date: Date | string) => {
+    const d = new Date(date)
+    return d.toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit'
     })
@@ -215,10 +213,9 @@ export default function SessionsPage() {
     return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`
   }
 
-  const getStatusColor = (status: Session['status']) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'scheduled': return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800'
-      case 'in_progress': return 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800'
       case 'completed': return 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'
       case 'cancelled': return 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800'
       case 'no_show': return 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800'
@@ -226,10 +223,9 @@ export default function SessionsPage() {
     }
   }
 
-  const getStatusIcon = (status: Session['status']) => {
+  const getStatusIcon = (status: string) => {
     switch (status) {
       case 'scheduled': return <Clock className="h-3 w-3" />
-      case 'in_progress': return <Video className="h-3 w-3" />
       case 'completed': return <CheckCircle className="h-3 w-3" />
       case 'cancelled': return <XCircle className="h-3 w-3" />
       case 'no_show': return <AlertCircle className="h-3 w-3" />
@@ -258,16 +254,16 @@ export default function SessionsPage() {
           {/* Student Info */}
           <div className="flex items-center gap-3 mb-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
             <Avatar
-              src={session.student.avatar}
-              fallback={`${session.student.firstName[0]}${session.student.lastName[0]}`}
+              src={session.students?.avatar_url}
+              fallback={session.students ? `${session.students.first_name[0]}${session.students.last_name[0]}` : '??'}
               size="lg"
               className="border-2 border-purple-200 dark:border-purple-700"
             />
             <div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {session.student.firstName} {session.student.lastName}
+                {session.students?.first_name} {session.students?.last_name}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{session.student.grade} • {session.subject}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{session.students?.grade} • {session.subject}</p>
               <Badge 
                 variant="secondary" 
                 className={cn('mt-1 text-xs', getStatusColor(session.status))}
@@ -285,13 +281,18 @@ export default function SessionsPage() {
             <div>
               <span className="font-medium text-gray-500 dark:text-gray-400">Date & Time:</span>
               <span className="ml-2 text-gray-900 dark:text-gray-100">
-                {formatDate(session.date)} at {formatTime(session.date)}
+                {formatDate(new Date(session.scheduled_at))} at {formatTime(session.scheduled_at)}
               </span>
             </div>
 
             <div>
               <span className="font-medium text-gray-500 dark:text-gray-400">Duration:</span>
-              <span className="ml-2 text-gray-900 dark:text-gray-100">{formatDuration(session.duration)}</span>
+              <span className="ml-2 text-gray-900 dark:text-gray-100">{formatDuration(session.duration_minutes)}</span>
+            </div>
+
+            <div>
+              <span className="font-medium text-gray-500 dark:text-gray-400">Price:</span>
+              <span className="ml-2 text-gray-900 dark:text-gray-100">${session.price}</span>
             </div>
 
             {session.notes && (
@@ -321,7 +322,6 @@ export default function SessionsPage() {
                   leftIcon={<ExternalLink className="h-4 w-4" />}
                   onClick={() => {
                     navigator.clipboard.writeText(joinLink)
-                    // You can add a toast notification here
                   }}
                   size="sm"
                 >
@@ -332,7 +332,7 @@ export default function SessionsPage() {
             
             <Button
               variant="outline"
-              onClick={() => router.push(`/students/${session.studentId}`)}
+              onClick={() => router.push(`/students/${session.student_id}`)}
               size="sm"
             >
               View Student Profile
@@ -358,13 +358,13 @@ export default function SessionsPage() {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
               <Avatar
-                src={session.student.avatar}
-                fallback={`${session.student.firstName[0]}${session.student.lastName[0]}`}
+                src={session.students?.avatar_url}
+                fallback={session.students ? `${session.students.first_name[0]}${session.students.last_name[0]}` : '??'}
                 size="md"
               />
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
-                  {session.student.firstName} {session.student.lastName}
+                  {session.students?.first_name} {session.students?.last_name}
                 </h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400">{session.subject}</p>
               </div>
@@ -389,11 +389,11 @@ export default function SessionsPage() {
           <div className="flex items-center gap-4 mb-3 text-sm text-gray-600 dark:text-gray-400">
             <div className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
-              <span>{formatTime(session.date)}</span>
+              <span>{formatTime(session.scheduled_at)}</span>
             </div>
             <div className="flex items-center gap-1">
               <Users className="h-3 w-3" />
-              <span>{formatDuration(session.duration)}</span>
+              <span>{formatDuration(session.duration_minutes)}</span>
             </div>
           </div>
 
@@ -404,23 +404,11 @@ export default function SessionsPage() {
             </p>
           )}
 
-          {/* Rating and Earnings */}
+          {/* Price */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
-              {session.rating && (
-                <>
-                  <Star className="h-3 w-3 text-yellow-500 fill-current" />
-                  <span className="text-xs text-gray-600 dark:text-gray-400">{session.rating}</span>
-                </>
-              )}
-            </div>
-            <div className="flex items-center gap-1">
-              {session.earnings && (
-                <>
-                  <DollarSign className="h-3 w-3 text-green-600 dark:text-green-400" />
-                  <span className="text-xs text-gray-600 dark:text-gray-400">${session.earnings}</span>
-                </>
-              )}
+              <DollarSign className="h-3 w-3 text-green-600 dark:text-green-400" />
+              <span className="text-xs text-gray-600 dark:text-gray-400">${session.price}</span>
             </div>
           </div>
         </div>
@@ -429,7 +417,7 @@ export default function SessionsPage() {
   )
 
   const CalendarDay = ({ date, sessions }: { date: Date, sessions: SessionWithStudent[] }) => {
-    const isToday = date.toDateString() === new Date().toDateString()
+              const isToday = date.toDateString() === TODAY.toDateString()
     const isCurrentMonth = date.getMonth() === currentDate.getMonth()
     
     return (
@@ -457,8 +445,8 @@ export default function SessionsPage() {
               }}
             >
               <div className="flex items-center gap-1">
-                <span className="font-medium">{formatTime(session.date)}</span>
-                <span className="truncate">{session.student.firstName}</span>
+                <span className="font-medium">{formatTime(session.scheduled_at)}</span>
+                <span className="truncate">{session.students?.first_name}</span>
               </div>
             </div>
           ))}
@@ -479,17 +467,16 @@ export default function SessionsPage() {
     // Get sessions organized by day and hour
     const getSessionsForDayHour = (day: Date, hour: number) => {
       return filteredSessions.filter(session => {
-        const sessionDate = new Date(session.date)
+        const sessionDate = new Date(session.scheduled_at)
         return sessionDate.toDateString() === day.toDateString() &&
                sessionDate.getHours() === hour
       })
     }
 
     // Get color for session based on status
-    const getSessionColor = (status: Session['status']) => {
+    const getSessionColor = (status: string) => {
       switch (status) {
         case 'scheduled': return 'bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-600 dark:hover:bg-blue-700'
-        case 'in_progress': return 'bg-green-500 hover:bg-green-600 text-white dark:bg-green-600 dark:hover:bg-green-700'
         case 'completed': return 'bg-gray-400 hover:bg-gray-500 text-white dark:bg-gray-600 dark:hover:bg-gray-700'
         case 'cancelled': return 'bg-red-400 hover:bg-red-500 text-white dark:bg-red-600 dark:hover:bg-red-700'
         case 'no_show': return 'bg-orange-400 hover:bg-orange-500 text-white dark:bg-orange-600 dark:hover:bg-orange-700'
@@ -507,7 +494,7 @@ export default function SessionsPage() {
           
           {/* Day Headers */}
           {weekDays.map((day, index) => {
-            const isToday = day.toDateString() === new Date().toDateString()
+            const isToday = day.toDateString() === TODAY.toDateString()
             return (
               <div 
                 key={index} 
@@ -548,7 +535,7 @@ export default function SessionsPage() {
               {/* Session Slots */}
               {weekDays.map((day, dayIndex) => {
                 const sessions = getSessionsForDayHour(day, hour)
-                const isToday = day.toDateString() === new Date().toDateString()
+                const isToday = day.toDateString() === TODAY.toDateString()
                 
                 return (
                   <div 
@@ -566,7 +553,7 @@ export default function SessionsPage() {
                           getSessionColor(session.status)
                         )}
                         style={{
-                          height: `${(session.duration / 60) * 50}px`,
+                          height: `${(session.duration_minutes / 60) * 50}px`,
                           minHeight: '40px'
                         }}
                         onClick={() => {
@@ -574,7 +561,7 @@ export default function SessionsPage() {
                           setShowSessionModal(true)
                         }}
                       >
-                        <div className="truncate">{session.student.firstName}</div>
+                        <div className="truncate">{session.students?.first_name}</div>
                         <div className="truncate opacity-75">{session.subject}</div>
                       </div>
                     ))}
@@ -590,10 +577,6 @@ export default function SessionsPage() {
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 bg-blue-500 dark:bg-blue-600 rounded"></div>
             <span className="text-gray-600 dark:text-gray-400">Scheduled</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-green-500 dark:bg-green-600 rounded"></div>
-            <span className="text-gray-600 dark:text-gray-400">In Progress</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 bg-gray-400 dark:bg-gray-600 rounded"></div>
@@ -613,12 +596,12 @@ export default function SessionsPage() {
     const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     
     return (
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
         {/* Header */}
-        <div className="grid grid-cols-7 border-b border-gray-200">
+        <div className="grid grid-cols-7 border-b border-gray-200 dark:border-gray-700">
           {weekDays.map((day) => (
-            <div key={day} className="p-4 border-r border-gray-200 last:border-r-0">
-              <div className="text-sm font-medium text-gray-900 text-center">
+            <div key={day} className="p-4 border-r border-gray-200 dark:border-gray-700 last:border-r-0">
+              <div className="text-sm font-medium text-gray-900 dark:text-gray-100 text-center">
                 {day}
               </div>
             </div>
@@ -642,35 +625,57 @@ export default function SessionsPage() {
     )
   }
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-nerdy-bg-light flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader className="h-8 w-8 text-purple-600 animate-spin" />
+          <p className="text-gray-600 dark:text-gray-400">Loading sessions...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-nerdy-bg-light flex items-center justify-center">
+        <div className="text-center">
+          <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Error loading sessions</h3>
+          <p className="text-gray-500 dark:text-gray-400">{error}</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gradient-nerdy-bg-light">
       <div className="max-w-7xl mx-auto p-4">
         {/* Header */}
         <div className="p-4 sm:p-6 lg:p-8">
-          {/* Header */}
-          <div className="mb-2">
-            <div className="flex items-center justify-between">
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">
                 My Sessions
               </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Schedule and manage your tutoring sessions
-              </p>
+              <Button 
+                variant="gradient" 
+                gradientType="nerdy" 
+                leftIcon={<Plus className="h-4 w-4" />}
+                onClick={() => router.push('/sessions/new')}
+                size="sm"
+              >
+                New Session
+              </Button>
             </div>
-            <Button 
-              variant="gradient" 
-              gradientType="nerdy" 
-              leftIcon={<Plus className="h-4 w-4" />}
-              onClick={() => router.push('/sessions/new')}
-              size="sm"
-            >
-              New Session
-            </Button>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Schedule and manage your tutoring sessions
+            </p>
           </div>
         </div>
 
         {/* Controls */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-3 mb-2">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-3 mb-4">
           <div className="flex flex-col lg:flex-row gap-4">
             {/* View Controls */}
             <div className="flex items-center gap-2">
@@ -831,7 +836,20 @@ export default function SessionsPage() {
             >
               <Calendar className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No sessions found</h3>
-              <p className="text-gray-500 dark:text-gray-400">Try adjusting your search or filters</p>
+              <p className="text-gray-500 dark:text-gray-400">
+                {sessions.length === 0 ? 'Schedule your first session to get started' : 'Try adjusting your search or filters'}
+              </p>
+              {sessions.length === 0 && (
+                <Button 
+                  variant="gradient" 
+                  gradientType="nerdy" 
+                  leftIcon={<Plus className="h-4 w-4" />}
+                  onClick={() => router.push('/sessions/new')}
+                  className="mt-4"
+                >
+                  Schedule Session
+                </Button>
+              )}
             </motion.div>
           )}
         </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -18,10 +18,14 @@ import {
   Plus,
   Zap
 } from 'lucide-react'
-import { Avatar, Button, NotificationBell, useToastHelpers } from '@/components/ui'
-import { cn } from '@/lib/utils'
+import Header from '@/components/layout/Header'
+import { Button, Badge, Avatar, NotificationBell } from '@/components/ui'
 import { StorageWarning } from '@/components/ui/StorageWarning'
+import { cn } from '@/lib/utils'
 import { useTutorStore } from '@/lib/stores/tutorStore'
+import { useAuth } from '@/lib/auth/auth-context'
+import { getStudents } from '@/lib/api/students'
+import { getUpcomingSessions } from '@/lib/api/dashboard'
 
 interface NavItem {
   id: string
@@ -32,62 +36,102 @@ interface NavItem {
   description: string
 }
 
-const navigation: NavItem[] = [
-  {
-    id: 'dashboard',
-    label: 'Dashboard',
-    href: '/dashboard',
-    icon: Home,
-    description: 'Overview and quick actions'
-  },
-  {
-    id: 'students',
-    label: 'Students',
-    href: '/students',
-    icon: Users,
-    badge: '12',
-    description: 'Manage your students'
-  },
-  {
-    id: 'sessions',
-    label: 'Sessions',
-    href: '/sessions',
-    icon: Calendar,
-    badge: '3',
-    description: 'Schedule and track sessions'
-  },
-  {
-    id: 'opportunities',
-    label: 'Opportunities',
-    href: '/opportunities',
-    icon: Search,
-    description: 'Find new tutoring opportunities'
-  },
-  {
-    id: 'earnings',
-    label: 'Earnings',
-    href: '/earnings',
-    icon: DollarSign,
-    description: 'Track income and billing'
-  },
-    {
-    id: 'achievements',
-    label: 'Achievements',
-    href: '/achievements',
-    icon: Trophy,
-    description: 'Profile and gamification'
-  }
-]
-
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [isLargeScreen, setIsLargeScreen] = useState(false)
+  const pathname = usePathname()
   const { tutor, level } = useTutorStore()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  
+  // Dynamic counts
+  const [studentCount, setStudentCount] = useState<number>(0)
+  const [upcomingSessionsCount, setUpcomingSessionsCount] = useState<number>(0)
+  
+  // Fetch real counts
+  useEffect(() => {
+    async function fetchCounts() {
+      if (!tutor?.id) return
+      
+      try {
+        // Fetch student count
+        const students = await getStudents(tutor.id)
+        const activeStudents = students.filter(s => s.is_active)
+        setStudentCount(activeStudents.length)
+        
+        // Fetch upcoming sessions count (next 7 days)
+        const sessions = await getUpcomingSessions(tutor.id, 100)
+        const nextWeek = new Date()
+        nextWeek.setDate(nextWeek.getDate() + 7)
+        const upcomingThisWeek = sessions.filter(s => new Date(s.scheduled_at) <= nextWeek)
+        setUpcomingSessionsCount(upcomingThisWeek.length)
+      } catch (error) {
+        console.error('Error fetching sidebar counts:', error)
+      }
+    }
+    
+    if (tutor?.id) {
+      fetchCounts()
+    }
+  }, [tutor?.id])
 
+  const navItems = [
+    {
+      id: 'dashboard',
+      label: 'Dashboard',
+      href: '/dashboard',
+      icon: Home,
+      description: 'Overview and quick actions'
+    },
+    {
+      id: 'students',
+      label: 'Students',
+      href: '/students',
+      icon: Users,
+      badge: studentCount > 0 ? String(studentCount) : undefined,
+      description: 'Manage your students'
+    },
+    {
+      id: 'sessions',
+      label: 'Sessions',
+      href: '/sessions',
+      icon: Calendar,
+      badge: upcomingSessionsCount > 0 ? String(upcomingSessionsCount) : undefined,
+      description: 'Schedule and track sessions'
+    },
+    {
+      id: 'tools',
+      label: 'AI Tools',
+      href: '/tools',
+      icon: Zap,
+      description: 'AI-powered teaching tools'
+    },
+    {
+      id: 'opportunities',
+      label: 'Opportunities',
+      href: '/opportunities',
+      icon: Search,
+      description: 'Find new tutoring opportunities'
+    },
+    {
+      id: 'earnings',
+      label: 'Earnings',
+      href: '/earnings',
+      icon: DollarSign,
+      description: 'Track income and billing'
+    },
+    {
+      id: 'achievements',
+      label: 'Achievements',
+      href: '/achievements',
+      icon: Trophy,
+      description: 'Profile and gamification'
+    }
+  ]
+
+  const [isLargeScreen, setIsLargeScreen] = useState(false)
+  
   React.useEffect(() => {
     const checkScreenSize = () => {
       setIsLargeScreen(window.innerWidth >= 1024) // lg breakpoint
@@ -97,6 +141,7 @@ export default function DashboardLayout({
     window.addEventListener('resize', checkScreenSize)
     return () => window.removeEventListener('resize', checkScreenSize)
   }, [])
+  
   const [notifications, setNotifications] = useState([
     {
       id: '1',
@@ -115,16 +160,13 @@ export default function DashboardLayout({
       read: false
     }
   ])
-  
-  const pathname = usePathname()
-  const { success, info } = useToastHelpers()
 
-  const markAsRead = (id: string) => {
+  const markNotificationAsRead = (id: string) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))
   }
 
-  const clearAllNotifications = () => {
-    setNotifications([])
+  const clearNotification = (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id))
   }
 
   return (
@@ -172,7 +214,7 @@ export default function DashboardLayout({
 
           {/* Navigation */}
           <nav className="flex-1 min-h-0 p-4 space-y-1 overflow-y-auto">
-            {navigation.map((item) => {
+            {navItems.map((item) => {
               const isActive = pathname === item.href
               const Icon = item.icon
               
@@ -252,7 +294,7 @@ export default function DashboardLayout({
               
               {/* Page title will be added by individual pages */}
               <div className="text-xl font-bold text-slate-800 dark:text-gray-100">
-                {navigation.find(item => item.href === pathname)?.label || 'Dashboard'}
+                {navItems.find(item => item.href === pathname)?.label || 'Dashboard'}
               </div>
             </div>
 
@@ -273,8 +315,8 @@ export default function DashboardLayout({
               {/* Notifications */}
               <NotificationBell 
                 notifications={notifications}
-                onMarkAsRead={markAsRead}
-                onClearAll={clearAllNotifications}
+                onMarkAsRead={markNotificationAsRead}
+                onClearAll={() => setNotifications([])}
               />
             </div>
           </div>

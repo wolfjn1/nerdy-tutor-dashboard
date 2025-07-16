@@ -62,8 +62,12 @@ export default function StudentsPage() {
   // Fetch students data
   useEffect(() => {
     async function fetchData() {
-      if (!tutor?.id) return
+      if (!tutor?.id) {
+        console.log('[Students] No tutor ID available:', tutor)
+        return
+      }
       
+      console.log('[Students] Fetching data for tutor ID:', tutor.id)
       setDataLoading(true)
       try {
         const [studentsData, sessionsData, stats] = await Promise.all([
@@ -71,6 +75,12 @@ export default function StudentsPage() {
           getSessions(tutor.id),
           getStudentStats(tutor.id)
         ])
+        
+        console.log('[Students] API Response:', {
+          students: studentsData,
+          sessionsCount: sessionsData?.length,
+          stats: stats
+        })
         
         setStudents(studentsData)
         setSessions(sessionsData)
@@ -331,7 +341,15 @@ export default function StudentsPage() {
 
           {/* Actions - Always at bottom */}
           <div className="flex gap-2">
-            <Button size="sm" variant="outline" className="flex-1">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="flex-1"
+              onClick={() => {
+                // Navigate to messages page with student pre-selected
+                router.push(`/messages?newConversation=${student.id}`)
+              }}
+            >
               <MessageCircle className="h-4 w-4 mr-2" />
               Message
             </Button>
@@ -435,7 +453,9 @@ export default function StudentsPage() {
               <Users className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">12</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                {dataLoading ? '...' : totalCount}
+              </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">{activeTab === 'current' ? 'Current' : 'Previous'} Students</div>
             </div>
           </div>
@@ -447,7 +467,9 @@ export default function StudentsPage() {
               <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">87%</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                {dataLoading ? '...' : `${avgPerformance}%`}
+              </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Avg Performance</div>
             </div>
           </div>
@@ -459,7 +481,9 @@ export default function StudentsPage() {
               <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">10</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                {dataLoading ? '...' : withScheduledSessions}
+              </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">{activeTab === 'current' ? 'With Scheduled Sessions' : 'Total Completed Sessions'}</div>
             </div>
           </div>
@@ -471,7 +495,9 @@ export default function StudentsPage() {
               <Star className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">4.6</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                {dataLoading ? '...' : avgRating}
+              </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Avg Rating</div>
             </div>
           </div>
@@ -545,18 +571,56 @@ export default function StudentsPage() {
         </div>
       </div>
 
-      {/* Students Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredStudents.map((student) => (
-          <StudentCard key={student.id} student={student} />
-        ))}
-      </div>
-
-      {filteredStudents.length === 0 && (
-        <div className="text-center py-12">
-          <Users className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No {activeTab} students found</h3>
-          <p className="text-gray-500 dark:text-gray-400">Try adjusting your search or filters</p>
+      {/* Students Grid or Empty State */}
+      {dataLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 animate-pulse">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                <div className="flex-1">
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                  <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : filteredStudents.length === 0 ? (
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
+          <div className="max-w-md mx-auto">
+            <Users className="h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              {students.length === 0 
+                ? "No students yet" 
+                : `No ${activeTab} students found`}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              {students.length === 0 
+                ? "Start building your student roster by viewing opportunities or adding students directly." 
+                : "Try adjusting your filters or search terms."}
+            </p>
+            {students.length === 0 && (
+              <Button 
+                variant="gradient" 
+                gradientType="nerdy" 
+                onClick={() => router.push('/opportunities')}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                View Opportunities
+              </Button>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className={cn(
+          viewMode === 'grid' 
+            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+            : "space-y-4"
+        )}>
+          {filteredStudents.map((student) => (
+            <StudentCard key={student.id} student={student} />
+          ))}
         </div>
       )}
     </div>

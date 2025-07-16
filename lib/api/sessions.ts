@@ -1,7 +1,41 @@
 import { createClient } from '@/lib/supabase-browser'
-import { startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns'
 
+// Create the client once at module level
 const supabase = createClient()
+
+// Define today as July 14, 2025 for calendar sync (in UTC)
+const TODAY = new Date('2025-07-14T00:00:00Z') // Use UTC to match database
+
+// Helper functions for date handling
+function startOfWeek(date: Date): Date {
+  const start = new Date(date)
+  const day = start.getDay()
+  const diff = start.getDate() - day
+  start.setDate(diff)
+  start.setHours(0, 0, 0, 0)
+  return start
+}
+
+function endOfWeek(date: Date): Date {
+  const end = new Date(date)
+  const day = end.getDay()
+  const diff = end.getDate() - day + 6
+  end.setDate(diff)
+  end.setHours(23, 59, 59, 999)
+  return end
+}
+
+function startOfMonth(date: Date): Date {
+  const start = new Date(date.getFullYear(), date.getMonth(), 1)
+  start.setHours(0, 0, 0, 0)
+  return start
+}
+
+function endOfMonth(date: Date): Date {
+  const end = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+  end.setHours(23, 59, 59, 999)
+  return end
+}
 
 export interface SessionData {
   id: string
@@ -59,14 +93,14 @@ export async function getSessions(
 
   // Date range filters
   if (filters?.dateRange === 'week') {
-    const start = startOfWeek(new Date())
-    const end = endOfWeek(new Date())
+    const start = startOfWeek(TODAY)
+    const end = endOfWeek(TODAY)
     query = query
       .gte('scheduled_at', start.toISOString())
       .lte('scheduled_at', end.toISOString())
   } else if (filters?.dateRange === 'month') {
-    const start = startOfMonth(new Date())
-    const end = endOfMonth(new Date())
+    const start = startOfMonth(TODAY)
+    const end = endOfMonth(TODAY)
     query = query
       .gte('scheduled_at', start.toISOString())
       .lte('scheduled_at', end.toISOString())
@@ -200,19 +234,19 @@ export async function completeSession(sessionId: string, rating?: number, notes?
 // Get session statistics
 export async function getSessionStats(tutorId: string, timeframe: 'week' | 'month' | 'year' = 'month') {
   let start: Date
-  const end = new Date()
+  const end = TODAY
 
   switch (timeframe) {
     case 'week':
-      start = new Date()
+      start = new Date(TODAY)
       start.setDate(start.getDate() - 7)
       break
     case 'month':
-      start = new Date()
+      start = new Date(TODAY)
       start.setMonth(start.getMonth() - 1)
       break
     case 'year':
-      start = new Date()
+      start = new Date(TODAY)
       start.setFullYear(start.getFullYear() - 1)
       break
   }

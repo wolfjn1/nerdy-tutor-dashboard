@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -24,113 +24,133 @@ import {
 import { cn } from '@/lib/utils'
 import { Avatar, Badge } from '@/components/ui'
 import { useAuth } from '@/lib/auth/auth-context'
+import { useTutorStore } from '@/lib/stores/tutorStore'
+import { getStudents } from '@/lib/api/students'
+import { getUpcomingSessions } from '@/lib/api/dashboard'
 
 interface SidebarItem {
   id: string
   label: string
   icon: React.ElementType
   href: string
-  badge?: string
+  badge?: string | number
   xpReward?: number
 }
 
-const sidebarItems: SidebarItem[] = [
-  {
-    id: 'dashboard',
-    label: 'Dashboard',
-    icon: Home,
-    href: '/dashboard'
-  },
-  {
-    id: 'students',
-    label: 'Students',
-    icon: Users,
-    href: '/students',
-    badge: '12'
-  },
-  {
-    id: 'sessions',
-    label: 'Sessions',
-    icon: Calendar,
-    href: '/sessions',
-    badge: '3'
-  },
-  {
-    id: 'opportunities',
-    label: 'Opportunities',
-    icon: Search,
-    href: '/opportunities'
-  },
-  {
-    id: 'tools',
-    label: 'AI Tools',
-    icon: Brain,
-    href: '/tools',
-    xpReward: 50
-  },
-  {
-    id: 'messages',
-    label: 'Messages',
-    icon: MessageCircle,
-    href: '/messages',
-    badge: '5'
-  },
-  {
-    id: 'earnings',
-    label: 'Earnings',
-    icon: DollarSign,
-    href: '/earnings'
-  },
-  {
-    id: 'achievements',
-    label: 'Achievements',
-    icon: Trophy,
-    href: '/achievements'
-  },
-  {
-    id: 'profile',
-    label: 'Profile',
-    icon: User,
-    href: '/profile'
-  },
-  {
-    id: 'settings',
-    label: 'Settings',
-    icon: Settings,
-    href: '/settings'
-  },
-]
-
-export interface SidebarProps {
-  className?: string
-  isCollapsed?: boolean
-  onToggle?: (collapsed: boolean) => void
-  isMobile?: boolean
-  isOpen?: boolean
-  onClose?: () => void
-}
-
-export const Sidebar: React.FC<SidebarProps> = ({
-  className,
-  isCollapsed = false,
-  onToggle,
-  isMobile = false,
-  isOpen = false,
-  onClose
-}) => {
-  const [collapsed, setCollapsed] = useState(isCollapsed)
+export default function Sidebar() {
   const pathname = usePathname()
-  const { tutor, signOut } = useAuth()
+  const { user, signOut } = useAuth()
+  const { tutor, level, totalXP, xpForNextLevel } = useTutorStore()
+  const [isExpanded, setIsExpanded] = useState(true)
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
+  
+  // Dynamic counts
+  const [studentCount, setStudentCount] = useState<number>(0)
+  const [upcomingSessionsCount, setUpcomingSessionsCount] = useState<number>(0)
+  const [messagesCount] = useState<number>(0) // Messages not implemented yet
+  
+  // Fetch real counts
+  useEffect(() => {
+    async function fetchCounts() {
+      if (!tutor?.id) return
+      
+      try {
+        // Fetch student count
+        const students = await getStudents(tutor.id)
+        const activeStudents = students.filter(s => s.is_active)
+        setStudentCount(activeStudents.length)
+        
+        // Fetch upcoming sessions count (next 7 days)
+        const sessions = await getUpcomingSessions(tutor.id, 100) // Get more to count
+        const nextWeek = new Date()
+        nextWeek.setDate(nextWeek.getDate() + 7)
+        const upcomingThisWeek = sessions.filter(s => new Date(s.scheduled_at) <= nextWeek)
+        setUpcomingSessionsCount(upcomingThisWeek.length)
+      } catch (error) {
+        console.error('Error fetching sidebar counts:', error)
+      }
+    }
+    
+    if (tutor?.id) {
+      fetchCounts()
+    }
+  }, [tutor?.id])
+
+  const sidebarItems: SidebarItem[] = [
+    {
+      id: 'dashboard',
+      label: 'Dashboard',
+      icon: Home,
+      href: '/dashboard'
+    },
+    {
+      id: 'students',
+      label: 'Students',
+      icon: Users,
+      href: '/students',
+      badge: studentCount > 0 ? studentCount : undefined
+    },
+    {
+      id: 'sessions',
+      label: 'Sessions',
+      icon: Calendar,
+      href: '/sessions',
+      badge: upcomingSessionsCount > 0 ? upcomingSessionsCount : undefined
+    },
+    {
+      id: 'tools',
+      label: 'AI Tools',
+      icon: Brain,
+      href: '/tools',
+      xpReward: 50
+    },
+    {
+      id: 'opportunities',
+      label: 'Opportunities',
+      icon: Search,
+      href: '/opportunities'
+    },
+    {
+      id: 'messages',
+      label: 'Messages',
+      icon: MessageCircle,
+      href: '/messages',
+      badge: messagesCount > 0 ? messagesCount : undefined
+    },
+    {
+      id: 'earnings',
+      label: 'Earnings',
+      icon: DollarSign,
+      href: '/earnings'
+    },
+    {
+      id: 'achievements',
+      label: 'Achievements',
+      icon: Trophy,
+      href: '/achievements'
+    },
+    {
+      id: 'profile',
+      label: 'Profile',
+      icon: User,
+      href: '/profile'
+    },
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: Settings,
+      href: '/settings'
+    }
+  ]
 
   const handleToggle = () => {
-    const newCollapsed = !collapsed
-    setCollapsed(newCollapsed)
-    onToggle?.(newCollapsed)
+    const newCollapsed = !isExpanded
+    setIsExpanded(newCollapsed)
   }
 
   const handleItemClick = () => {
-    if (isMobile) {
-      onClose?.()
+    if (isMobileOpen) {
+      setIsMobileOpen(false)
     }
   }
 
@@ -176,17 +196,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const SidebarContent = () => (
     <motion.div
       variants={sidebarVariants}
-      animate={collapsed ? 'collapsed' : 'expanded'}
+      animate={isExpanded ? 'expanded' : 'collapsed'}
       className={cn(
         'flex flex-col h-full glass-effect border-r border-white/10',
         'shadow-lg backdrop-blur-sm',
-        className
+        isExpanded ? 'w-full' : 'w-20'
       )}
     >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-white/10">
         <AnimatePresence mode="wait">
-          {!collapsed && (
+          {isExpanded && (
             <motion.div
               key="logo"
               variants={itemVariants}
@@ -205,12 +225,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
         </AnimatePresence>
         
-        {!isMobile && (
+        {!isExpanded && (
           <button
             onClick={handleToggle}
             className="p-2 rounded-lg hover:bg-white/10 transition-colors"
           >
-            {collapsed ? (
+            {isExpanded ? (
               <ChevronRight className="w-4 h-4 text-white" />
             ) : (
               <ChevronLeft className="w-4 h-4 text-white" />
@@ -232,13 +252,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200',
                   'hover:bg-white/10 text-white cursor-pointer',
                   isActive && 'bg-gradient-nerdy shadow-lg nerdy-glow',
-                  collapsed && 'justify-center'
+                  !isExpanded && 'justify-center'
                 )}
               >
                 <item.icon className="w-5 h-5 flex-shrink-0" />
                 
                 <AnimatePresence mode="wait">
-                  {!collapsed && (
+                  {isExpanded && (
                     <motion.div
                       variants={itemVariants}
                       initial="collapsed"
@@ -273,7 +293,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="p-4 border-t border-white/10 space-y-2">
         <div className={cn(
           'flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors cursor-pointer',
-          collapsed && 'justify-center'
+          !isExpanded && 'justify-center'
         )}>
           <Avatar
             src={tutor?.avatar_url || undefined}
@@ -285,7 +305,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           />
           
           <AnimatePresence mode="wait">
-            {!collapsed && (
+            {isExpanded && (
               <motion.div
                 variants={itemVariants}
                 initial="collapsed"
@@ -310,11 +330,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           className={cn(
             'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200',
             'hover:bg-red-500/20 text-red-400 cursor-pointer',
-            collapsed && 'justify-center'
+            !isExpanded && 'justify-center'
           )}
         >
           <LogOut className="w-5 h-5 flex-shrink-0" />
-          {!collapsed && (
+          {isExpanded && (
             <span className="font-medium text-sm">Logout</span>
           )}
         </button>
@@ -322,10 +342,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
     </motion.div>
   )
 
-  if (isMobile) {
+  if (isMobileOpen) {
     return (
       <AnimatePresence>
-        {isOpen && (
+        {isMobileOpen && (
           <>
             {/* Backdrop */}
             <motion.div
@@ -333,7 +353,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
-              onClick={onClose}
+              onClick={() => setIsMobileOpen(false)}
             />
             
             {/* Mobile Sidebar */}
@@ -355,7 +375,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </div>
                 
                 <button
-                  onClick={onClose}
+                  onClick={() => setIsMobileOpen(false)}
                   className="p-2 rounded-lg hover:bg-white/10 transition-colors"
                 >
                   <X className="w-5 h-5 text-white" />
@@ -377,6 +397,4 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <SidebarContent />
     </div>
   )
-}
-
-export default Sidebar 
+} 

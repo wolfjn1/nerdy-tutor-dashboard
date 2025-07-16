@@ -1,148 +1,164 @@
 'use client'
 
 import React from 'react'
-import { motion } from 'framer-motion'
-import { Brain, Zap, BookOpen, PenTool, Calculator, MessageSquare } from 'lucide-react'
-import { Card, Button } from '@/components/ui'
+import { BookOpen, Layers, Calculator, Brain, PenTool, MessageSquare, ArrowRight, Clock } from 'lucide-react'
+import { Card } from '@/components/ui'
+import { useRouter } from 'next/navigation'
 
 export default function ToolsPage() {
-  const tools = [
+  const router = useRouter()
+  
+  const availableTools = [
     {
       id: 'lesson-builder',
       name: 'AI Lesson Builder',
-      description: 'Create personalized lesson plans with AI assistance',
+      description: 'Generate complete lesson plans in seconds with AI assistance',
       icon: BookOpen,
-      color: 'bg-purple-100',
-      iconColor: 'text-purple-600',
-      xpReward: 25
+      iconBg: 'bg-purple-500',
+      iconColor: 'text-white',
+      time: '2 min setup'
     },
     {
-      id: 'problem-generator',
+      id: 'flashcards',
+      name: 'Flashcards',
+      description: 'Create interactive study decks to help students memorize key concepts',
+      icon: Layers,
+      iconBg: 'bg-orange-500',
+      iconColor: 'text-white',
+      time: '5 min setup'
+    }
+  ]
+
+  const comingSoonTools = [
+    {
       name: 'Problem Generator',
-      description: 'Generate practice problems for any subject',
+      description: 'Auto-generate practice problems',
       icon: Calculator,
-      color: 'bg-blue-100',
-      iconColor: 'text-blue-600',
-      xpReward: 15
+      iconBg: 'bg-blue-100',
+      iconColor: 'text-blue-600'
     },
     {
-      id: 'study-assistant',
       name: 'Study Assistant',
-      description: 'AI-powered study guide and homework help',
+      description: 'AI chatbot for homework help',
       icon: Brain,
-      color: 'bg-pink-100',
-      iconColor: 'text-pink-600',
-      xpReward: 20
+      iconBg: 'bg-pink-100',
+      iconColor: 'text-pink-600'
     },
     {
-      id: 'quiz-maker',
       name: 'Quiz Maker',
-      description: 'Create custom quizzes and assessments',
+      description: 'Create auto-graded quizzes',
       icon: PenTool,
-      color: 'bg-green-100',
-      iconColor: 'text-green-600',
-      xpReward: 18
+      iconBg: 'bg-green-100',
+      iconColor: 'text-green-600'
     },
     {
-      id: 'explanation-helper',
       name: 'Explanation Helper',
-      description: 'Get multiple ways to explain difficult concepts',
+      description: 'Multiple ways to explain concepts',
       icon: MessageSquare,
-      color: 'bg-yellow-100',
-      iconColor: 'text-yellow-600',
-      xpReward: 22
-    },
-    {
-      id: 'ai-tutor',
-      name: 'AI Tutor Chat',
-      description: 'Chat with AI for instant teaching assistance',
-      icon: Zap,
-      color: 'bg-indigo-100',
-      iconColor: 'text-indigo-600',
-      xpReward: 30
+      iconBg: 'bg-yellow-100',
+      iconColor: 'text-yellow-600'
     }
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-5xl mx-auto px-4">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center"
-      >
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          AI Tutoring Tools 🧠
+      <div className="mb-10">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
+          AI Teaching Tools
         </h1>
-        <p className="text-gray-600">
-          Supercharge your teaching with AI-powered tools
+        <p className="text-lg text-gray-700 dark:text-gray-300">
+          Save hours on lesson planning and create engaging learning experiences
         </p>
-      </motion.div>
+      </div>
 
-      {/* Tools Grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-      >
-        {tools.map((tool, index) => {
-          const Icon = tool.icon
-          return (
-            <motion.div
-              key={tool.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ y: -4 }}
-            >
-              <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
-                <div className="p-6">
-                  <div className={`w-12 h-12 ${tool.color} rounded-lg flex items-center justify-center mb-4`}>
+      {/* Available Tools */}
+      <section className="mb-16">
+        <div className="flex items-baseline justify-between mb-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            Available Tools
+          </h2>
+          <span className="text-sm text-gray-600 dark:text-gray-400">
+            Click to open
+          </span>
+        </div>
+        
+        <div className="grid md:grid-cols-2 gap-4">
+          {availableTools.map((tool) => {
+            const Icon = tool.icon
+            return (
+              <Card
+                key={tool.id}
+                className="p-6 cursor-pointer bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-lg transition-all duration-200"
+                onClick={() => router.push(`/tools/${tool.id}`)}
+              >
+                <div className="flex gap-4">
+                  {/* Icon with solid background */}
+                  <div className={`${tool.iconBg} p-3 rounded-lg flex-shrink-0`}>
                     <Icon className={`w-6 h-6 ${tool.iconColor}`} />
                   </div>
                   
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {tool.name}
-                  </h3>
-                  
-                  <p className="text-gray-600 mb-4 text-sm">
-                    {tool.description}
-                  </p>
-                  
-                  <div className="flex items-center justify-between">
-                    <Button 
-                      variant="gradient" 
-                      gradientType="nerdy" 
-                      size="sm"
-                      className="flex-1"
-                    >
-                      Launch Tool
-                    </Button>
-                    <div className="ml-3 text-xs text-gray-500">
-                      +{tool.xpReward} XP
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-1">
+                      {tool.name}
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-3">
+                      {tool.description}
+                    </p>
+                    
+                    {/* Meta info */}
+                    <div className="flex items-center justify-between">
+                      <span className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
+                        <Clock className="w-4 h-4" />
+                        {tool.time}
+                      </span>
+                      <ArrowRight className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                     </div>
                   </div>
                 </div>
               </Card>
-            </motion.div>
-          )
-        })}
-      </motion.div>
+            )
+          })}
+        </div>
+      </section>
 
       {/* Coming Soon */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="text-center py-12"
-      >
-        <div className="text-6xl mb-4">🚀</div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">More Tools Coming Soon!</h2>
-        <p className="text-gray-600">
-          We're constantly adding new AI-powered tools to help you teach better
+      <section>
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+          Coming Soon
+        </h2>
+        
+        <div className="grid sm:grid-cols-2 gap-3">
+          {comingSoonTools.map((tool, index) => {
+            const Icon = tool.icon
+            return (
+              <div
+                key={index}
+                className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 opacity-70"
+              >
+                <div className="flex items-start gap-3">
+                  <div className={`${tool.iconBg} p-2 rounded-lg flex-shrink-0`}>
+                    <Icon className={`w-5 h-5 ${tool.iconColor}`} />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-800 dark:text-gray-200 mb-0.5">
+                      {tool.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {tool.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+        
+        {/* Footer message */}
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-8">
+          New tools are added regularly based on tutor feedback
         </p>
-      </motion.div>
+      </section>
     </div>
   )
 } 

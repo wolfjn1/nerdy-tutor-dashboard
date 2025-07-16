@@ -1,765 +1,437 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { 
-  ArrowLeft,
   Calendar, 
   Clock, 
-  User,
+  DollarSign, 
+  User, 
   BookOpen,
-  FileText,
-  Target,
-  Plus,
-  X,
-  Search,
-  ChevronDown,
-  Save,
-  Send,
   AlertCircle,
-  CheckCircle,
-  Timer,
-  Users,
-  MapPin,
-  Video,
-  Phone,
-  MessageCircle,
-  DollarSign,
-  Repeat
+  Check,
+  ChevronLeft,
+  Plus,
+  Loader
 } from 'lucide-react'
-import { Button, Badge, Avatar } from '@/components/ui'
+import { Card, Button } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import studentsData from '@/lib/mock-data/students.json'
-import { Student } from '@/lib/types'
+import { useAuth } from '@/lib/auth/auth-context'
+import { getStudents } from '@/lib/api/students'
+import { createSession } from '@/lib/api/sessions'
 
-// Type the imported data
-const students = studentsData.map(student => ({
-  ...student,
-  nextSession: student.nextSession ? new Date(student.nextSession) : undefined,
-  createdAt: new Date(student.createdAt)
-})) as Student[]
+interface FormData {
+  studentId: string
+  subject: string
+  date: string
+  time: string
+  duration: number
+  price: number
+  notes: string
+  recurring: boolean
+  recurringType: 'weekly' | 'biweekly' | 'monthly'
+  recurringCount: number
+}
 
 export default function NewSessionPage() {
   const router = useRouter()
+  const { tutor } = useAuth()
+  const [students, setStudents] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
   
-  // Form state
-  const [step, setStep] = useState(1)
-  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
-  const [studentSearch, setStudentSearch] = useState('')
-  const [showStudentDropdown, setShowStudentDropdown] = useState(false)
-  
-  // Session details
-  const [sessionDate, setSessionDate] = useState('')
-  const [sessionTime, setSessionTime] = useState('')
-  const [duration, setDuration] = useState(60)
-  const [subject, setSubject] = useState('')
-  const [isRecurring, setIsRecurring] = useState(false)
-  const [recurringPattern, setRecurringPattern] = useState<'weekly' | 'biweekly' | 'monthly'>('weekly')
-  const [recurringEnd, setRecurringEnd] = useState('')
-  
-  // Lesson plan
-  const [lessonTitle, setLessonTitle] = useState('')
-  const [objectives, setObjectives] = useState<string[]>([''])
-  const [materials, setMaterials] = useState<string[]>([''])
-  const [sessionNotes, setSessionNotes] = useState('')
-  
-  // Validation and submission
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formData, setFormData] = useState<FormData>({
+    studentId: '',
+    subject: '',
+    date: '',
+    time: '',
+    duration: 60,
+    price: 0,
+    notes: '',
+    recurring: false,
+    recurringType: 'weekly',
+    recurringCount: 4
+  })
 
-  // Filter students based on search
-  const filteredStudents = useMemo(() => {
-    if (!studentSearch) return students
-    return students.filter(student =>
-      `${student.firstName} ${student.lastName}`.toLowerCase().includes(studentSearch.toLowerCase()) ||
-      student.subjects.some(subject => subject.toLowerCase().includes(studentSearch.toLowerCase()))
+  // Fetch students
+  useEffect(() => {
+    const fetchStudents = async () => {
+      if (!tutor?.id) return
+      
+      try {
+        const data = await getStudents(tutor.id)
+        setStudents(data.filter(s => s.is_active))
+        
+        // Set default price based on tutor's hourly rate
+        if (tutor.hourly_rate) {
+          setFormData(prev => ({ ...prev, price: tutor.hourly_rate }))
+        }
+      } catch (err) {
+        console.error('Error fetching students:', err)
+        setError('Failed to load students')
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    fetchStudents()
+  }, [tutor])
+
+  // Handle form changes
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target
+    
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked
+      setFormData(prev => ({ ...prev, [name]: checked }))
+    } else if (name === 'duration' || name === 'price' || name === 'recurringCount') {
+      setFormData(prev => ({ ...prev, [name]: parseFloat(value) || 0 }))
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }))
+    }
+    
+    // Auto-update subject when student is selected
+    if (name === 'studentId' && value) {
+      const student = students.find(s => s.id === value)
+      if (student && student.subjects?.length > 0) {
+        setFormData(prev => ({ ...prev, subject: student.subjects[0] }))
+      }
+    }
+  }
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!tutor?.id) {
+      setError('No tutor found')
+      return
+    }
+    
+    setSubmitting(true)
+    setError(null)
+    
+    try {
+      // Combine date and time
+      const scheduledAt = new Date(`${formData.date}T${formData.time}`)
+      
+      if (formData.recurring) {
+        // Create multiple sessions
+        const sessions = []
+        for (let i = 0; i < formData.recurringCount; i++) {
+          const sessionDate = new Date(scheduledAt)
+          
+          if (formData.recurringType === 'weekly') {
+            sessionDate.setDate(sessionDate.getDate() + (i * 7))
+          } else if (formData.recurringType === 'biweekly') {
+            sessionDate.setDate(sessionDate.getDate() + (i * 14))
+          } else if (formData.recurringType === 'monthly') {
+            sessionDate.setMonth(sessionDate.getMonth() + i)
+          }
+          
+          sessions.push({
+            tutor_id: tutor.id,
+            student_id: formData.studentId,
+            subject: formData.subject,
+            scheduled_at: sessionDate.toISOString(),
+            duration: formData.duration,
+            notes: formData.notes
+          })
+        }
+        
+        // Create all sessions
+        await Promise.all(sessions.map(session => createSession(session)))
+        setSuccess(true)
+        
+        setTimeout(() => {
+          router.push('/sessions')
+        }, 1500)
+      } else {
+        // Create single session
+        await createSession({
+          tutor_id: tutor.id,
+          student_id: formData.studentId,
+          subject: formData.subject,
+          scheduled_at: scheduledAt.toISOString(),
+          duration: formData.duration,
+          notes: formData.notes
+        })
+        
+        setSuccess(true)
+        
+        setTimeout(() => {
+          router.push('/sessions')
+        }, 1500)
+      }
+    } catch (err) {
+      console.error('Error creating session:', err)
+      setError('Failed to create session. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-nerdy-bg-light flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader className="h-8 w-8 text-purple-600 animate-spin" />
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
+      </div>
     )
-  }, [studentSearch])
-
-  // Get available subjects based on selected student
-  const availableSubjects = useMemo(() => {
-    if (!selectedStudent) return ['Math', 'Science', 'English', 'History', 'Physics', 'Chemistry', 'Biology']
-    return selectedStudent.subjects
-  }, [selectedStudent])
-
-  // Validation functions
-  const validateStep = (stepNumber: number) => {
-    const newErrors: Record<string, string> = {}
-    
-    if (stepNumber === 1) {
-      if (!selectedStudent) newErrors.student = 'Please select a student'
-      if (!subject) newErrors.subject = 'Please select a subject'
-      if (!sessionDate) newErrors.date = 'Please select a date'
-      if (!sessionTime) newErrors.time = 'Please select a time'
-    }
-    
-    if (stepNumber === 2 && lessonTitle) {
-      const validObjectives = objectives.filter(obj => obj.trim() !== '')
-      if (validObjectives.length === 0) newErrors.objectives = 'Please add at least one learning objective'
-    }
-    
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleNext = () => {
-    if (validateStep(step)) {
-      setStep(step + 1)
-    }
-  }
-
-  const handleBack = () => {
-    setStep(step - 1)
-  }
-
-  const handleStudentSelect = (student: Student) => {
-    setSelectedStudent(student)
-    setStudentSearch(`${student.firstName} ${student.lastName}`)
-    setShowStudentDropdown(false)
-    if (student.subjects.length === 1) {
-      setSubject(student.subjects[0])
-    }
-  }
-
-  const addObjective = () => {
-    setObjectives([...objectives, ''])
-  }
-
-  const updateObjective = (index: number, value: string) => {
-    const newObjectives = [...objectives]
-    newObjectives[index] = value
-    setObjectives(newObjectives)
-  }
-
-  const removeObjective = (index: number) => {
-    setObjectives(objectives.filter((_, i) => i !== index))
-  }
-
-  const addMaterial = () => {
-    setMaterials([...materials, ''])
-  }
-
-  const updateMaterial = (index: number, value: string) => {
-    const newMaterials = [...materials]
-    newMaterials[index] = value
-    setMaterials(newMaterials)
-  }
-
-  const removeMaterial = (index: number) => {
-    setMaterials(materials.filter((_, i) => i !== index))
-  }
-
-  const handleSubmit = async () => {
-    if (!validateStep(1)) return
-    
-    setIsSubmitting(true)
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false)
-      router.push('/sessions')
-    }, 2000)
-  }
-
-  const getMinDate = () => {
-    const today = new Date()
-    return today.toISOString().split('T')[0]
-  }
-
-  const getMinTime = () => {
-    const today = new Date()
-    const selectedDate = new Date(sessionDate)
-    
-    if (selectedDate.toDateString() === today.toDateString()) {
-      const currentTime = new Date()
-      currentTime.setHours(currentTime.getHours() + 1) // Minimum 1 hour from now
-      return currentTime.toTimeString().slice(0, 5)
-    }
-    return '08:00'
   }
 
   return (
-    <div className="min-h-screen bg-gradient-nerdy-bg-light dark:bg-gray-900">
-      <div className="max-w-4xl mx-auto p-6">
+    <div className="min-h-screen bg-gradient-nerdy-bg-light">
+      <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <div className="flex items-center gap-4 mb-6">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => router.push('/sessions')}
-              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Sessions
-            </Button>
-          </div>
+        <div className="mb-8">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push('/sessions')}
+            className="mb-4"
+          >
+            <ChevronLeft className="h-4 w-4 mr-1" />
+            Back to Sessions
+          </Button>
+          
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            Schedule New Session
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Create a new tutoring session with one of your students
+          </p>
+        </div>
 
-          <div className="flex items-center justify-between">
+        {/* Form */}
+        <Card className="p-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Student Selection */}
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                Schedule New Session
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                Create a new tutoring session with your students
-              </p>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <User className="inline h-4 w-4 mr-1" />
+                Student
+              </label>
+              <select
+                name="studentId"
+                value={formData.studentId}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+              >
+                <option value="">Select a student</option>
+                {students.map(student => (
+                  <option key={student.id} value={student.id}>
+                    {student.first_name} {student.last_name} - {student.grade}
+                  </option>
+                ))}
+              </select>
+              {students.length === 0 && (
+                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  No active students found. Add students first.
+                </p>
+              )}
             </div>
-            
-            {/* Progress indicator */}
-            <div className="flex items-center gap-2">
-              {[1, 2, 3].map((stepNumber) => (
-                <div key={stepNumber} className="flex items-center">
-                  <div className={cn(
-                    'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors',
-                    step >= stepNumber 
-                      ? 'bg-purple-600 text-white' 
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
-                  )}>
-                    {stepNumber}
-                  </div>
-                  {stepNumber < 3 && (
-                    <div className={cn(
-                      'w-8 h-0.5 mx-2 transition-colors',
-                      step > stepNumber ? 'bg-purple-600' : 'bg-gray-200 dark:bg-gray-700'
-                    )} />
-                  )}
-                </div>
-              ))}
+
+            {/* Subject */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <BookOpen className="inline h-4 w-4 mr-1" />
+                Subject
+              </label>
+              <input
+                type="text"
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                required
+                placeholder="e.g., Mathematics, Physics, English"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+              />
             </div>
-          </div>
-        </motion.div>
 
-        {/* Step Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-        >
-          <AnimatePresence mode="wait">
-            {/* Step 1: Session Details */}
-            {step === 1 && (
-              <motion.div
-                key="step1"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-6"
-              >
-                <div className="bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-800 rounded-lg shadow-sm">
-                  <div className="p-6">
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">Session Details</h2>
-                    
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {/* Student Selection */}
-                      <div className="lg:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Select Student *
-                        </label>
-                        <div className="relative">
-                          <div className="relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
-                            <input
-                              type="text"
-                              placeholder="Search students by name or subject..."
-                              value={studentSearch}
-                              onChange={(e) => {
-                                setStudentSearch(e.target.value)
-                                setShowStudentDropdown(true)
-                                if (!e.target.value) setSelectedStudent(null)
-                              }}
-                              onFocus={() => setShowStudentDropdown(true)}
-                              className={cn(
-                                'pl-10 w-full px-3 py-3 border rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400',
-                                errors.student ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-600'
-                              )}
-                            />
-                          </div>
-                          
-                          {/* Student Dropdown */}
-                          {showStudentDropdown && (
-                            <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                              {filteredStudents.length > 0 ? (
-                                filteredStudents.map((student) => (
-                                  <button
-                                    key={student.id}
-                                    onClick={() => handleStudentSelect(student)}
-                                    className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0"
-                                  >
-                                    <Avatar
-                                      src={student.avatar}
-                                      fallback={`${student.firstName[0]}${student.lastName[0]}`}
-                                      size="sm"
-                                    />
-                                    <div className="flex-1">
-                                      <div className="font-medium text-gray-900 dark:text-gray-100">
-                                        {student.firstName} {student.lastName}
-                                      </div>
-                                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                                        Grade {student.grade} • {student.subjects.join(', ')}
-                                      </div>
-                                    </div>
-                                  </button>
-                                ))
-                              ) : (
-                                <div className="px-4 py-3 text-center text-gray-500 dark:text-gray-400">
-                                  No students found
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                        {errors.student && (
-                          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.student}</p>
-                        )}
-                      </div>
+            {/* Date and Time */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <Calendar className="inline h-4 w-4 mr-1" />
+                  Date
+                </label>
+                <input
+                  type="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                  required
+                  min={new Date().toISOString().split('T')[0]}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+                />
+              </div>
 
-                      {/* Subject Selection */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Subject *
-                        </label>
-                        <select
-                          value={subject}
-                          onChange={(e) => setSubject(e.target.value)}
-                          className={cn(
-                            'w-full px-3 py-3 border rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400',
-                            errors.subject ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-600'
-                          )}
-                        >
-                          <option value="">Select a subject</option>
-                          {availableSubjects.map(sub => (
-                            <option key={sub} value={sub}>{sub}</option>
-                          ))}
-                        </select>
-                        {errors.subject && (
-                          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.subject}</p>
-                        )}
-                      </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <Clock className="inline h-4 w-4 mr-1" />
+                  Time
+                </label>
+                <input
+                  type="time"
+                  name="time"
+                  value={formData.time}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+                />
+              </div>
+            </div>
 
-                      {/* Duration */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Duration (minutes)
-                        </label>
-                        <select
-                          value={duration}
-                          onChange={(e) => setDuration(parseInt(e.target.value))}
-                          className="w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
-                        >
-                          <option value={30}>30 minutes</option>
-                          <option value={45}>45 minutes</option>
-                          <option value={60}>1 hour</option>
-                          <option value={90}>1.5 hours</option>
-                          <option value={120}>2 hours</option>
-                        </select>
-                      </div>
+            {/* Duration and Price */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Duration (minutes)
+                </label>
+                <select
+                  name="duration"
+                  value={formData.duration}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+                >
+                  <option value="30">30 minutes</option>
+                  <option value="45">45 minutes</option>
+                  <option value="60">60 minutes</option>
+                  <option value="90">90 minutes</option>
+                  <option value="120">120 minutes</option>
+                </select>
+              </div>
 
-                      {/* Date */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Date *
-                        </label>
-                        <input
-                          type="date"
-                          value={sessionDate}
-                          onChange={(e) => setSessionDate(e.target.value)}
-                          min={getMinDate()}
-                          className={cn(
-                            'w-full px-3 py-3 border rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400',
-                            errors.date ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-600'
-                          )}
-                        />
-                        {errors.date && (
-                          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.date}</p>
-                        )}
-                      </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <DollarSign className="inline h-4 w-4 mr-1" />
+                  Price ($)
+                </label>
+                <input
+                  type="number"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  required
+                  min="0"
+                  step="0.01"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+                />
+              </div>
+            </div>
 
-                      {/* Time */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Time *
-                        </label>
-                        <input
-                          type="time"
-                          value={sessionTime}
-                          onChange={(e) => setSessionTime(e.target.value)}
-                          min={sessionDate ? getMinTime() : '08:00'}
-                          className={cn(
-                            'w-full px-3 py-3 border rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400',
-                            errors.time ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-600'
-                          )}
-                        />
-                        {errors.time && (
-                          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.time}</p>
-                        )}
-                      </div>
+            {/* Notes */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Session Notes (optional)
+              </label>
+              <textarea
+                name="notes"
+                value={formData.notes}
+                onChange={handleChange}
+                rows={3}
+                placeholder="Any special topics, homework, or preparation needed..."
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+              />
+            </div>
 
+            {/* Recurring Sessions */}
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  id="recurring"
+                  name="recurring"
+                  checked={formData.recurring}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                />
+                <label htmlFor="recurring" className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Create recurring sessions
+                </label>
+              </div>
 
+              {formData.recurring && (
+                <div className="grid grid-cols-2 gap-4 ml-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Frequency
+                    </label>
+                    <select
+                      name="recurringType"
+                      value={formData.recurringType}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+                    >
+                      <option value="weekly">Weekly</option>
+                      <option value="biweekly">Bi-weekly</option>
+                      <option value="monthly">Monthly</option>
+                    </select>
+                  </div>
 
-                      {/* Recurring Options */}
-                      <div className="lg:col-span-2">
-                        <div className="flex items-center gap-2 mb-3">
-                          <input
-                            type="checkbox"
-                            id="recurring"
-                            checked={isRecurring}
-                            onChange={(e) => setIsRecurring(e.target.checked)}
-                            className="w-4 h-4 text-purple-600 border-gray-300 dark:border-gray-600 rounded focus:ring-purple-500 dark:focus:ring-purple-400"
-                          />
-                          <label htmlFor="recurring" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Make this a recurring session
-                          </label>
-                        </div>
-                        
-                        {isRecurring && (
-                          <div className="grid grid-cols-2 gap-4 mt-4">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Repeat Pattern
-                              </label>
-                              <select
-                                value={recurringPattern}
-                                onChange={(e) => setRecurringPattern(e.target.value as any)}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
-                              >
-                                <option value="weekly">Weekly</option>
-                                <option value="biweekly">Bi-weekly</option>
-                                <option value="monthly">Monthly</option>
-                              </select>
-                            </div>
-                            
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                End Date
-                              </label>
-                              <input
-                                type="date"
-                                value={recurringEnd}
-                                onChange={(e) => setRecurringEnd(e.target.value)}
-                                min={sessionDate}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
-                              />
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Number of sessions
+                    </label>
+                    <input
+                      type="number"
+                      name="recurringCount"
+                      value={formData.recurringCount}
+                      onChange={handleChange}
+                      min="2"
+                      max="52"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+                    />
                   </div>
                 </div>
-              </motion.div>
+              )}
+            </div>
+
+            {/* Error/Success Messages */}
+            {error && (
+              <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+              </div>
             )}
 
-            {/* Step 2: Lesson Plan (Optional) */}
-            {step === 2 && (
-              <motion.div
-                key="step2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-6"
+            {success && (
+              <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
+                <p className="text-sm text-green-600 dark:text-green-400">
+                  Session{formData.recurring ? 's' : ''} created successfully! Redirecting...
+                </p>
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <div className="flex justify-end gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push('/sessions')}
+                disabled={submitting}
               >
-                <div className="bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-800 rounded-lg shadow-sm">
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Lesson Plan (Optional)</h2>
-                      <Badge variant="secondary" className="text-xs">
-                        You can add this later
-                      </Badge>
-                    </div>
-                    
-                    <div className="space-y-6">
-                      {/* Lesson Title */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Lesson Title
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g., Introduction to Quadratic Equations"
-                          value={lessonTitle}
-                          onChange={(e) => setLessonTitle(e.target.value)}
-                          className="w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
-                        />
-                      </div>
-
-                      {/* Learning Objectives */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Learning Objectives
-                        </label>
-                        <div className="space-y-2">
-                          {objectives.map((objective, index) => (
-                            <div key={index} className="flex items-center gap-2">
-                              <Target className="h-4 w-4 text-purple-500 dark:text-purple-400 flex-shrink-0" />
-                              <input
-                                type="text"
-                                placeholder="What will the student learn?"
-                                value={objective}
-                                onChange={(e) => updateObjective(index, e.target.value)}
-                                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
-                              />
-                              {objectives.length > 1 && (
-                                <button
-                                  onClick={() => removeObjective(index)}
-                                  className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"
-                                >
-                                  <X className="h-4 w-4" />
-                                </button>
-                              )}
-                            </div>
-                          ))}
-                          <button
-                            onClick={addObjective}
-                            className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors"
-                          >
-                            <Plus className="h-4 w-4" />
-                            Add objective
-                          </button>
-                        </div>
-                        {errors.objectives && (
-                          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.objectives}</p>
-                        )}
-                      </div>
-
-                      {/* Materials */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Materials Needed
-                        </label>
-                        <div className="space-y-2">
-                          {materials.map((material, index) => (
-                            <div key={index} className="flex items-center gap-2">
-                              <BookOpen className="h-4 w-4 text-purple-500 dark:text-purple-400 flex-shrink-0" />
-                              <input
-                                type="text"
-                                placeholder="e.g., Calculator, textbook, worksheets"
-                                value={material}
-                                onChange={(e) => updateMaterial(index, e.target.value)}
-                                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
-                              />
-                              {materials.length > 1 && (
-                                <button
-                                  onClick={() => removeMaterial(index)}
-                                  className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"
-                                >
-                                  <X className="h-4 w-4" />
-                                </button>
-                              )}
-                            </div>
-                          ))}
-                          <button
-                            onClick={addMaterial}
-                            className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors"
-                          >
-                            <Plus className="h-4 w-4" />
-                            Add material
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Session Notes */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Session Notes
-                        </label>
-                        <textarea
-                          placeholder="Any additional notes or special instructions for this session..."
-                          value={sessionNotes}
-                          onChange={(e) => setSessionNotes(e.target.value)}
-                          rows={4}
-                          className="w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 resize-none"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Step 3: Review & Confirm */}
-            {step === 3 && (
-              <motion.div
-                key="step3"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-6"
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="gradient"
+                gradientType="nerdy"
+                disabled={submitting || students.length === 0}
+                leftIcon={submitting ? <Loader className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
               >
-                <div className="bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-800 rounded-lg shadow-sm">
-                  <div className="p-6">
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">Review & Confirm</h2>
-                    
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {/* Session Summary */}
-                      <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Session Details</h3>
-                        <div className="space-y-3">
-                          <div className="flex items-center gap-3">
-                            {selectedStudent && (
-                              <>
-                                <Avatar
-                                  src={selectedStudent.avatar}
-                                  fallback={`${selectedStudent.firstName[0]}${selectedStudent.lastName[0]}`}
-                                  size="sm"
-                                />
-                                <div>
-                                  <div className="font-medium text-gray-900 dark:text-gray-100">
-                                    {selectedStudent.firstName} {selectedStudent.lastName}
-                                  </div>
-                                  <div className="text-sm text-gray-500 dark:text-gray-400">Grade {selectedStudent.grade}</div>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                          
-                          <div className="space-y-2 text-sm">
-                            <div className="flex justify-between">
-                              <span className="text-gray-600 dark:text-gray-400">Subject:</span>
-                              <span className="font-medium text-gray-900 dark:text-gray-100">{subject}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-600 dark:text-gray-400">Date:</span>
-                              <span className="font-medium text-gray-900 dark:text-gray-100">
-                                {new Date(sessionDate).toLocaleDateString('en-US', {
-                                  weekday: 'long',
-                                  month: 'long',
-                                  day: 'numeric'
-                                })}
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-600 dark:text-gray-400">Time:</span>
-                              <span className="font-medium text-gray-900 dark:text-gray-100">{sessionTime}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-600 dark:text-gray-400">Duration:</span>
-                              <span className="font-medium text-gray-900 dark:text-gray-100">{duration} minutes</span>
-                            </div>
-                            {isRecurring && (
-                              <div className="flex justify-between">
-                                <span className="text-gray-600 dark:text-gray-400">Recurring:</span>
-                                <span className="font-medium text-gray-900 dark:text-gray-100 capitalize">
-                                  {recurringPattern} until {recurringEnd}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Lesson Plan Summary */}
-                      <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Lesson Plan</h3>
-                        {lessonTitle ? (
-                          <div className="space-y-3">
-                            <div>
-                              <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">{lessonTitle}</div>
-                              {objectives.filter(obj => obj.trim()).length > 0 && (
-                                <div>
-                                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Objectives:</div>
-                                  <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
-                                    {objectives.filter(obj => obj.trim()).map((objective, index) => (
-                                      <li key={index} className="flex items-start gap-2">
-                                        <Target className="h-3 w-3 text-purple-500 dark:text-purple-400 mt-0.5 flex-shrink-0" />
-                                        {objective}
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              )}
-                              {materials.filter(mat => mat.trim()).length > 0 && (
-                                <div className="mt-2">
-                                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Materials:</div>
-                                  <div className="flex flex-wrap gap-1">
-                                    {materials.filter(mat => mat.trim()).map((material, index) => (
-                                      <Badge key={index} variant="secondary" size="sm">
-                                        {material}
-                                      </Badge>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ) : (
-                          <p className="text-sm text-gray-500 dark:text-gray-400 italic">No lesson plan added</p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Submit Warning */}
-                    <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg">
-                      <div className="flex items-start gap-3">
-                        <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <div className="font-medium text-blue-900 dark:text-blue-100">Ready to schedule?</div>
-                          <div className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                            The student and their parent will receive a notification about this session. 
-                            You can always edit the details later if needed.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-
-        {/* Navigation Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="flex items-center justify-between mt-8"
-        >
-          <div>
-            {step > 1 && (
-              <Button variant="outline" onClick={handleBack}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
+                {submitting ? 'Creating...' : `Create Session${formData.recurring ? 's' : ''}`}
               </Button>
-            )}
-          </div>
-
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={() => router.push('/sessions')}>
-              Cancel
-            </Button>
-            
-            {step < 3 ? (
-              <Button variant="gradient" gradientType="nerdy" onClick={handleNext}>
-                Continue
-                <ArrowLeft className="h-4 w-4 ml-2 rotate-180" />
-              </Button>
-            ) : (
-              <Button 
-                variant="gradient" 
-                gradientType="nerdy" 
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
-                    Scheduling...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Schedule Session
-                  </>
-                )}
-              </Button>
-            )}
-          </div>
-        </motion.div>
+            </div>
+          </form>
+        </Card>
       </div>
     </div>
   )

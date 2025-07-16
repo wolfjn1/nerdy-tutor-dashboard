@@ -57,42 +57,65 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) {
         console.log('[Auth] Error fetching tutor profile:', error)
         
-        // If no tutor exists, create a default one for demo purposes
+        // If no tutor exists, create one in the database
         if (error.code === 'PGRST116') {
-          console.log('[Auth] No tutor record found, creating default data')
-          const defaultTutor = {
-            id: 'demo-tutor-001',
+          console.log('[Auth] No tutor record found, creating one in database')
+          
+          // Get user email from the auth user
+          const { data: { user: authUser } } = await supabase.auth.getUser()
+          const userEmail = authUser?.email || `user_${userId.substring(0, 8)}@example.com`
+          
+          // Extract first name from email if possible
+          const emailParts = userEmail.split('@')[0].split(/[._-]/)
+          const firstName = emailParts[0] ? emailParts[0].charAt(0).toUpperCase() + emailParts[0].slice(1) : 'New'
+          const lastName = emailParts[1] ? emailParts[1].charAt(0).toUpperCase() + emailParts[1].slice(1) : 'Tutor'
+          
+          // Create tutor data
+          const newTutorData = {
             auth_user_id: userId,
-            email: 'sarah_chen@hotmail.com',
-            first_name: 'Sarah',
-            last_name: 'Chen',
-            avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop&crop=face',
-            bio: 'Expert mathematics tutor with 5+ years of experience. Specializing in AP Calculus, SAT/ACT prep, and college-level mathematics.',
-            subjects: ['Mathematics', 'Calculus', 'Algebra', 'SAT Math'],
-            hourly_rate: 85,
+            email: userEmail,
+            first_name: firstName,
+            last_name: lastName,
+            avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face',
+            bio: 'Experienced tutor ready to help students excel.',
+            subjects: ['Mathematics', 'Science', 'English'],
+            hourly_rate: 60,
             availability: {},
-            rating: 4.9,
-            total_earnings: 15750,
-            total_hours: 185,
-            is_verified: true,
-            badges: ['Expert Tutor', 'Top Rated', 'Century Club', 'Perfect Week']
+            rating: 0,
+            total_earnings: 0,
+            total_hours: 0,
+            is_verified: false,
+            badges: [],
           }
           
-          setTutor(defaultTutor)
-          setTutorInStore(defaultTutor)
+          // Insert into database
+          const { data: insertedTutor, error: insertError } = await supabase
+            .from('tutors')
+            .insert(newTutorData)
+            .select()
+            .single()
+          
+          if (insertError) {
+            console.error('[Auth] Error creating tutor:', insertError)
+            throw insertError
+          }
+          
+          console.log('[Auth] Created tutor in database:', insertedTutor)
+          setTutor(insertedTutor)
+          setTutorInStore(insertedTutor)
           
           // Also set gamification data
           const setGamificationData = useTutorStore.getState().setGamificationData
           const setStreak = useTutorStore.getState().setStreak
           
-          // Set level 42 with 25% progress (128662 XP total)
-          setGamificationData(128662)
+          // Set level 1 for new users (0 XP)
+          setGamificationData(0)
           
-          // Set streak to 21 days
-          setStreak(21)
+          // Set streak to 0 days for new users
+          setStreak(0)
           
-          console.log('[Auth] Default tutor data set with gamification')
-          return defaultTutor
+          console.log('[Auth] Tutor created with gamification data')
+          return insertedTutor
         }
         
         throw error

@@ -5,46 +5,46 @@ import { DollarSign, TrendingUp, CreditCard, Calendar, Download, FileText, Clock
 import { Button, Badge, Modal } from '@/components/ui'
 import { cn } from '@/lib/utils'
 
-// Mock completed sessions that need invoicing
+// Mock data for uninvoiced sessions
 const uninvoicedSessions = [
   {
-    id: 'session-006',
+    id: 'session-005',
     studentName: 'Emma Watson',
-    subject: 'Math', 
-    date: '2025-01-12',
+    subject: 'Math',
+    date: '2025-07-12',
     duration: 60,
     rate: 75,
     amount: 75,
     status: 'completed',
-    notes: 'Emma did great with linear equations. Ready to move to quadratics.'
+    notes: 'Great session on quadratic equations. Emma understood the concepts well.'
   },
   {
-    id: 'session-007',
+    id: 'session-006',
     studentName: 'Alex Thompson',
     subject: 'Chemistry',
-    date: '2025-01-10',
+    date: '2025-07-11',
     duration: 90,
     rate: 75,
     amount: 112.50,
     status: 'completed',
-    notes: 'Good progress on stoichiometry. Still needs practice with limiting reagents.'
+    notes: 'Covered organic chemistry basics. Alex needs more practice with naming compounds.'
   },
   {
-    id: 'session-008',
+    id: 'session-007',
     studentName: 'Sophia Brown',
     subject: 'English',
-    date: '2025-01-08',
+    date: '2025-07-10',
     duration: 60,
     rate: 75,
     amount: 75,
     status: 'completed',
-    notes: 'Sophia\'s creative writing is improving. Worked on character development.'
+    notes: 'Essay structure review. Sophia is improving her thesis statements.'
   },
   {
-    id: 'session-009',
+    id: 'session-008',
     studentName: 'Marcus Johnson',
     subject: 'Math',
-    date: '2025-01-11',
+    date: '2025-07-13',
     duration: 90,
     rate: 75,
     amount: 112.50,
@@ -55,7 +55,7 @@ const uninvoicedSessions = [
     id: 'session-010',
     studentName: 'Olivia Martinez',
     subject: 'Biology',
-    date: '2025-01-09',
+    date: '2025-07-11',
     duration: 60,
     rate: 75,
     amount: 75,
@@ -68,31 +68,31 @@ const uninvoicedSessions = [
 const invoices = [
   {
     id: 'inv-001',
-    invoiceNumber: 'INV-2025-001',
+    invoiceNumber: 'INV-2025-055',
     studentName: 'Sarah Chen',
-    date: '2025-01-05',
-    dueDate: '2025-01-20',
+    date: '2025-07-05',
+    dueDate: '2025-07-20',
     amount: 340,
     status: 'paid',
     sessions: 4,
-    paidDate: '2025-01-12'
+    paidDate: '2025-07-12'
   },
   {
     id: 'inv-002',
-    invoiceNumber: 'INV-2025-002',
+    invoiceNumber: 'INV-2025-056',
     studentName: 'David Kim',
-    date: '2025-01-01',
-    dueDate: '2025-01-16',
+    date: '2025-07-01',
+    dueDate: '2025-07-16',
     amount: 450,
     status: 'sent',
     sessions: 5
   },
   {
     id: 'inv-003',
-    invoiceNumber: 'INV-2024-089',
+    invoiceNumber: 'INV-2025-054',
     studentName: 'Lisa Wang',
-    date: '2024-12-28',
-    dueDate: '2025-01-12',
+    date: '2025-06-28',
+    dueDate: '2025-07-12',
     amount: 285,
     status: 'overdue',
     sessions: 3
@@ -103,7 +103,7 @@ const invoices = [
 const transactions = [
   {
     id: 'trans-001',
-    date: '2025-01-14',
+    date: '2025-07-14',
     studentName: 'Sarah Chen',
     subject: 'AP Calculus',
     duration: 60,
@@ -117,7 +117,7 @@ const transactions = [
   },
   {
     id: 'trans-002', 
-    date: '2025-01-14',
+    date: '2025-07-14',
     studentName: 'Marcus Johnson',
     subject: 'SAT Math',
     duration: 90,
@@ -130,7 +130,7 @@ const transactions = [
   },
   {
     id: 'trans-003',
-    date: '2025-01-13',
+    date: '2025-07-13',
     studentName: 'Emily Rodriguez',
     subject: 'Statistics',
     duration: 60,
@@ -143,7 +143,7 @@ const transactions = [
   },
   {
     id: 'trans-004',
-    date: '2025-01-12',
+    date: '2025-07-12',
     studentName: 'David Kim',
     subject: 'Algebra',
     duration: 60,

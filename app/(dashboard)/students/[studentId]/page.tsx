@@ -1,7 +1,6 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import React, { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { 
   ArrowLeft,
@@ -15,7 +14,6 @@ import {
   Mail,
   Edit,
   Plus,
-  MoreHorizontal,
   User,
   BookOpen,
   Target,
@@ -24,59 +22,177 @@ import {
   DollarSign,
   Video,
   CheckCircle,
-  XCircle,
   AlertCircle,
-  Users,
-  MapPin,
-  Settings,
-  Filter,
-  Download
+  BarChart,
+  Activity,
+  Loader
 } from 'lucide-react'
 import { Card, Button, Badge, Avatar } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import studentsData from '@/lib/mock-data/students.json'
-import sessionsData from '@/lib/mock-data/sessions.json'
-import { Student, Session } from '@/lib/types'
+import { useAuth } from '@/lib/auth/auth-context'
+import { getStudent, getIndividualStudentStats } from '@/lib/api/students'
+import { getSessions } from '@/lib/api/sessions'
 
-// Type the imported data and convert dates
-const students = studentsData.map(student => ({
-  ...student,
-  nextSession: student.nextSession ? new Date(student.nextSession) : undefined,
-  createdAt: new Date(student.createdAt)
-})) as Student[]
+interface StudentDetail {
+  id: string
+  tutor_id: string
+  first_name: string
+  last_name: string
+  email?: string
+  phone?: string
+  grade: string
+  subjects: string[]
+  goals?: string
+  notes?: string
+  is_active: boolean
+  parent_name?: string
+  parent_email?: string
+  parent_phone?: string
+  address?: string
+  created_at: string
+  updated_at: string
+}
 
-const sessions = sessionsData.map(session => ({
-  ...session,
-  date: new Date(session.date),
-  createdAt: new Date(session.createdAt),
-  updatedAt: new Date(session.updatedAt)
-})) as Session[]
+interface StudentStats {
+  totalSessions: number
+  completedSessions: number
+  cancelledSessions: number
+  attendanceRate: number
+  averageRating: number
+  totalHours: number
+  subjectDistribution: { subject: string; count: number }[]
+  monthlyProgress: { month: string; performance: number }[]
+}
 
-interface StudentDetailPageProps {
-  params: {
-    studentId: string
-  }
+interface SessionHistory {
+  id: string
+  subject: string
+  scheduled_at: string
+  duration_minutes: number
+  status: string
+  price: number
+  notes?: string
+  rating?: number
 }
 
 export default function StudentDetailPage() {
-  const params = useParams()
   const router = useRouter()
+  const params = useParams()
   const studentId = params.studentId as string
+  const { tutor } = useAuth()
   
+  const [student, setStudent] = useState<StudentDetail | null>(null)
+  const [stats, setStats] = useState<StudentStats | null>(null)
+  const [sessions, setSessions] = useState<SessionHistory[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'overview' | 'sessions' | 'progress' | 'notes'>('overview')
-  const [sessionFilter, setSessionFilter] = useState<'all' | 'completed' | 'scheduled' | 'cancelled'>('all')
 
-  // Find student and their sessions
-  const student = students.find(s => s.id === studentId)
-  const studentSessions = sessions.filter(s => s.studentId === studentId)
+  // Fetch student data
+  useEffect(() => {
+    const fetchStudentData = async () => {
+      if (!tutor?.id) return
+      
+      setLoading(true)
+      setError(null)
+      
+      try {
+        const [studentData, statsData, sessionsData] = await Promise.all([
+          getStudent(studentId),
+          getIndividualStudentStats(studentId),
+          getSessions(tutor.id, { studentId })
+        ])
+        
+        setStudent(studentData)
+        
+        // Use the stats data directly from getIndividualStudentStats
+        if (statsData) {
+          const calculatedStats = {
+            totalSessions: statsData.totalSessions,
+            completedSessions: statsData.completedSessions,
+            cancelledSessions: statsData.cancelledSessions,
+            attendanceRate: statsData.attendanceRate,
+            averageRating: statsData.averageRating,
+            totalHours: statsData.totalHours,
+            subjectDistribution: sessionsData.reduce((acc: any[], s: any) => {
+              const existing = acc.find(item => item.subject === s.subject)
+              if (existing) {
+                existing.count++
+              } else {
+                acc.push({ subject: s.subject, count: 1 })
+              }
+              return acc
+            }, []),
+            monthlyProgress: [] // This would need to be calculated from historical data
+          }
+          
+          setStats(calculatedStats)
+        }
+        setSessions(sessionsData)
+      } catch (err) {
+        console.error('Error fetching student data:', err)
+        setError('Failed to load student details')
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    fetchStudentData()
+  }, [studentId, tutor?.id])
 
-  if (!student) {
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    })
+  }
+
+  const formatTime = (date: string) => {
+    return new Date(date).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
+  const getPerformanceTrend = () => {
+    if (!stats?.monthlyProgress || stats.monthlyProgress.length < 2) return 'stable'
+    
+    const recent = stats.monthlyProgress.slice(-3)
+    const avgRecent = recent.reduce((sum: number, m: { performance: number }) => sum + m.performance, 0) / recent.length
+    const avgPrevious = stats.monthlyProgress.slice(-6, -3).reduce((sum: number, m: { performance: number }) => sum + m.performance, 0) / 3
+    
+    if (avgRecent > avgPrevious + 5) return 'improving'
+    if (avgRecent < avgPrevious - 5) return 'declining'
+    return 'stable'
+  }
+
+  const performanceTrend = getPerformanceTrend()
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-nerdy-bg-light flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader className="h-8 w-8 text-purple-600 animate-spin" />
+          <p className="text-gray-600 dark:text-gray-400">Loading student details...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !student) {
     return (
       <div className="min-h-screen bg-gradient-nerdy-bg-light flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Student Not Found</h1>
-          <p className="text-gray-600 mb-4">The student you're looking for doesn't exist.</p>
-          <Button variant="gradient" gradientType="nerdy" onClick={() => router.push('/students')}>
+          <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            {error || 'Student not found'}
+          </h3>
+          <Button
+            variant="outline"
+            onClick={() => router.push('/students')}
+            className="mt-4"
+          >
             Back to Students
           </Button>
         </div>
@@ -84,610 +200,448 @@ export default function StudentDetailPage() {
     )
   }
 
-  // Calculate statistics
-  const stats = useMemo(() => {
-    const completedSessions = studentSessions.filter(s => s.status === 'completed')
-    const scheduledSessions = studentSessions.filter(s => s.status === 'scheduled')
-    const cancelledSessions = studentSessions.filter(s => s.status === 'cancelled')
-    
-    const totalEarnings = completedSessions.reduce((sum, s) => sum + (s.earnings || 0), 0)
-    const totalHours = completedSessions.reduce((sum, s) => sum + s.duration, 0) / 60
-    const avgRating = completedSessions.length > 0 
-      ? completedSessions.reduce((sum, s) => sum + (s.rating || 0), 0) / completedSessions.length 
-      : 0
-
-    // Calculate monthly progress (last 6 months)
-    const monthlyData = []
-    for (let i = 5; i >= 0; i--) {
-      const date = new Date()
-      date.setMonth(date.getMonth() - i)
-      const monthSessions = completedSessions.filter(s => 
-        s.date.getMonth() === date.getMonth() && s.date.getFullYear() === date.getFullYear()
-      )
-      monthlyData.push({
-        month: date.toLocaleDateString('en-US', { month: 'short' }),
-        sessions: monthSessions.length,
-        hours: monthSessions.reduce((sum, s) => sum + s.duration, 0) / 60,
-        avgRating: monthSessions.length > 0 
-          ? monthSessions.reduce((sum, s) => sum + (s.rating || 0), 0) / monthSessions.length 
-          : 0
-      })
-    }
-
-    return {
-      totalSessions: studentSessions.length,
-      completedSessions: completedSessions.length,
-      scheduledSessions: scheduledSessions.length,
-      cancelledSessions: cancelledSessions.length,
-      totalEarnings,
-      totalHours: Math.round(totalHours * 10) / 10,
-      avgRating: Math.round(avgRating * 10) / 10,
-      attendanceRate: student.progress.attendance,
-      monthlyData
-    }
-  }, [studentSessions, student])
-
-  // Filter sessions based on current filter
-  const filteredSessions = useMemo(() => {
-    if (sessionFilter === 'all') return studentSessions
-    return studentSessions.filter(session => session.status === sessionFilter)
-  }, [studentSessions, sessionFilter])
-
-  const getStatusColor = (status: Session['status']) => {
-    switch (status) {
-      case 'scheduled': return 'bg-blue-100 text-blue-800 border-blue-200'
-      case 'in_progress': return 'bg-green-100 text-green-800 border-green-200'
-      case 'completed': return 'bg-gray-100 text-gray-800 border-gray-200'
-      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200'
-      case 'no_show': return 'bg-orange-100 text-orange-800 border-orange-200'
-      default: return 'bg-gray-100 text-gray-800 border-gray-200'
-    }
-  }
-
-  const getStatusIcon = (status: Session['status']) => {
-    switch (status) {
-      case 'scheduled': return <Clock className="h-3 w-3" />
-      case 'in_progress': return <Video className="h-3 w-3" />
-      case 'completed': return <CheckCircle className="h-3 w-3" />
-      case 'cancelled': return <XCircle className="h-3 w-3" />
-      case 'no_show': return <AlertCircle className="h-3 w-3" />
-      default: return <Clock className="h-3 w-3" />
-    }
-  }
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    })
-  }
-
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
-
-  const formatDuration = (minutes: number) => {
-    const hours = Math.floor(minutes / 60)
-    const mins = minutes % 60
-    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`
-  }
-
-  const ProgressChart = () => (
-    <div className="h-32">
-      <div className="flex justify-between items-end h-full">
-        {stats.monthlyData.map((data, index) => (
-          <div key={index} className="flex flex-col items-center">
-            <div className="flex flex-col justify-end h-20 mb-2">
-              <div 
-                className="bg-gradient-nerdy rounded-t w-6 transition-all duration-500"
-                style={{ height: `${(data.sessions / Math.max(...stats.monthlyData.map(d => d.sessions)) || 1) * 100}%` }}
-              />
-            </div>
-            <div className="text-xs text-gray-500">{data.month}</div>
-            <div className="text-xs font-medium text-gray-900">{data.sessions}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-
-  const SessionCard = ({ session }: { session: Session }) => (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="group"
-    >
-      <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-lg transition-all duration-300">
-        <div className="flex items-center justify-between mb-3">
-          <div>
-            <h3 className="font-semibold text-gray-900">{session.subject}</h3>
-            <p className="text-sm text-gray-500">
-              {formatDate(session.date)} at {formatTime(session.date)}
-            </p>
-          </div>
-          <Badge 
-            variant="secondary" 
-            className={cn('text-xs border', getStatusColor(session.status))}
-          >
-            <span className="flex items-center gap-1">
-              {getStatusIcon(session.status)}
-              {session.status.replace('_', ' ')}
-            </span>
-          </Badge>
-        </div>
-
-        <div className="flex items-center gap-4 mb-3 text-sm text-gray-600">
-          <div className="flex items-center gap-1">
-            <Clock className="h-3 w-3" />
-            <span>{formatDuration(session.duration)}</span>
-          </div>
-          {session.rating && (
-            <div className="flex items-center gap-1">
-              <Star className="h-3 w-3 text-yellow-500 fill-current" />
-              <span>{session.rating}</span>
-            </div>
-          )}
-          {session.earnings && (
-            <div className="flex items-center gap-1">
-              <DollarSign className="h-3 w-3 text-green-600" />
-              <span>${session.earnings}</span>
-            </div>
-          )}
-        </div>
-
-        {session.notes && (
-          <p className="text-sm text-gray-600 line-clamp-2">
-            {session.notes}
-          </p>
-        )}
-      </div>
-    </motion.div>
-  )
-
   return (
     <div className="min-h-screen bg-gradient-nerdy-bg-light">
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <div className="flex items-center gap-4 mb-6">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => router.push('/students')}
-              className="text-gray-600 hover:text-gray-900"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Students
-            </Button>
-          </div>
-
-          {/* Student Profile Header */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-6">
-                <Avatar
-                  src={student.avatar}
-                  fallback={`${student.firstName[0]}${student.lastName[0]}`}
-                  size="2xl"
-                  className="border-4 border-purple-200"
-                />
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                    {student.firstName} {student.lastName}
-                  </h1>
-                  <div className="flex items-center gap-4 text-gray-600 mb-3">
-                    <span className="flex items-center gap-1">
-                      <BookOpen className="h-4 w-4" />
-                      Grade {student.grade}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      Student since {student.createdAt.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {student.subjects.map(subject => (
-                      <Badge key={subject} variant="secondary" className="text-xs bg-purple-100 text-purple-700 border-purple-200">
-                        {subject}
-                      </Badge>
-                    ))}
+        <div className="mb-8">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push('/students')}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Back to Students
+          </Button>
+          
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Avatar
+                fallback={`${student.first_name[0]}${student.last_name[0]}`}
+                size="xl"
+                className="border-4 border-purple-200 dark:border-purple-800"
+              />
+              <div>
+                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">
+                  {student.first_name} {student.last_name}
+                </h1>
+                <div className="flex items-center gap-4 mt-2">
+                  <Badge variant="secondary" className="text-sm">
+                    {student.grade}
+                  </Badge>
+                  <Badge 
+                    variant="secondary" 
+                    className={cn(
+                      'text-sm',
+                      student.is_active 
+                        ? 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400' 
+                        : 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-700 dark:text-gray-300'
+                    )}
+                  >
+                    {student.is_active ? 'Active' : 'Inactive'}
+                  </Badge>
+                  <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
+                    {performanceTrend === 'improving' && (
+                      <>
+                        <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+                        <span className="text-green-600 dark:text-green-400">Improving</span>
+                      </>
+                    )}
+                    {performanceTrend === 'declining' && (
+                      <>
+                        <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
+                        <span className="text-red-600 dark:text-red-400">Needs Attention</span>
+                      </>
+                    )}
+                    {performanceTrend === 'stable' && (
+                      <>
+                        <Activity className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                        <span className="text-blue-600 dark:text-blue-400">Stable Progress</span>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
-
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  Message
-                </Button>
-                <Button variant="gradient" gradientType="nerdy" size="sm">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Schedule Session
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </div>
+            </div>
+            
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                leftIcon={<MessageCircle className="h-4 w-4" />}
+                onClick={() => router.push(`/messages?newConversation=${studentId}`)}
+              >
+                Message
+              </Button>
+              <Button
+                variant="gradient"
+                gradientType="nerdy"
+                leftIcon={<Plus className="h-4 w-4" />}
+                onClick={() => router.push(`/sessions/new?studentId=${student.id}`)}
+              >
+                Schedule Session
+              </Button>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Stats Cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
-        >
-          <div className="bg-white rounded-xl border border-blue-200 p-4 shadow-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+          <Card className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Calendar className="w-5 h-5 text-blue-600" />
+              <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                <BookOpen className="h-5 w-5 text-purple-600 dark:text-purple-400" />
               </div>
               <div>
-                <div className="text-xl font-bold text-gray-900">{stats.completedSessions}</div>
-                <div className="text-sm text-gray-600">Sessions Completed</div>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  {stats?.totalSessions || 0}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total Sessions</p>
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-white rounded-xl border border-green-200 p-4 shadow-sm">
+          <Card className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-green-600" />
+              <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <div className="text-xl font-bold text-gray-900">{student.progress.performance}%</div>
-                <div className="text-sm text-gray-600">Performance</div>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  {Math.round(stats?.attendanceRate || 0)}%
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Attendance</p>
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-white rounded-xl border border-yellow-200 p-4 shadow-sm">
+          <Card className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <Star className="w-5 h-5 text-yellow-600" />
+              <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center">
+                <Star className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
               </div>
               <div>
-                <div className="text-xl font-bold text-gray-900">{stats.avgRating || '-'}</div>
-                <div className="text-sm text-gray-600">Avg Rating</div>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  {stats?.averageRating?.toFixed(1) || 'N/A'}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Avg Rating</p>
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-white rounded-xl border border-purple-200 p-4 shadow-sm">
+          <Card className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Clock className="w-5 h-5 text-purple-600" />
+              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <div className="text-xl font-bold text-gray-900">{stats.totalHours}h</div>
-                <div className="text-sm text-gray-600">Total Hours</div>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  {stats?.totalHours || 0}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total Hours</p>
               </div>
             </div>
-          </div>
-        </motion.div>
+          </Card>
 
-        {/* Tab Navigation */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-6"
-        >
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <div className="flex gap-2">
-              {[
-                { id: 'overview', label: 'Overview', icon: User },
-                { id: 'sessions', label: 'Sessions', icon: Calendar },
-                { id: 'progress', label: 'Progress', icon: TrendingUp },
-                { id: 'notes', label: 'Notes', icon: FileText }
-              ].map(tab => {
-                const Icon = tab.icon
-                return (
-                  <Button
-                    key={tab.id}
-                    variant={activeTab === tab.id ? 'gradient' : 'outline'}
-                    gradientType={activeTab === tab.id ? 'nerdy' : undefined}
-                    size="sm"
-                    onClick={() => setActiveTab(tab.id as any)}
-                    className="flex-1"
-                  >
-                    <Icon className="h-4 w-4 mr-2" />
-                    {tab.label}
-                  </Button>
-                )
-              })}
+          <Card className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-pink-100 dark:bg-pink-900/30 rounded-lg flex items-center justify-center">
+                <Award className="h-5 w-5 text-pink-600 dark:text-pink-400" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  {student.subjects.length}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Subjects</p>
+              </div>
             </div>
+          </Card>
+        </div>
+
+        {/* Tabs */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 mb-6">
+          <div className="flex border-b border-gray-200 dark:border-gray-700">
+            {[
+              { id: 'overview', label: 'Overview', icon: User },
+              { id: 'sessions', label: 'Sessions', icon: Calendar },
+              { id: 'progress', label: 'Progress', icon: BarChart },
+              { id: 'notes', label: 'Notes', icon: FileText }
+            ].map((tab) => {
+              const Icon = tab.icon
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={cn(
+                    'flex-1 px-4 py-3 text-sm font-medium flex items-center justify-center gap-2 transition-colors',
+                    activeTab === tab.id
+                      ? 'text-purple-600 dark:text-purple-400 border-b-2 border-purple-600 dark:border-purple-400'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                  {tab.label}
+                </button>
+              )
+            })}
           </div>
-        </motion.div>
+        </div>
 
         {/* Tab Content */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          <AnimatePresence mode="wait">
-            {activeTab === 'overview' && (
-              <motion.div
-                key="overview"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-              >
-                {/* Progress Overview */}
-                <div className="lg:col-span-2 space-y-6">
-                  <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Progress Overview</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <div className="flex justify-between text-sm mb-2">
-                          <span className="text-gray-600">Performance</span>
-                          <span className="text-gray-900 font-medium">{student.progress.performance}%</span>
+        <div className="space-y-6">
+          {/* Overview Tab */}
+          {activeTab === 'overview' && (
+            <>
+              {/* Contact Information */}
+              <Card className="p-6">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                  Contact Information
+                </h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Student</h3>
+                    <div className="space-y-2 text-sm">
+                      {student.email && (
+                        <div className="flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-gray-400" />
+                          <a href={`mailto:${student.email}`} className="text-purple-600 dark:text-purple-400 hover:underline">
+                            {student.email}
+                          </a>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-3">
-                          <div 
-                            className="h-3 rounded-full bg-gradient-nerdy transition-all duration-500"
-                            style={{ width: `${student.progress.performance}%` }}
-                          />
+                      )}
+                      {student.phone && (
+                        <div className="flex items-center gap-2">
+                          <Phone className="h-4 w-4 text-gray-400" />
+                          <a href={`tel:${student.phone}`} className="text-purple-600 dark:text-purple-400 hover:underline">
+                            {student.phone}
+                          </a>
                         </div>
-                      </div>
-                      
-                      <div>
-                        <div className="flex justify-between text-sm mb-2">
-                          <span className="text-gray-600">Attendance</span>
-                          <span className="text-gray-900 font-medium">{student.progress.attendance}%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-3">
-                          <div 
-                            className="h-3 rounded-full bg-gradient-pink-cyan transition-all duration-500"
-                            style={{ width: `${student.progress.attendance}%` }}
-                          />
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <div className="flex justify-between text-sm mb-2">
-                          <span className="text-gray-600">Engagement</span>
-                          <span className="text-gray-900 font-medium">{student.progress.engagement}%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-3">
-                          <div 
-                            className="h-3 rounded-full bg-gradient-yellow-pink transition-all duration-500"
-                            style={{ width: `${student.progress.engagement}%` }}
-                          />
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </div>
-
-                  <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Session Activity (Last 6 Months)</h3>
-                    <ProgressChart />
+                  
+                  <div>
+                    <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Parent/Guardian</h3>
+                    <div className="space-y-2 text-sm">
+                      {student.parent_name && (
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-gray-400" />
+                          <span className="text-gray-900 dark:text-gray-100">{student.parent_name}</span>
+                        </div>
+                      )}
+                      {student.parent_email && (
+                        <div className="flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-gray-400" />
+                          <a href={`mailto:${student.parent_email}`} className="text-purple-600 dark:text-purple-400 hover:underline">
+                            {student.parent_email}
+                          </a>
+                        </div>
+                      )}
+                      {student.parent_phone && (
+                        <div className="flex items-center gap-2">
+                          <Phone className="h-4 w-4 text-gray-400" />
+                          <a href={`tel:${student.parent_phone}`} className="text-purple-600 dark:text-purple-400 hover:underline">
+                            {student.parent_phone}
+                          </a>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
+              </Card>
 
-                {/* Student Information */}
-                <div className="space-y-6">
-                  <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900 mb-1">Parent/Guardian</div>
-                        <div className="text-sm text-gray-600">{student.parentContact.name}</div>
-                        <div className="text-xs text-gray-500">{student.parentContact.relationship}</div>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Mail className="h-4 w-4" />
-                        <span>{student.parentContact.email}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Phone className="h-4 w-4" />
-                        <span>{student.parentContact.phone}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Notes</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      {student.notes}
-                    </p>
-                  </div>
-
-                  <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Tags</h3>
+              {/* Subjects & Goals */}
+              <Card className="p-6">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                  Academic Information
+                </h2>
+                
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Subjects</h3>
                     <div className="flex flex-wrap gap-2">
-                      {student.tags.map(tag => (
-                        <Badge key={tag} variant="secondary" className="text-xs bg-gray-100 text-gray-700 border-gray-200">
-                          {tag}
+                      {student.subjects.map((subject, index) => (
+                        <Badge key={index} variant="secondary" className="text-sm">
+                          {subject}
                         </Badge>
                       ))}
                     </div>
                   </div>
+                  
+                  {student.goals && (
+                    <div>
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Learning Goals</h3>
+                      <p className="text-gray-600 dark:text-gray-400">{student.goals}</p>
+                    </div>
+                  )}
                 </div>
-              </motion.div>
-            )}
+              </Card>
+            </>
+          )}
 
-            {activeTab === 'sessions' && (
-              <motion.div
-                key="sessions"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-              >
-                <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm mb-6">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-gray-900">Session History</h3>
-                    <div className="flex gap-2">
-                      <select
-                        value={sessionFilter}
-                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSessionFilter(e.target.value as any)}
-                        className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      >
-                        <option value="all">All Sessions</option>
-                        <option value="completed">Completed</option>
-                        <option value="scheduled">Scheduled</option>
-                        <option value="cancelled">Cancelled</option>
-                      </select>
-                      <Button variant="outline" size="sm">
-                        <Download className="h-4 w-4 mr-2" />
-                        Export
-                      </Button>
+          {/* Sessions Tab */}
+          {activeTab === 'sessions' && (
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Session History
+                </h2>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  leftIcon={<Calendar className="h-4 w-4" />}
+                  onClick={() => router.push(`/sessions?studentId=${student.id}`)}
+                >
+                  View All
+                </Button>
+              </div>
+              
+              <div className="space-y-3">
+                {sessions.slice(0, 10).map((session) => (
+                  <div 
+                    key={session.id}
+                    className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+                    onClick={() => router.push(`/sessions/${session.id}`)}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={cn(
+                        'w-2 h-12 rounded-full',
+                        session.status === 'completed' ? 'bg-green-500' : 
+                        session.status === 'scheduled' ? 'bg-blue-500' :
+                        session.status === 'cancelled' ? 'bg-red-500' : 'bg-gray-500'
+                      )} />
+                      <div>
+                        <div className="font-medium text-gray-900 dark:text-gray-100">
+                          {session.subject}
+                        </div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                          {formatDate(session.scheduled_at)} at {formatTime(session.scheduled_at)}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-4">
+                      {session.rating && (
+                        <div className="flex items-center gap-1">
+                          <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                          <span className="text-sm font-medium">{session.rating}</span>
+                        </div>
+                      )}
+                      <Badge variant="secondary" className="text-xs">
+                        {session.duration_minutes} min
+                      </Badge>
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        ${session.price}
+                      </span>
                     </div>
                   </div>
-                </div>
+                ))}
+              </div>
+            </Card>
+          )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <AnimatePresence mode="popLayout">
-                    {filteredSessions.map((session, index) => (
-                      <motion.div
-                        key={session.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ delay: index * 0.05 }}
-                      >
-                        <SessionCard session={session} />
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-
-                {filteredSessions.length === 0 && (
-                  <div className="text-center py-12">
-                    <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No sessions found</h3>
-                    <p className="text-gray-500">No sessions match the current filter</p>
+          {/* Progress Tab */}
+          {activeTab === 'progress' && (
+            <>
+              {/* Performance Chart */}
+              <Card className="p-6">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">
+                  Performance Trend
+                </h2>
+                
+                {stats?.monthlyProgress && stats.monthlyProgress.length > 0 ? (
+                  <div className="h-64 flex items-end justify-between gap-2">
+                    {stats.monthlyProgress.slice(-6).map((month, index) => {
+                      const height = month.performance
+                      return (
+                        <div key={index} className="flex-1 flex flex-col items-center">
+                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-t relative" style={{ height: '100%' }}>
+                            <div 
+                              className="absolute bottom-0 w-full bg-gradient-to-t from-purple-600 to-pink-500 rounded-t transition-all duration-500"
+                              style={{ height: `${height}%` }}
+                            />
+                          </div>
+                          <span className="text-xs text-gray-600 dark:text-gray-400 mt-2">{month.month}</span>
+                          <span className="text-xs font-medium text-gray-900 dark:text-gray-100">
+                            {height}%
+                          </span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                    No performance data available yet
                   </div>
                 )}
-              </motion.div>
-            )}
+              </Card>
 
-            {activeTab === 'progress' && (
-              <motion.div
-                key="progress"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="grid grid-cols-1 lg:grid-cols-2 gap-6"
-              >
-                <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Academic Performance</h3>
-                  <div className="space-y-6">
-                    {student.subjects.map(subject => {
-                      // Mock subject-specific performance
-                      const performance = Math.floor(Math.random() * 30) + 70
+              {/* Subject Distribution */}
+              <Card className="p-6">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">
+                  Subject Distribution
+                </h2>
+                
+                {stats?.subjectDistribution && stats.subjectDistribution.length > 0 ? (
+                  <div className="space-y-3">
+                    {stats.subjectDistribution.map((subject, index) => {
+                      const percentage = (subject.count / stats.totalSessions) * 100
                       return (
-                        <div key={subject}>
-                          <div className="flex justify-between text-sm mb-2">
-                            <span className="text-gray-600">{subject}</span>
-                            <span className="text-gray-900 font-medium">{performance}%</span>
+                        <div key={index}>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              {subject.subject}
+                            </span>
+                            <span className="text-sm text-gray-600 dark:text-gray-400">
+                              {subject.count} sessions ({percentage.toFixed(0)}%)
+                            </span>
                           </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                             <div 
-                              className="h-2 rounded-full bg-gradient-nerdy transition-all duration-500"
-                              style={{ width: `${performance}%` }}
+                              className="bg-gradient-to-r from-purple-600 to-pink-500 h-2 rounded-full transition-all duration-500"
+                              style={{ width: `${percentage}%` }}
                             />
                           </div>
                         </div>
                       )
                     })}
                   </div>
-                </div>
-
-                <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Session Trends</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <TrendingUp className="h-5 w-5 text-green-600" />
-                        <div>
-                          <div className="font-medium text-green-900">Performance Improving</div>
-                          <div className="text-sm text-green-700">+12% this month</div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <Calendar className="h-5 w-5 text-blue-600" />
-                        <div>
-                          <div className="font-medium text-blue-900">Consistent Attendance</div>
-                          <div className="text-sm text-blue-700">{student.progress.attendance}% attendance rate</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <Target className="h-5 w-5 text-yellow-600" />
-                        <div>
-                          <div className="font-medium text-yellow-900">Goals on Track</div>
-                          <div className="text-sm text-yellow-700">Meeting learning objectives</div>
-                        </div>
-                      </div>
-                    </div>
+                ) : (
+                  <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                    No subject data available yet
                   </div>
-                </div>
-              </motion.div>
-            )}
+                )}
+              </Card>
+            </>
+          )}
 
-            {activeTab === 'notes' && (
-              <motion.div
-                key="notes"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-              >
-                <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900">Session Notes & Progress</h3>
-                    <Button variant="gradient" gradientType="nerdy" size="sm">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Note
-                    </Button>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    {studentSessions
-                      .filter(s => s.notes)
-                      .sort((a, b) => b.date.getTime() - a.date.getTime())
-                      .slice(0, 10)
-                      .map(session => (
-                        <div key={session.id} className="border-l-4 border-purple-200 pl-4 py-2">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="text-sm font-medium text-gray-900">
-                              {session.subject} - {formatDate(session.date)}
-                            </div>
-                            {session.rating && (
-                              <div className="flex items-center gap-1">
-                                <Star className="h-3 w-3 text-yellow-500 fill-current" />
-                                <span className="text-xs text-gray-600">{session.rating}</span>
-                              </div>
-                            )}
-                          </div>
-                          <p className="text-sm text-gray-600 leading-relaxed">
-                            {session.notes}
-                          </p>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+          {/* Notes Tab */}
+          {activeTab === 'notes' && (
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Notes
+                </h2>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  leftIcon={<Edit className="h-4 w-4" />}
+                >
+                  Edit Notes
+                </Button>
+              </div>
+              
+              <div className="prose dark:prose-invert max-w-none">
+                {student.notes ? (
+                  <p className="text-gray-600 dark:text-gray-400 whitespace-pre-wrap">{student.notes}</p>
+                ) : (
+                  <p className="text-gray-500 dark:text-gray-400 italic">No notes added yet</p>
+                )}
+              </div>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   )

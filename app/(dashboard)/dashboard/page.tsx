@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Calendar, Clock, TrendingUp, Users, DollarSign, Target, BookOpen, Trophy } from 'lucide-react'
 import { useTutorStore } from '@/lib/stores/tutorStore'
 import { useAuth } from '@/lib/auth/auth-context'
+import { useGameification } from '@/lib/hooks/useGameification'
 import { 
   getTodaysSessions, 
   getTodaysEarnings, 
@@ -13,31 +14,68 @@ import {
   getRequiredActions,
   getQuickActions
 } from '@/lib/api/dashboard'
-import { format } from 'date-fns'
+import { getSessionStats } from '@/lib/api/sessions'
+import { getEarningsSummary } from '@/lib/api/earnings'
+
+// Helper function to format dates
+function formatDate(date: Date | string, format: string): string {
+  const d = new Date(date)
+  if (format === 'MMM d, h:mm a') {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    const month = months[d.getMonth()]
+    const day = d.getDate()
+    const hours = d.getHours()
+    const minutes = d.getMinutes()
+    const ampm = hours >= 12 ? 'pm' : 'am'
+    const hour12 = hours % 12 || 12
+    return `${month} ${day}, ${hour12}:${minutes.toString().padStart(2, '0')} ${ampm}`
+  } else if (format === 'h:mm a') {
+    const hours = d.getHours()
+    const minutes = d.getMinutes()
+    const ampm = hours >= 12 ? 'pm' : 'am'
+    const hour12 = hours % 12 || 12
+    return `${hour12}:${minutes.toString().padStart(2, '0')} ${ampm}`
+  }
+  return d.toLocaleString()
+}
 
 export default function DashboardPage() {
-  const { tutor, level, totalXP, xpForNextLevel, streak, students, sessions } = useTutorStore()
-  const { loading: authLoading } = useAuth()
-  const [mounted, setMounted] = React.useState(false)
+  const { tutor, loading: authLoading } = useAuth()
+  const [mounted, setMounted] = useState(false)
   
-  // Dashboard data state
-  const [todaysSessions, setTodaysSessions] = useState<number>(0)
-  const [todaysEarnings, setTodaysEarnings] = useState<number>(0)
-  const [activeStudentsCount, setActiveStudentsCount] = useState<number>(0)
-  const [successRate, setSuccessRate] = useState<number>(0)
+  // Dashboard data states
+  const [todaysSessions, setTodaysSessions] = useState(0)
+  const [todaysSessionsList, setTodaysSessionsList] = useState<any[]>([])
+  const [todaysEarnings, setTodaysEarnings] = useState(0)
+  const [activeStudentsCount, setActiveStudentsCount] = useState(0)
+  const [successRate, setSuccessRate] = useState(0)
   const [upcomingSessions, setUpcomingSessions] = useState<any[]>([])
   const [requiredActions, setRequiredActions] = useState<any[]>([])
   const [dataLoading, setDataLoading] = useState(true)
   
-  React.useEffect(() => {
+  // Additional stats for header
+  const [totalSessions, setTotalSessions] = useState(0)
+  const [monthlyEarnings, setMonthlyEarnings] = useState(0)
+  
+  // Gamification states - now calculated from actual sessions
+  const { totalXP, level, levelProgress, xpForNextLevel, streak, achievements } = useGameification()
+  
+  useEffect(() => {
     setMounted(true)
   }, [])
   
   // Fetch dashboard data
   useEffect(() => {
     async function fetchDashboardData() {
-      if (!tutor?.id) return
+      console.log('[Dashboard] fetchDashboardData - tutor:', tutor)
       
+      if (!tutor || !tutor.id) {
+        console.log('[Dashboard] No tutor or tutor.id, skipping data fetch')
+        setDataLoading(false)
+        return
+      }
+      
+      console.log('[Dashboard] Fetching data for tutor ID:', tutor.id)
       setDataLoading(true)
       try {
         const [
@@ -46,33 +84,60 @@ export default function DashboardPage() {
           activeCount,
           rate,
           upcoming,
-          actions
+          actions,
+          sessionStats,
+          earningsSummary
         ] = await Promise.all([
           getTodaysSessions(tutor.id),
           getTodaysEarnings(tutor.id),
           getActiveStudentsCount(tutor.id),
           getSuccessRate(tutor.id),
-          getUpcomingSessions(tutor.id, 3),
-          getRequiredActions(tutor.id)
+          getUpcomingSessions(tutor.id),
+          getRequiredActions(tutor.id),
+          getSessionStats(tutor.id, 'year'),
+          getEarningsSummary(tutor.id)
         ])
         
+        console.log('[Dashboard] Data fetched successfully:', {
+          sessions: sessionsData.length,
+          earnings,
+          activeCount,
+          rate,
+          upcoming: upcoming.length,
+          actions: actions.length,
+          totalSessions: sessionStats.totalSessions,
+          monthlyEarnings: earningsSummary.thisMonth
+        })
+        
         setTodaysSessions(sessionsData.length)
+        setTodaysSessionsList(sessionsData)
         setTodaysEarnings(earnings)
         setActiveStudentsCount(activeCount)
         setSuccessRate(rate)
         setUpcomingSessions(upcoming)
         setRequiredActions(actions)
+        setTotalSessions(sessionStats.totalSessions)
+        setMonthlyEarnings(earningsSummary.thisMonth)
       } catch (error) {
-        console.error('Error fetching dashboard data:', error)
+        console.error('[Dashboard] Error fetching dashboard data:', error)
+        // Set default values on error
+        setTodaysSessions(0)
+        setTodaysEarnings(0)
+        setActiveStudentsCount(0)
+        setSuccessRate(0)
+        setUpcomingSessions([])
+        setRequiredActions([])
+        setTotalSessions(0)
+        setMonthlyEarnings(0)
       } finally {
         setDataLoading(false)
       }
     }
     
-    if (mounted && tutor?.id) {
+    if (mounted && !authLoading) {
       fetchDashboardData()
     }
-  }, [mounted, tutor?.id])
+  }, [mounted, tutor, authLoading])
   
   // Debug log
   console.log('[Dashboard] Tutor data:', tutor)
@@ -110,6 +175,11 @@ export default function DashboardPage() {
       </div>
     )
   }
+  
+  // Calculate XP from actual sessions (10 XP per session)
+  const calculatedXP = totalSessions * 10
+  const displayLevel = Math.floor(calculatedXP / 100) + 1
+  const xpProgress = calculatedXP % 100
   
   return (
     <div className="space-y-4">
@@ -155,7 +225,7 @@ export default function DashboardPage() {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="flex items-center gap-8">
             <div className="text-center">
-              <div className="text-4xl font-bold mb-1">Level {level || 42}</div>
+              <div className="text-4xl font-bold mb-1">Level {displayLevel}</div>
               <div className="text-purple-100 dark:text-purple-200">Expert</div>
             </div>
             
@@ -164,42 +234,30 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <Trophy className="w-6 h-6 text-yellow-300" />
               <div>
-                <div className="text-2xl font-bold">{streak || 21}</div>
-                <div className="text-sm text-purple-100 dark:text-purple-200">day streak</div>
+                <div className="text-2xl font-bold">{totalSessions}</div>
+                <div className="text-sm text-purple-100 dark:text-purple-200">total sessions</div>
               </div>
             </div>
           </div>
           
           <div className="flex-1 max-w-md">
             <div className="flex justify-between text-sm mb-2">
-              <span>{(() => {
-                // Calculate XP within current level
-                let remainingXP = totalXP || 0
-                for (let i = 1; i < (level || 1); i++) {
-                  // XP formula: level * 100 + (level - 1) * 50
-                  remainingXP -= (i * 100 + (i - 1) * 50)
-                }
-                return remainingXP
-              })()} / {xpForNextLevel || 100} XP</span>
+              <span>{xpProgress} / 100 XP</span>
               <span>to next level</span>
             </div>
             <div className="w-full bg-white/20 rounded-full h-3">
               <div 
                 className="bg-gradient-to-r from-yellow-300 to-yellow-500 h-3 rounded-full transition-all duration-500"
-                style={{ width: `${(() => {
-                  // Calculate progress within current level
-                  let remainingXP = totalXP || 0
-                  for (let i = 1; i < (level || 1); i++) {
-                    remainingXP -= (i * 100 + (i - 1) * 50)
-                  }
-                  const progress = (remainingXP / (xpForNextLevel || 100)) * 100
-                  return Math.min(100, Math.max(0, progress))
-                })()}%` }}
+                style={{ width: `${xpProgress}%` }}
               />
+            </div>
+            <div className="flex justify-between mt-2 text-xs text-purple-100">
+              <span>{calculatedXP} XP total</span>
+              <span>+10 XP per session</span>
             </div>
             
             {/* Recent Achievements */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mt-3">
               <span className="text-white/80 text-sm font-medium">Recent:</span>
               <div className="flex gap-2">
                 <span className="px-3 py-1.5 bg-white/20 dark:bg-white/10 backdrop-blur-sm text-white text-sm rounded-full font-medium">
@@ -258,10 +316,10 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-pink-200 dark:border-pink-800 p-4 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-green-200 dark:border-green-800 p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-pink-100 dark:bg-pink-900/30 rounded-lg flex items-center justify-center">
-              <Target className="w-5 h-5 text-pink-600 dark:text-pink-400" />
+            <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+              <Target className="w-5 h-5 text-green-600 dark:text-green-400" />
             </div>
             <div>
               <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
@@ -289,7 +347,7 @@ export default function DashboardPage() {
               <div>
                 <div className="font-medium">{upcomingSessions[0].students?.first_name} {upcomingSessions[0].students?.last_name}</div>
                 <div className="text-sm text-gray-300">
-                  {upcomingSessions[0].subject} • {format(new Date(upcomingSessions[0].scheduled_at), 'MMM d, h:mm a')}
+                  {upcomingSessions[0].subject} • {formatDate(upcomingSessions[0].scheduled_at, 'MMM d, h:mm a')}
                 </div>
               </div>
             </div>
@@ -345,8 +403,8 @@ export default function DashboardPage() {
           <div className="space-y-3">
             {dataLoading ? (
               <div className="text-gray-400 text-sm">Loading...</div>
-            ) : upcomingSessions.length > 0 ? (
-              upcomingSessions.map((session) => (
+            ) : todaysSessionsList.length > 0 ? (
+              todaysSessionsList.map((session) => (
                 <div key={session.id} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
                   <div className="w-1.5 h-12 bg-purple-500 rounded-full" />
                   <div className="flex-1">
@@ -354,7 +412,7 @@ export default function DashboardPage() {
                       {session.students?.first_name} {session.students?.last_name}
                     </div>
                     <div className="text-xs text-gray-300">
-                      {format(new Date(session.scheduled_at), 'h:mm a')} - {session.subject}
+                      {formatDate(session.scheduled_at, 'h:mm a')} - {session.subject}
                     </div>
                   </div>
                 </div>

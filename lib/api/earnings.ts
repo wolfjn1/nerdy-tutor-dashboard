@@ -1,7 +1,53 @@
 import { createClient } from '@/lib/supabase-browser'
-import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, startOfYear, endOfYear } from 'date-fns'
 
+// Create the client once at module level
 const supabase = createClient()
+
+// Define today as July 14, 2025 for calendar sync (in UTC)
+const TODAY = new Date('2025-07-14T00:00:00Z') // Use UTC to match database
+
+// Helper functions for date handling
+function startOfWeek(date: Date): Date {
+  const start = new Date(date)
+  const day = start.getDay()
+  const diff = start.getDate() - day
+  start.setDate(diff)
+  start.setHours(0, 0, 0, 0)
+  return start
+}
+
+function endOfWeek(date: Date): Date {
+  const end = new Date(date)
+  const day = end.getDay()
+  const diff = end.getDate() - day + 6
+  end.setDate(diff)
+  end.setHours(23, 59, 59, 999)
+  return end
+}
+
+function startOfMonth(date: Date): Date {
+  const start = new Date(date.getFullYear(), date.getMonth(), 1)
+  start.setHours(0, 0, 0, 0)
+  return start
+}
+
+function endOfMonth(date: Date): Date {
+  const end = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+  end.setHours(23, 59, 59, 999)
+  return end
+}
+
+function startOfYear(date: Date): Date {
+  const start = new Date(date.getFullYear(), 0, 1)
+  start.setHours(0, 0, 0, 0)
+  return start
+}
+
+function endOfYear(date: Date): Date {
+  const end = new Date(date.getFullYear(), 11, 31)
+  end.setHours(23, 59, 59, 999)
+  return end
+}
 
 export interface InvoiceData {
   id: string
@@ -27,7 +73,7 @@ export interface InvoiceData {
 
 // Get earnings summary for different periods
 export async function getEarningsSummary(tutorId: string) {
-  const now = new Date()
+  const now = TODAY
   
   // This week
   const weekStart = startOfWeek(now)
@@ -111,7 +157,7 @@ export async function getEarningsSummary(tutorId: string) {
 // Get monthly earnings data for chart
 export async function getMonthlyEarnings(tutorId: string, months: number = 12) {
   const monthlyData = []
-  const now = new Date()
+  const now = TODAY
 
   for (let i = months - 1; i >= 0; i--) {
     const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
@@ -251,7 +297,7 @@ export async function createInvoice(
       tax: tax,
       total: total,
       status: 'draft',
-      issue_date: new Date().toISOString().split('T')[0],
+      issue_date: TODAY.toISOString().split('T')[0],
       due_date: dueDate,
       notes: notes
     })

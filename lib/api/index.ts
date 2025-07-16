@@ -11,4 +11,7 @@ export * from './sessions'
 export * from './opportunities'
 
 // Earnings API
-export * from './earnings' 
+export * from './earnings'
+export * from './achievements'
+export * from './messages'
+export * from './profile' 

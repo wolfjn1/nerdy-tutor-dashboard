@@ -81,12 +81,17 @@ export async function middleware(req: NextRequest) {
     '/test',
     '/test-supabase',
     '/api/test-supabase',
-    '/env-test'
+    '/env-test',
+    '/force-logout',
+    '/clear-session'
   ]
   const isPublicRoute = publicRoutes.some(route => req.nextUrl.pathname.startsWith(route))
+  
+  // Allow bypass for debugging
+  const bypassAuth = req.nextUrl.searchParams.get('bypass') === 'true'
 
   // If user is not authenticated and trying to access protected route
-  if (!session && !isPublicRoute && req.nextUrl.pathname !== '/') {
+  if (!session && !isPublicRoute && req.nextUrl.pathname !== '/' && !bypassAuth) {
     const redirectUrl = req.nextUrl.clone()
     redirectUrl.pathname = '/login'
     redirectUrl.searchParams.set('redirect', req.nextUrl.pathname)
@@ -94,14 +99,19 @@ export async function middleware(req: NextRequest) {
   }
 
   // If user is authenticated and trying to access auth pages
-  if (session && isPublicRoute) {
-    const redirectUrl = req.nextUrl.clone()
-    redirectUrl.pathname = '/dashboard'
-    return NextResponse.redirect(redirectUrl)
+  if (session && isPublicRoute && !bypassAuth) {
+    // Don't redirect if it's an API route or debug route
+    const debugRoutes = ['/test', '/test-supabase', '/status', '/env-test', '/force-logout']
+    const isDebugRoute = debugRoutes.some(route => req.nextUrl.pathname.startsWith(route))
+    if (!isDebugRoute && !req.nextUrl.pathname.startsWith('/api')) {
+      const redirectUrl = req.nextUrl.clone()
+      redirectUrl.pathname = '/dashboard'
+      return NextResponse.redirect(redirectUrl)
+    }
   }
 
   // If user is authenticated and accessing root, redirect to dashboard
-  if (session && req.nextUrl.pathname === '/') {
+  if (session && req.nextUrl.pathname === '/' && !bypassAuth) {
     const redirectUrl = req.nextUrl.clone()
     redirectUrl.pathname = '/dashboard'
     return NextResponse.redirect(redirectUrl)

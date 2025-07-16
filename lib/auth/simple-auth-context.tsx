@@ -19,6 +19,8 @@ interface AuthContextType {
   loading: boolean
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>
   signOut: () => Promise<void>
+  signUp?: (email: string, password: string, userData?: any) => Promise<{ error: Error | null, user?: User | null }>
+  updateProfile?: (updates: any) => Promise<{ error: Error | null }>
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -27,6 +29,8 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signIn: async () => ({ error: null }),
   signOut: async () => {},
+  signUp: async () => ({ error: null }),
+  updateProfile: async () => ({ error: null }),
 })
 
 export const useAuth = () => useContext(AuthContext)
@@ -115,8 +119,43 @@ export function SimpleAuthProvider({ children }: { children: React.ReactNode }) 
     router.push('/login')
   }
 
+  const signUp = async (email: string, password: string, userData?: any) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          data: userData
+        }
+      })
+      if (error) return { error, user: null }
+      return { error: null, user: data.user }
+    } catch (error) {
+      return { error: error as Error, user: null }
+    }
+  }
+
+  const updateProfile = async (updates: any) => {
+    try {
+      if (!user || !tutor) return { error: new Error('No user logged in') }
+      
+      const { error } = await supabase
+        .from('tutors')
+        .update(updates)
+        .eq('id', tutor.id)
+      
+      if (error) return { error }
+      
+      // Update local state
+      setTutor({ ...tutor, ...updates })
+      return { error: null }
+    } catch (error) {
+      return { error: error as Error }
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, tutor, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, tutor, loading, signIn, signOut, signUp, updateProfile }}>
       {children}
     </AuthContext.Provider>
   )

@@ -17,6 +17,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<{ error: Error | null }>
   signOut: () => Promise<void>
   updateProfile: (updates: any) => Promise<{ error: Error | null }>
+  refreshAuth: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -28,6 +29,7 @@ const AuthContext = createContext<AuthContextType>({
   signUp: async () => ({ error: null }),
   signOut: async () => {},
   updateProfile: async () => ({ error: null }),
+  refreshAuth: async () => {},
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -61,8 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (error.code === 'PGRST116') {
           console.log('[Auth] No tutor record found for user:', userId)
           setTutor(null)
-          setLoading(false)
-          return
+          return null
         }
         
         throw error
@@ -71,11 +72,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('[Auth] Tutor profile loaded:', data)
       setTutor(data)
       setTutorInStore(data)
+      return data
     } catch (error) {
       console.error('[Auth] Error in fetchTutor:', error)
       setTutor(null)
-    } finally {
-      setLoading(false)
+      return null
     }
   }
 
@@ -103,17 +104,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  useEffect(() => {
-    // Check storage capabilities
-    const storageInfo = tokenManager.getStorageInfo()
-    setStorageWarning(storageInfo.warning)
-
-    // Check for existing session
-    const initializeAuth = async () => {
-      try {
-        console.log('[Auth] Initializing auth...')
+  // Check for existing session
+  const initializeAuth = async () => {
+    try {
+      console.log('[Auth] Initializing auth...')
+      
+      // Add a timeout to prevent infinite loading
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Auth initialization timeout')), 5000)
+      )
+      
+      const authPromise = async () => {
+        // Add a small delay to ensure cookies are ready (helps with Vercel)
+        await new Promise(resolve => setTimeout(resolve, 100))
+        
         // First try normal session
-        const { data: { session } } = await supabase.auth.getSession()
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+        
+        if (sessionError) {
+          console.error('[Auth] Session error:', sessionError)
+          // Don't throw, continue with no session
+          return null
+        }
         
         console.log('[Auth] Session found:', !!session, session?.user?.id)
         
@@ -121,27 +133,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(session.user)
           const tutorData = await fetchTutorProfile(session.user.id)
           console.log('[Auth] After fetchTutorProfile, tutor data:', tutorData)
-        } else {
-          // Check for stored tokens
-          const tokens = await tokenManager.getTokens()
-          if (tokens && !await tokenManager.isTokenExpired()) {
-            const { data: { user } } = await supabase.auth.getUser(tokens.access_token)
-            if (user) {
-              setUser(user)
-              await fetchTutorProfile(user.id)
-            }
-          } else {
-            // Last resort: check URL token
-            await checkUrlToken()
+          return { user: session.user, tutor: tutorData }
+        }
+        
+        // Check for stored tokens
+        const tokens = await tokenManager.getTokens()
+        if (tokens && !await tokenManager.isTokenExpired()) {
+          const { data: { user } } = await supabase.auth.getUser(tokens.access_token)
+          if (user) {
+            setUser(user)
+            const tutorData = await fetchTutorProfile(user.id)
+            return { user, tutor: tutorData }
           }
         }
-      } catch (error) {
-        console.error('Error initializing auth:', error)
-      } finally {
-        setLoading(false)
+        
+        // Last resort: check URL token
+        await checkUrlToken()
+        return null
       }
+      
+      // Race between auth and timeout
+      await Promise.race([authPromise(), timeoutPromise])
+    } catch (error) {
+      console.error('[Auth] Error initializing auth:', error)
+      // If timeout or error, just proceed without auth
+      setUser(null)
+      setTutor(null)
+    } finally {
+      // Always set loading to false to prevent infinite loading
+      console.log('[Auth] Setting loading to false')
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
+    // Check storage capabilities
+    const storageInfo = tokenManager.getStorageInfo()
+    setStorageWarning(storageInfo.warning)
+
+    // Initialize auth on mount
     initializeAuth()
 
     // Listen for auth changes
@@ -294,18 +324,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  // Force refresh auth state
+  const refreshAuth = async () => {
+    console.log('[Auth] Force refreshing auth...')
+    setLoading(true)
+    await initializeAuth()
+  }
+
+  const value = {
+    user,
+    tutor,
+    loading,
+    storageWarning,
+    signIn,
+    signUp,
+    signOut,
+    refreshAuth, // Add this to the context value
+    updateProfile,
+  }
+
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        tutor,
-        loading,
-        storageWarning,
-        signIn,
-        signUp,
-        signOut,
-        updateProfile,
-      }}
+      value={value}
     >
       {children}
     </AuthContext.Provider>

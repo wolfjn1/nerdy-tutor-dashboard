@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import { Button, Badge, Avatar, NotificationBell } from '@/components/ui'
+import { AuthDebug } from '@/components/debug/AuthDebug'
 import { StorageWarning } from '@/components/ui/StorageWarning'
 import { cn } from '@/lib/utils'
 import { useTutorStore } from '@/lib/stores/tutorStore'
@@ -44,9 +45,23 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname()
   const router = useRouter()
-  const { tutor, user, loading } = useAuth()
+  const { tutor, user, loading, refreshAuth } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   
+  // Add timeout to refresh auth if loading takes too long
+  useEffect(() => {
+    if (loading) {
+      const timeout = setTimeout(() => {
+        console.log('[Dashboard] Loading timeout, attempting refresh...')
+        if (refreshAuth) {
+          refreshAuth()
+        }
+      }, 10000) // 10 second timeout
+      
+      return () => clearTimeout(timeout)
+    }
+  }, [loading, refreshAuth])
+
   // Dynamic counts
   const [studentCount, setStudentCount] = useState<number>(0)
   const [upcomingSessionsCount, setUpcomingSessionsCount] = useState<number>(0)
@@ -171,6 +186,13 @@ export default function DashboardLayout({
     setNotifications(prev => prev.filter(n => n.id !== id))
   }
 
+  // Handle authentication redirects
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login')
+    }
+  }, [loading, user, router])
+
   // Show loading state while checking auth
   if (loading) {
     return (
@@ -180,10 +202,13 @@ export default function DashboardLayout({
     )
   }
 
-  // If no user at all, redirect to login
+  // If no user at all, show loading (redirect will happen via useEffect)
   if (!user) {
-    router.push('/login')
-    return null
+    return (
+      <div className="min-h-screen bg-gradient-nerdy-bg-light dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-purple-600 dark:text-purple-400">Redirecting...</div>
+      </div>
+    )
   }
 
   // If user is logged in but has no tutor profile, show a message instead of redirecting
@@ -391,6 +416,11 @@ export default function DashboardLayout({
           <Zap className="w-6 h-6" />
         </Button>
       </motion.div>
+      
+      {/* Debug component - remove in production */}
+      {process.env.NODE_ENV === 'development' && (
+        <AuthDebug />
+      )}
     </div>
   )
 } 

@@ -18,10 +18,15 @@ export async function middleware(req: NextRequest) {
       cookies: {
         get(name: string) {
           const value = req.cookies.get(name)?.value
-          // Remove verbose cookie logging to reduce console noise
           return value
         },
         set(name: string, value: string, options: CookieOptions) {
+          // Set cookie on both request and response
+          req.cookies.set({
+            name,
+            value,
+            ...options,
+          })
           res.cookies.set({
             name,
             value,
@@ -29,6 +34,12 @@ export async function middleware(req: NextRequest) {
           })
         },
         remove(name: string, options: CookieOptions) {
+          // Remove cookie from both request and response
+          req.cookies.set({
+            name,
+            value: '',
+            ...options,
+          })
           res.cookies.set({
             name,
             value: '',
@@ -56,7 +67,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // List of public routes that don't require authentication
-  const publicRoutes = ['/login', '/register', '/forgot-password', '/reset-password', '/env-check', '/api/env-check', '/test-xp']
+  const publicRoutes = ['/login', '/register', '/forgot-password', '/reset-password', '/env-check', '/api/env-check', '/test-xp', '/status', '/api/check-env', '/api/debug-auth']
   const isPublicRoute = publicRoutes.some(route => req.nextUrl.pathname.startsWith(route))
 
   // If user is not authenticated and trying to access protected route

@@ -36,6 +36,10 @@ export default function LoginPage() {
     
     setIsLoading(true)
     console.log('Starting authentication with:', email)
+    console.log('Environment check:', {
+      hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      hasSupabaseKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    })
 
     try {
       const { error } = await signIn(email, password)

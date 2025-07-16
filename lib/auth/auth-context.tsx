@@ -108,55 +108,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const initializeAuth = async () => {
     try {
       console.log('[Auth] Initializing auth...')
+      console.log('[Auth] Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 30) + '...')
+      console.log('[Auth] Has Anon Key:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
       
-      // Add a timeout to prevent infinite loading
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Auth initialization timeout')), 5000)
-      )
+      // Add a small delay to ensure cookies are ready (helps with Vercel)
+      await new Promise(resolve => setTimeout(resolve, 100))
       
-      const authPromise = async () => {
-        // Add a small delay to ensure cookies are ready (helps with Vercel)
-        await new Promise(resolve => setTimeout(resolve, 100))
-        
-        // First try normal session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-        
-        if (sessionError) {
-          console.error('[Auth] Session error:', sessionError)
-          // Don't throw, continue with no session
-          return null
-        }
-        
-        console.log('[Auth] Session found:', !!session, session?.user?.id)
-        
-        if (session) {
-          setUser(session.user)
-          const tutorData = await fetchTutorProfile(session.user.id)
-          console.log('[Auth] After fetchTutorProfile, tutor data:', tutorData)
-          return { user: session.user, tutor: tutorData }
-        }
-        
+      // First try normal session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      
+      if (sessionError) {
+        console.error('[Auth] Session error:', sessionError)
+        // Don't throw, continue with no session
+      }
+      
+      console.log('[Auth] Session found:', !!session, session?.user?.id)
+      
+      if (session) {
+        setUser(session.user)
+        const tutorData = await fetchTutorProfile(session.user.id)
+        console.log('[Auth] After fetchTutorProfile, tutor data:', tutorData)
+      } else {
         // Check for stored tokens
         const tokens = await tokenManager.getTokens()
         if (tokens && !await tokenManager.isTokenExpired()) {
           const { data: { user } } = await supabase.auth.getUser(tokens.access_token)
           if (user) {
             setUser(user)
-            const tutorData = await fetchTutorProfile(user.id)
-            return { user, tutor: tutorData }
+            await fetchTutorProfile(user.id)
           }
+        } else {
+          // Last resort: check URL token
+          await checkUrlToken()
         }
-        
-        // Last resort: check URL token
-        await checkUrlToken()
-        return null
       }
-      
-      // Race between auth and timeout
-      await Promise.race([authPromise(), timeoutPromise])
     } catch (error) {
       console.error('[Auth] Error initializing auth:', error)
-      // If timeout or error, just proceed without auth
+      // If error, just proceed without auth
       setUser(null)
       setTutor(null)
     } finally {

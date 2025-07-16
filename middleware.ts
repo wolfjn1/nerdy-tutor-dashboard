@@ -88,6 +88,7 @@ export async function middleware(req: NextRequest) {
     '/simple-supabase-test',
     '/clear-all',
     '/auth-test',
+    '/auth-status',
     '/api/test-auth',
     '/api/force-logout'
   ]

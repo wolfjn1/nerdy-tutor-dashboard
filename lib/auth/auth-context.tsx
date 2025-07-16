@@ -168,6 +168,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (event === 'SIGNED_OUT') {
         router.push('/login')
       }
+      
+      // Redirect to dashboard on sign in if we're on a public page
+      if (event === 'SIGNED_IN' && session) {
+        const publicPages = ['/login', '/register', '/forgot-password']
+        if (publicPages.includes(window.location.pathname)) {
+          router.push('/dashboard')
+        }
+      }
     })
 
     return () => {

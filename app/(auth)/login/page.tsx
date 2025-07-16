@@ -58,7 +58,8 @@ export default function LoginPage() {
         setIsLoading(false)
       } else {
         console.log('Login successful, redirecting to dashboard...')
-        // The auth context will handle the redirect
+        // Redirect to dashboard after successful login
+        router.push('/dashboard')
       }
     } catch (err: any) {
       console.error('Unexpected error during login:', err)

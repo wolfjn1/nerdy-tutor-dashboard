@@ -28,7 +28,7 @@ export default function StatusPage() {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
         
         // Try a simple database query
-        let dbStatus = null
+        let dbStatus: string | null = null
         try {
           const { error: dbError } = await supabase.from('tutors').select('count').limit(1)
           dbStatus = dbError ? `DB Error: ${dbError.message}` : 'Connected'

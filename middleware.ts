@@ -103,7 +103,9 @@ export async function middleware(req: NextRequest) {
       '/api/force-logout',
       '/simple-test',
       '/no-auth-dashboard',
-      '/debug-auth'
+      '/debug-auth',
+      '/dashboard-static',
+      '/vercel-test'
     ]
     const isPublicRoute = publicRoutes.some(route => req.nextUrl.pathname.startsWith(route))
     

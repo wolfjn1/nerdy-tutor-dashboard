@@ -8,7 +8,7 @@ export async function GET() {
     
     // Try to create a basic Supabase client
     let clientCreated = false
-    let clientError = null
+    let clientError: string | null = null
     
     if (hasUrl && hasKey) {
       try {

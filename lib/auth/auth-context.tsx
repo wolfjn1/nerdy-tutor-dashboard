@@ -49,7 +49,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Fetch tutor profile when user changes
   const fetchTutorProfile = async (userId: string) => {
     try {
-      console.log('[Auth] Fetching tutor profile for user:', userId)
       const { data, error } = await supabase
         .from('tutors')
         .select('*')
@@ -57,11 +56,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .single()
 
       if (error) {
-        console.log('[Auth] Error fetching tutor profile:', error)
         
         // If no tutor exists, don't create one automatically
         if (error.code === 'PGRST116') {
-          console.log('[Auth] No tutor record found for user:', userId)
           setTutor(null)
           return null
         }
@@ -69,7 +66,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw error
       }
 
-      console.log('[Auth] Tutor profile loaded:', data)
       setTutor(data)
       setTutorInStore(data)
       return data
@@ -107,10 +103,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Check for existing session
   const initializeAuth = async () => {
     try {
-      console.log('[Auth] Initializing auth...')
-      console.log('[Auth] Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 30) + '...')
-      console.log('[Auth] Has Anon Key:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
-      
       // Add a small delay to ensure cookies are ready (helps with Vercel)
       await new Promise(resolve => setTimeout(resolve, 100))
       
@@ -122,12 +114,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Don't throw, continue with no session
       }
       
-      console.log('[Auth] Session found:', !!session, session?.user?.id)
-      
       if (session) {
         setUser(session.user)
-        const tutorData = await fetchTutorProfile(session.user.id)
-        console.log('[Auth] After fetchTutorProfile, tutor data:', tutorData)
+        await fetchTutorProfile(session.user.id)
       } else {
         // Check for stored tokens
         const tokens = await tokenManager.getTokens()
@@ -149,7 +138,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setTutor(null)
     } finally {
       // Always set loading to false to prevent infinite loading
-      console.log('[Auth] Setting loading to false')
       setLoading(false)
     }
   }
@@ -314,7 +302,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Force refresh auth state
   const refreshAuth = async () => {
-    console.log('[Auth] Force refreshing auth...')
     setLoading(true)
     await initializeAuth()
   }

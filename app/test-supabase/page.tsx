@@ -21,7 +21,7 @@ export default function TestSupabasePage() {
         }
 
         // Try to create client
-        let clientTest = { created: false, error: null as string | null }
+        let clientTest: any = { created: false, error: null as string | null }
         try {
           const { createClient } = await import('@/lib/supabase-browser')
           const client = createClient()

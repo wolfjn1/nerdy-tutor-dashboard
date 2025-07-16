@@ -8,14 +8,10 @@ export function createClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   
-  console.log('[Supabase Client] Creating client with URL:', supabaseUrl?.substring(0, 30) + '...')
-  console.log('[Supabase Client] Has Anon Key:', !!supabaseKey)
-  
   if (!supabaseUrl || !supabaseKey) {
     const error = new Error(
       `Missing Supabase environment variables. URL: ${!!supabaseUrl}, Key: ${!!supabaseKey}`
     )
-    console.error('[Supabase Client] Error:', error)
     throw error
   }
   
@@ -23,9 +19,7 @@ export function createClient() {
   if (!supabaseInstance) {
     try {
       supabaseInstance = createBrowserClient(supabaseUrl, supabaseKey)
-      console.log('[Supabase Client] Client created successfully')
     } catch (error) {
-      console.error('[Supabase Client] Failed to create client:', error)
       throw error
     }
   }

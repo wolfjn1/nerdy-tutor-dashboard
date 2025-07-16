@@ -57,83 +57,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) {
         console.log('[Auth] Error fetching tutor profile:', error)
         
-        // If no tutor exists, create one in the database
+        // If no tutor exists, don't create one automatically
         if (error.code === 'PGRST116') {
-          console.log('[Auth] No tutor record found, creating one in database')
-          
-          // Get user email from the auth user
-          const { data: { user: authUser } } = await supabase.auth.getUser()
-          const userEmail = authUser?.email || `user_${userId.substring(0, 8)}@example.com`
-          
-          // Extract first name from email if possible
-          const emailParts = userEmail.split('@')[0].split(/[._-]/)
-          const firstName = emailParts[0] ? emailParts[0].charAt(0).toUpperCase() + emailParts[0].slice(1) : 'New'
-          const lastName = emailParts[1] ? emailParts[1].charAt(0).toUpperCase() + emailParts[1].slice(1) : 'Tutor'
-          
-          // Create tutor data
-          const newTutorData = {
-            auth_user_id: userId,
-            email: userEmail,
-            first_name: firstName,
-            last_name: lastName,
-            avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face',
-            bio: 'Experienced tutor ready to help students excel.',
-            subjects: ['Mathematics', 'Science', 'English'],
-            hourly_rate: 60,
-            availability: {},
-            rating: 0,
-            total_earnings: 0,
-            total_hours: 0,
-            is_verified: false,
-            badges: [],
-          }
-          
-          // Insert into database
-          const { data: insertedTutor, error: insertError } = await supabase
-            .from('tutors')
-            .insert(newTutorData)
-            .select()
-            .single()
-          
-          if (insertError) {
-            console.error('[Auth] Error creating tutor:', insertError)
-            throw insertError
-          }
-          
-          console.log('[Auth] Created tutor in database:', insertedTutor)
-          setTutor(insertedTutor)
-          setTutorInStore(insertedTutor)
-          
-          // Also set gamification data
-          const setGamificationData = useTutorStore.getState().setGamificationData
-          const setStreak = useTutorStore.getState().setStreak
-          
-          // Set level 1 for new users (0 XP)
-          setGamificationData(0)
-          
-          // Set streak to 0 days for new users
-          setStreak(0)
-          
-          console.log('[Auth] Tutor created with gamification data')
-          return insertedTutor
+          console.log('[Auth] No tutor record found for user:', userId)
+          setTutor(null)
+          setLoading(false)
+          return
         }
         
         throw error
       }
-      
-      console.log('[Auth] Tutor profile fetched:', data)
-      
-      // Update both local state and global store
+
+      console.log('[Auth] Tutor profile loaded:', data)
       setTutor(data)
-      if (data) {
-        setTutorInStore(data)
-        console.log('[Auth] Tutor data set in store')
-      }
-      
-      return data
+      setTutorInStore(data)
     } catch (error) {
-      console.error('Error fetching tutor profile:', error)
-      return null
+      console.error('[Auth] Error in fetchTutor:', error)
+      setTutor(null)
+    } finally {
+      setLoading(false)
     }
   }
 

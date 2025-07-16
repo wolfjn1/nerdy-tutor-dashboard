@@ -26,6 +26,7 @@ import { useTutorStore } from '@/lib/stores/tutorStore'
 import { useAuth } from '@/lib/auth/auth-context'
 import { getStudents } from '@/lib/api/students'
 import { getUpcomingSessions } from '@/lib/api/dashboard'
+import { useRouter } from 'next/navigation'
 
 interface NavItem {
   id: string
@@ -42,7 +43,8 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const { tutor, level } = useTutorStore()
+  const router = useRouter()
+  const { tutor, user, loading } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   
   // Dynamic counts
@@ -169,6 +171,22 @@ export default function DashboardLayout({
     setNotifications(prev => prev.filter(n => n.id !== id))
   }
 
+  // If user is logged in but has no tutor profile, redirect to login
+  if (!loading && user && !tutor) {
+    console.log('[Dashboard Layout] User has no tutor profile, redirecting to login')
+    router.push('/login')
+    return null
+  }
+
+  // Show loading state while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-nerdy-bg-light dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-purple-600 dark:text-purple-400">Loading...</div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gradient-nerdy-bg-light dark:bg-gray-900 flex">
       {/* Mobile sidebar backdrop */}
@@ -257,7 +275,7 @@ export default function DashboardLayout({
               />
               <div className="flex-1 min-w-0">
                 <div className="text-white font-medium text-sm">{tutor ? `${tutor.first_name} ${tutor.last_name}` : 'John Doe'}</div>
-                <div className="text-white/80 dark:text-purple-300 text-xs">Expert Tutor • Level {level}</div>
+                <div className="text-white/80 dark:text-purple-300 text-xs">Expert Tutor • Level {tutor ? Math.floor((tutor.total_hours || 0) / 10) + 1 : 1}</div>
               </div>
             </div>
             

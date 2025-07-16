@@ -114,9 +114,9 @@ export async function getEarningsSummary(tutorId: string) {
       .lte('scheduled_at', yearEnd.toISOString())
   ])
 
-  const weekEarnings = weekData.data?.reduce((sum, s) => sum + (Number(s.earnings) || 0), 0) || 0
-  const monthEarnings = monthData.data?.reduce((sum, s) => sum + (Number(s.earnings) || 0), 0) || 0
-  const yearEarnings = yearData.data?.reduce((sum, s) => sum + (Number(s.earnings) || 0), 0) || 0
+  const weekEarnings = weekData.data?.reduce((sum: any, s: any) => sum + (Number(s.earnings) || 0), 0) || 0
+  const monthEarnings = monthData.data?.reduce((sum: any, s: any) => sum + (Number(s.earnings) || 0), 0) || 0
+  const yearEarnings = yearData.data?.reduce((sum: any, s: any) => sum + (Number(s.earnings) || 0), 0) || 0
 
   // Get pending invoices total
   const { data: pendingInvoices } = await supabase
@@ -156,10 +156,10 @@ export async function getEarningsSummary(tutorId: string) {
 
 // Get monthly earnings data for chart
 export async function getMonthlyEarnings(tutorId: string, months: number = 12) {
-  const monthlyData = []
+  const monthlyData: any[] = []
   const now = TODAY
 
-  for (let i = months - 1; i >= 0; i--) {
+  for (let i = 0; i < 6; i++) {
     const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
     const start = startOfMonth(date)
     const end = endOfMonth(date)

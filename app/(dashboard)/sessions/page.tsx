@@ -134,9 +134,9 @@ export default function SessionsPage() {
     return new Date(end.setDate(end.getDate() + 6))
   }
 
-  const getWeekDays = (date: Date) => {
-    const start = startOfWeek(date)
-    const days = []
+  const getWeekDays = () => {
+    const days: Date[] = []
+    const start = new Date(currentDate)
     for (let i = 0; i < 7; i++) {
       const day = new Date(start)
       day.setDate(start.getDate() + i)
@@ -153,7 +153,7 @@ export default function SessionsPage() {
     const startDate = startOfWeek(firstDay)
     const endDate = endOfWeek(lastDay)
     
-    const days = []
+    const days: Date[] = []
     const currentDate = new Date(startDate)
     
     while (currentDate <= endDate) {
@@ -161,6 +161,19 @@ export default function SessionsPage() {
       currentDate.setDate(currentDate.getDate() + 1)
     }
     
+    return days
+  }
+
+  const getAllDaysInMonth = (date: Date) => {
+    const days: Date[] = []
+    const startDate = new Date(date.getFullYear(), date.getMonth(), 1)
+    const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+    const currentDate = new Date(startDate)
+    
+    while (currentDate <= endDate) {
+      days.push(new Date(currentDate))
+      currentDate.setDate(currentDate.getDate() + 1)
+    }
     return days
   }
 
@@ -461,7 +474,7 @@ export default function SessionsPage() {
   }
 
   const WeekView = () => {
-    const weekDays = getWeekDays(currentDate)
+    const weekDays = getWeekDays()
     const hours = Array.from({ length: 14 }, (_, i) => i + 7) // 7 AM to 9 PM
     
     // Get sessions organized by day and hour

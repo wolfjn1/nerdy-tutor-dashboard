@@ -43,7 +43,11 @@ export default function Header({ onMenuToggle }: HeaderProps) {
       </div>
 
       <div className="flex items-center gap-3">
-        <NotificationBell />
+        <NotificationBell 
+          notifications={[]}
+          onMarkAsRead={() => {}}
+          onClearAll={() => {}}
+        />
         
         <button
           onClick={handleLogout}

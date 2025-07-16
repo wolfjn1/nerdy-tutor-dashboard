@@ -57,14 +57,14 @@ export default function DashboardLayout({
       try {
         // Fetch student count
         const students = await getStudents(tutor.id)
-        const activeStudents = students.filter(s => s.is_active)
+        const activeStudents = students.filter((s: any) => s.is_active)
         setStudentCount(activeStudents.length)
         
         // Fetch upcoming sessions count (next 7 days)
-        const sessions = await getUpcomingSessions(tutor.id, 100)
+        const sessions = await getUpcomingSessions(tutor.id)
         const nextWeek = new Date()
         nextWeek.setDate(nextWeek.getDate() + 7)
-        const upcomingThisWeek = sessions.filter(s => new Date(s.scheduled_at) <= nextWeek)
+        const upcomingThisWeek = sessions.filter((s: any) => new Date(s.scheduled_at) <= nextWeek)
         setUpcomingSessionsCount(upcomingThisWeek.length)
       } catch (error) {
         console.error('Error fetching sidebar counts:', error)

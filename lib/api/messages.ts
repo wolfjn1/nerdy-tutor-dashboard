@@ -209,19 +209,19 @@ export async function getMessages(conversationId: string): Promise<Message[]> {
         ? {
             name: Array.isArray(conversation.tutors) 
               ? `${conversation.tutors[0]?.first_name || 'Unknown'} ${conversation.tutors[0]?.last_name || 'Tutor'}`
-              : `${conversation.tutors.first_name} ${conversation.tutors.last_name}`,
+              : `${(conversation.tutors as any).first_name} ${(conversation.tutors as any).last_name}`,
             avatar_url: Array.isArray(conversation.tutors)
               ? conversation.tutors[0]?.avatar_url
-              : conversation.tutors.avatar_url
+              : (conversation.tutors as any).avatar_url
           }
         : msg.sender_type === 'student' && conversation?.students
         ? {
             name: Array.isArray(conversation.students)
               ? `${conversation.students[0]?.first_name || 'Unknown'} ${conversation.students[0]?.last_name || 'Student'}`
-              : `${conversation.students.first_name} ${conversation.students.last_name}`,
+              : `${(conversation.students as any).first_name} ${(conversation.students as any).last_name}`,
             avatar_url: Array.isArray(conversation.students)
               ? conversation.students[0]?.avatar_url
-              : conversation.students.avatar_url
+              : (conversation.students as any).avatar_url
           }
         : undefined
     }))

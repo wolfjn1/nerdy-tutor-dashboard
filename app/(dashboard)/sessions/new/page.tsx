@@ -62,7 +62,7 @@ export default function NewSessionPage() {
       
       try {
         const data = await getStudents(tutor.id)
-        setStudents(data.filter(s => s.is_active))
+        setStudents(data.filter((s: any) => s.is_active))
         
         // Set default price based on tutor's hourly rate
         if (tutor.hourly_rate) {
@@ -119,7 +119,7 @@ export default function NewSessionPage() {
       
       if (formData.recurring) {
         // Create multiple sessions
-        const sessions = []
+        const sessions: any[] = []
         for (let i = 0; i < formData.recurringCount; i++) {
           const sessionDate = new Date(scheduledAt)
           

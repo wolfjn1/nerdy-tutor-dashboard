@@ -53,11 +53,11 @@ export async function getTutorAchievements(tutorId: string) {
 
   // Merge the data
   const achievementsMap = new Map()
-  tutorAchievements?.forEach(ta => {
+  tutorAchievements?.forEach((ta: any) => {
     achievementsMap.set(ta.achievement_id, ta)
   })
 
-  return allAchievements.map(achievement => {
+  return allAchievements.map((achievement: any) => {
     const tutorProgress = achievementsMap.get(achievement.id)
     return {
       ...achievement,
@@ -107,7 +107,7 @@ export async function getAchievementStats(tutorId: string) {
     }
   }
 
-  data?.forEach(item => {
+  data?.forEach((item: any) => {
     if (item.achievements) {
       stats.totalXPEarned += item.achievements.xp_reward || 0
       const rarity = item.achievements.rarity as keyof typeof stats.byRarity
@@ -133,7 +133,7 @@ export async function checkAchievementProgress(tutorId: string, type: string, va
     return []
   }
 
-  const newlyUnlocked = []
+  const newlyUnlocked: any[] = []
 
   for (const achievement of achievements) {
     // Check if already unlocked
@@ -240,9 +240,9 @@ export function groupAchievementsByTier(achievements: any[]) {
       const highestProgress = Math.max(...relatedAchievements.map(a => a.progress || 0))
       const config = tierConfig[baseType] || { tiers: [] }
       
-      // Determine current tier and progress
-      let currentTier = null
-      let nextTier = config.tiers[0]
+      // Calculate current tier
+      let currentTier: any = null
+      let nextTier: any = null
       let tierIndex = -1
       
       for (let i = 0; i < config.tiers.length; i++) {

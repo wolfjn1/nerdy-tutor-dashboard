@@ -37,38 +37,33 @@ export default function LoginPage() {
     setIsLoading(true)
     console.log('Starting authentication with:', email)
 
-    const { error } = await signIn(email, password)
-    console.log('SignIn result:', { error })
-    
-    if (error) {
-      console.error('Login error:', error)
-      // Provide more user-friendly error messages
-      if (error.message.includes('Invalid login credentials')) {
-        setError('Invalid email or password. Please check your credentials and try again.')
-      } else if (error.message.includes('Email not confirmed')) {
-        setError('Please verify your email address before signing in.')
-      } else if (error.message.includes('User not found')) {
-        setError('No account found with this email address.')
-      } else if (error.message.includes('network')) {
-        setError('Network error. Please check your connection and try again.')
+    try {
+      const { error } = await signIn(email, password)
+      console.log('SignIn result:', { error })
+      
+      if (error) {
+        console.error('Login error:', error)
+        // Provide more user-friendly error messages
+        if (error.message.includes('Invalid login credentials')) {
+          setError('Invalid email or password. Please check your credentials and try again.')
+        } else if (error.message.includes('Email not confirmed')) {
+          setError('Please verify your email address before signing in.')
+        } else if (error.message.includes('User not found')) {
+          setError('No account found with this email address.')
+        } else if (error.message.includes('network')) {
+          setError('Network error. Please check your connection and try again.')
+        } else {
+          setError(error.message || 'An error occurred during sign in. Please try again.')
+        }
+        setIsLoading(false)
       } else {
-        setError(error.message || 'An error occurred during sign in. Please try again.')
+        console.log('Login successful, redirecting to dashboard...')
+        // The auth context will handle the redirect
       }
+    } catch (err: any) {
+      console.error('Unexpected error during login:', err)
+      setError(err.message || 'An unexpected error occurred. Please try again.')
       setIsLoading(false)
-    } else {
-      console.log('Login successful, redirecting to dashboard...')
-      // Check if we have a session
-      const { data: { session } } = await supabase.auth.getSession()
-      console.log('Current session after login:', session)
-      
-      // First refresh the router to update auth state
-      router.refresh()
-      
-      // Then redirect
-      setTimeout(() => {
-        console.log('Executing redirect to /dashboard')
-        router.push('/dashboard')
-      }, 100)
     }
   }
 

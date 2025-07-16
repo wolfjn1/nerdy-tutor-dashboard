@@ -24,36 +24,23 @@ export default function SettingsPage() {
   
   const [activeSection, setActiveSection] = useState('profile')
   const [profileData, setProfileData] = useState({
-    firstName: tutor?.first_name || 'John',
-    lastName: tutor?.last_name || 'Doe',
-    email: tutor?.email || 'john.doe@example.com',
+    firstName: tutor?.first_name || '',
+    lastName: tutor?.last_name || '',
+    email: tutor?.email || '',
     phone: '+1 (555) 123-4567',
-    bio: tutor?.bio || 'Expert tutor with 3+ years of experience in Mathematics, Physics, and Chemistry. Passionate about helping students achieve their academic goals.',
+    bio: tutor?.bio || '',
     avatar_url: tutor?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
   })
 
-  // Initialize tutor if not set
-  useEffect(() => {
-    if (!tutor) {
-      setTutor({
-        id: 'tutor-001',
-        first_name: profileData.firstName,
-        last_name: profileData.lastName,
-        email: profileData.email,
-        bio: profileData.bio,
-        avatar_url: profileData.avatar_url,
-        hourly_rate: 85,
-        subjects: ['Mathematics', 'Physics', 'Chemistry', 'Calculus'],
-        availability: {},
-        rating: 4.9,
-        total_earnings: 15750,
-        total_hours: 185,
-        created_at: new Date('2022-03-01'),
-        is_verified: true,
-        badges: ['expert', 'top-rated']
-      })
-    }
-  }, [tutor, setTutor, profileData])
+  // If no tutor profile, the dashboard layout should handle this
+  // But as a safety check, we'll show a loading state
+  if (!tutor) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-gray-600 dark:text-gray-400">Loading profile...</div>
+      </div>
+    )
+  }
 
   const handleSignOut = async () => {
     try {

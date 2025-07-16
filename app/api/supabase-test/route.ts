@@ -8,7 +8,7 @@ export async function GET() {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL
     
     // Test 2: Try to create a client and make a simple request
-    let connectionTest = { success: false, error: null as any }
+    let connectionTest: any = { success: false, error: null }
     
     if (hasUrl && hasKey) {
       try {

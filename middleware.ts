@@ -87,6 +87,8 @@ export async function middleware(req: NextRequest) {
     '/no-auth-test',
     '/simple-supabase-test',
     '/clear-all',
+    '/auth-test',
+    '/api/test-auth',
     '/api/force-logout'
   ]
   const isPublicRoute = publicRoutes.some(route => req.nextUrl.pathname.startsWith(route))

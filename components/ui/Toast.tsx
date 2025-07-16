@@ -153,17 +153,31 @@ const ToastItem: React.FC<{ toast: Toast, onRemove: (id: string) => void }> = ({
 
 // Helper hook for common toast patterns
 export const useToastHelpers = () => {
-  const { addToast } = useToast()
-
-  return {
-    success: (title: string, description?: string) => 
-      addToast({ type: 'success', title, description }),
-    error: (title: string, description?: string) => 
-      addToast({ type: 'error', title, description }),
-    warning: (title: string, description?: string) => 
-      addToast({ type: 'warning', title, description }),
-    info: (title: string, description?: string) => 
-      addToast({ type: 'info', title, description }),
+  try {
+    const { addToast } = useToast()
+    
+    return {
+      success: (title: string, description?: string) => {
+        addToast({ title, description, type: 'success' })
+      },
+      error: (title: string, description?: string) => {
+        addToast({ title, description, type: 'error' })
+      },
+      info: (title: string, description?: string) => {
+        addToast({ title, description, type: 'info' })
+      },
+      warning: (title: string, description?: string) => {
+        addToast({ title, description, type: 'warning' })
+      }
+    }
+  } catch {
+    // Return no-op functions during prerendering
+    return {
+      success: () => {},
+      error: () => {},
+      info: () => {},
+      warning: () => {}
+    }
   }
 }
 

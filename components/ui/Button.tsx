@@ -70,7 +70,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const [showXPAnimation, setShowXPAnimation] = useState(false)
-    const { success } = useToastHelpers()
+    // Make toast helpers optional for prerendering
+    let toastHelpers: any = null
+    try {
+      toastHelpers = useToastHelpers()
+    } catch {
+      // Toast provider not available during prerendering
+    }
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (disabled || isLoading) return
@@ -81,11 +87,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         setTimeout(() => setShowXPAnimation(false), 2000)
         onXPGained?.(xpReward)
         
-        // Show success toast with XP reward
-        success(
-          `+${xpReward} XP earned!`,
-          `Great job! You've gained ${xpReward} experience points.`
-        )
+        // Show success toast with XP reward if toast is available
+        if (toastHelpers?.success) {
+          toastHelpers.success(
+            `+${xpReward} XP earned!`,
+            `Great job! You've gained ${xpReward} experience points.`
+          )
+        }
       }
 
       onClick?.(e)

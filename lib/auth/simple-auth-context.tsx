@@ -39,10 +39,19 @@ export function SimpleAuthProvider({ children }: { children: React.ReactNode }) 
   const [user, setUser] = useState<User | null>(null)
   const [tutor, setTutor] = useState<Tutor | null>(null)
   const [loading, setLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
+  // Handle client-side mounting
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    // Only run auth check on client side after mounting
+    if (!mounted) return
+
     // Simple auth check
     const checkAuth = async () => {
       try {
@@ -74,7 +83,7 @@ export function SimpleAuthProvider({ children }: { children: React.ReactNode }) 
     }
 
     // Run check with a small delay for Vercel
-    setTimeout(checkAuth, 100)
+    const timer = setTimeout(checkAuth, 100)
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -98,9 +107,10 @@ export function SimpleAuthProvider({ children }: { children: React.ReactNode }) 
     })
 
     return () => {
+      clearTimeout(timer)
       subscription.unsubscribe()
     }
-  }, [])
+  }, [mounted, supabase])
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -152,6 +162,15 @@ export function SimpleAuthProvider({ children }: { children: React.ReactNode }) 
     } catch (error) {
       return { error: error as Error }
     }
+  }
+
+  // During SSR or before mount, show loading state
+  if (!mounted) {
+    return (
+      <AuthContext.Provider value={{ user: null, tutor: null, loading: true, signIn, signOut, signUp, updateProfile }}>
+        {children}
+      </AuthContext.Provider>
+    )
   }
 
   return (

@@ -39,6 +39,7 @@ export default function LoginPage() {
     console.log('Environment check:', {
       hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
       hasSupabaseKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      url: process.env.NEXT_PUBLIC_SUPABASE_URL
     })
 
     try {
@@ -62,8 +63,10 @@ export default function LoginPage() {
         setIsLoading(false)
       } else {
         console.log('Login successful, redirecting to dashboard...')
-        // Redirect to dashboard after successful login
-        router.push('/dashboard')
+        // Add a small delay to ensure auth state is updated
+        setTimeout(() => {
+          router.push('/dashboard')
+        }, 100)
       }
     } catch (err: any) {
       console.error('Unexpected error during login:', err)

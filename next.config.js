@@ -13,10 +13,6 @@ const nextConfig = {
       },
     ],
   },
-  // Netlify-specific configuration
-  experimental: {
-    serverActions: true,
-  },
   // Ensure environment variables are available
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,

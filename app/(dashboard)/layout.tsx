@@ -37,6 +37,15 @@ interface NavItem {
   description: string
 }
 
+// Add type declaration for Assembled at the top of the file
+declare global {
+  interface Window {
+    Assembled?: {
+      openChat: () => void
+    }
+  }
+}
+
 function DashboardContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
@@ -233,6 +242,32 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     )
   }
 
+  // Load Assembled chat widget script
+  useEffect(() => {
+    const script = document.createElement('script')
+    script.src = 'https://cal.assembledhq.com/static/js/public-chat.js'
+    script.setAttribute('data-company-id', 'ec88077a-64ee-44e2-a813-925b45de7908')
+    script.setAttribute('data-profile-id', '649cf0fd-813f-4464-b8e3-2e23ab04aad6')
+    script.async = true
+    document.body.appendChild(script)
+
+    return () => {
+      // Cleanup script on unmount
+      if (document.body.contains(script)) {
+        document.body.removeChild(script)
+      }
+    }
+  }, [])
+
+  const handleAIAssistantClick = () => {
+    // Launch Assembled widget
+    if (window.Assembled && window.Assembled.openChat) {
+      window.Assembled.openChat()
+    } else {
+      console.log('[AI Assistant] Widget not loaded yet')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-nerdy-bg-light dark:bg-gray-900 flex">
       {/* Mobile sidebar backdrop */}
@@ -371,7 +406,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                   gradientType="nerdy"
                   size="sm"
                   leftIcon={<Zap className="w-4 h-4" />}
-                  xpReward={25}
+                  onClick={handleAIAssistantClick}
                 >
                   AI Assistant
                 </Button>
@@ -443,6 +478,8 @@ export default function DashboardLayout({
       setTutor(tutor as any)
     }
   }, [tutor, setTutor])
+
+  // Remove the duplicate useEffect and handleAIAssistantClick from here
 
   return (
     <SimpleAuthProvider>

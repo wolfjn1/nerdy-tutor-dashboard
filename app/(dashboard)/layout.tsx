@@ -425,6 +425,22 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const pathname = usePathname()
+  const { tutor, loading: authLoading } = useAuth()
+  const { setTutor } = useTutorStore()
+  const [students, setStudents] = useState<any[]>([])
+  const [upcomingSessions, setUpcomingSessions] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  
+  // Sync tutor data from auth to store
+  useEffect(() => {
+    if (tutor) {
+      console.log('[Layout] Syncing tutor to store:', tutor)
+      setTutor(tutor as any)
+    }
+  }, [tutor, setTutor])
+
   return (
     <SimpleAuthProvider>
       <DashboardContent>{children}</DashboardContent>

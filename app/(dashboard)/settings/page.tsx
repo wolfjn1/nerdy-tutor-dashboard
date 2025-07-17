@@ -17,20 +17,35 @@ import { useRouter } from 'next/navigation'
 
 export default function SettingsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { tutor, setTutor, updateTutorAvatar } = useTutorStore()
+  const { tutor, updateProfile } = useAuth()
+  const { updateTutorAvatar } = useTutorStore()
   const { success, error } = useToastHelpers()
   const { signOut } = useAuth()
   const router = useRouter()
   
   const [activeSection, setActiveSection] = useState('profile')
   const [profileData, setProfileData] = useState({
-    firstName: tutor?.first_name || '',
-    lastName: tutor?.last_name || '',
-    email: tutor?.email || '',
+    firstName: '',
+    lastName: '',
+    email: '',
     phone: '+1 (555) 123-4567',
-    bio: tutor?.bio || '',
-    avatar_url: tutor?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
+    bio: '',
+    avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
   })
+
+  // Initialize profile data when tutor loads
+  useEffect(() => {
+    if (tutor) {
+      setProfileData({
+        firstName: tutor.name?.split(' ')[0] || '',
+        lastName: tutor.name?.split(' ')[1] || '',
+        email: tutor.email || '',
+        phone: tutor.phone || '+1 (555) 123-4567',
+        bio: tutor.bio || '',
+        avatar_url: tutor.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
+      })
+    }
+  }, [tutor])
 
   // If no tutor profile, the dashboard layout should handle this
   // But as a safety check, we'll show a loading state
@@ -92,25 +107,32 @@ export default function SettingsPage() {
     { id: 'account', label: 'Account', icon: FileText }
   ]
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSaving(true)
     
-    // Update the store with new profile data
-    if (tutor) {
-      setTutor({
-        ...tutor,
-        first_name: profileData.firstName,
-        last_name: profileData.lastName,
-        email: profileData.email,
-        bio: profileData.bio,
-        avatar_url: profileData.avatar_url
-      })
-    }
-    
-    setTimeout(() => {
-      setIsSaving(false)
+    try {
+      // Update the profile via auth context
+      if (updateProfile) {
+        const { error } = await updateProfile({
+          name: `${profileData.firstName} ${profileData.lastName}`.trim(),
+          email: profileData.email,
+          phone: profileData.phone,
+          bio: profileData.bio,
+          avatar_url: profileData.avatar_url
+        })
+        
+        if (error) {
+          throw error
+        }
+      }
+      
       success('Settings saved successfully!')
-    }, 1000)
+    } catch (err) {
+      error('Failed to save settings')
+      console.error('Save error:', err)
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {

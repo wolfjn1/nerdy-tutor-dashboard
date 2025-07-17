@@ -43,8 +43,7 @@ interface StudentWithStats extends StudentData {
 
 export default function StudentsPage() {
   const router = useRouter()
-  const { tutor } = useTutorStore()
-  const { loading: authLoading } = useAuth()
+  const { tutor, loading: authLoading } = useAuth()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedSubject, setSelectedSubject] = useState<string>('all')
   const [selectedGrade, setSelectedGrade] = useState<string>('all')

@@ -69,27 +69,16 @@ Users see appropriate warnings based on their storage situation:
 - Dismissible but reappears on next login
 - Clear explanation of limitations
 
-## Implementation Details
+## Implementation Components
 
-### Storage Adapter (`lib/auth/storage-adapter.ts`)
-```typescript
-// Automatically detects best storage method
-const adapter = new AuthStorageAdapter()
+### Simple Auth Context (`lib/auth/simple-auth-context.tsx`)
 
-// Falls back gracefully:
-// cookies → localStorage → sessionStorage → memory
-```
+The main authentication provider that:
+1. Checks session on mount
+2. Handles login/logout
+3. Manages user and tutor state
 
-### Token Manager (`lib/auth/token-auth.ts`)
-```typescript
-// Manages tokens regardless of storage method
-const tokenManager = new TokenAuthManager()
-
-// Provides consistent API:
-await tokenManager.storeTokens(tokens)
-await tokenManager.getTokens()
-await tokenManager.clearTokens()
-```
+## Configuration Considerations
 
 ### Auth Context Updates
 The auth context now:

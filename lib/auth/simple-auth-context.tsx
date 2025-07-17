@@ -3,7 +3,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase-browser'
-import { useRouter } from 'next/navigation'
 
 interface Tutor {
   id: string
@@ -40,7 +39,6 @@ export function SimpleAuthProvider({ children }: { children: React.ReactNode }) 
   const [tutor, setTutor] = useState<Tutor | null>(null)
   const [loading, setLoading] = useState(true)
   const [mounted, setMounted] = useState(false)
-  const router = useRouter()
   const supabase = createClient()
 
   // Handle client-side mounting
@@ -126,7 +124,10 @@ export function SimpleAuthProvider({ children }: { children: React.ReactNode }) 
     await supabase.auth.signOut()
     setUser(null)
     setTutor(null)
-    router.push('/login')
+    // Navigate using window.location instead of router
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login'
+    }
   }
 
   const signUp = async (email: string, password: string, userData?: any) => {

@@ -8,4 +8,5 @@ export { NotificationBellComponent as NotificationBell }
 export { Skeleton } from './Skeleton'
 // Removed StorageWarning export
 export { SimpleLineChart, SimpleAreaChart, SimpleBarChart, SimplePieChart, NerdyChartColors, ChartGradients } from './Chart'
-export { ToastProvider, useToast, useToastHelpers } from './Toast' 
+export { ToastProvider, useToast, useToastHelpers } from './Toast'
+export { ThemeToggle, ThemeToggleCompact } from './ThemeToggle' 

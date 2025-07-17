@@ -14,6 +14,7 @@ import { useTutorStore } from '@/lib/stores/tutorStore'
 import { useToastHelpers } from '@/components/ui'
 import { useAuth } from '@/lib/auth/simple-auth-context'
 import { useRouter } from 'next/navigation'
+import { useTheme } from '@/lib/theme-context'
 
 export default function SettingsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -22,6 +23,7 @@ export default function SettingsPage() {
   const { success, error } = useToastHelpers()
   const { signOut } = useAuth()
   const router = useRouter()
+  const { theme, setTheme } = useTheme()
   
   const [activeSection, setActiveSection] = useState('profile')
   const [profileData, setProfileData] = useState({
@@ -92,6 +94,11 @@ export default function SettingsPage() {
     sessionReminder: '15',
     autoAcceptReschedule: false
   })
+
+  // Sync theme with context
+  useEffect(() => {
+    setPreferences(prev => ({ ...prev, theme }))
+  }, [theme])
 
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showPasswordModal, setShowPasswordModal] = useState(false)
@@ -482,7 +489,11 @@ export default function SettingsPage() {
             Theme
           </label>
           <div className="flex items-center gap-4">
-            <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 dark:border-gray-600">
+            <select 
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 dark:border-gray-600"
+              value={theme}
+              onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'system')}
+            >
               <option value="light">Light</option>
               <option value="dark">Dark</option>
               <option value="system">System</option>

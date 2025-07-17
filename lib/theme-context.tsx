@@ -2,35 +2,39 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
-type Theme = 'light' | 'dark'
+type Theme = 'light' | 'dark' | 'system'
 
 interface ThemeContextType {
   theme: Theme
+  resolvedTheme: 'light' | 'dark'  // The actual theme being used
   toggleTheme: () => void
   setTheme: (theme: Theme) => void
 }
 
 const ThemeContext = createContext<ThemeContextType>({
   theme: 'light',
+  resolvedTheme: 'light',
   toggleTheme: () => {},
   setTheme: () => {},
 })
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('light')
+  const [theme, setTheme] = useState<Theme>('system')
+  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light')
   const [mounted, setMounted] = useState(false)
+
+  // Detect system preference
+  const getSystemTheme = () => {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  }
 
   // Only run on client side
   useEffect(() => {
     setMounted(true)
-    // Get theme from localStorage or system preference
+    // Get theme from localStorage
     const savedTheme = localStorage.getItem('theme') as Theme | null
     if (savedTheme) {
       setTheme(savedTheme)
-    } else {
-      // Check system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      setTheme(prefersDark ? 'dark' : 'light')
     }
   }, [])
 
@@ -38,13 +42,37 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (!mounted) return
 
     const root = window.document.documentElement
+    
+    // Determine the actual theme to use
+    let themeToUse: 'light' | 'dark'
+    if (theme === 'system') {
+      themeToUse = getSystemTheme()
+    } else {
+      themeToUse = theme as 'light' | 'dark'
+    }
+    
+    setResolvedTheme(themeToUse)
     root.classList.remove('light', 'dark')
-    root.classList.add(theme)
+    root.classList.add(themeToUse)
     localStorage.setItem('theme', theme)
+
+    // Listen for system theme changes when in system mode
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      const handleChange = () => {
+        const newTheme = getSystemTheme()
+        setResolvedTheme(newTheme)
+        root.classList.remove('light', 'dark')
+        root.classList.add(newTheme)
+      }
+      mediaQuery.addEventListener('change', handleChange)
+      return () => mediaQuery.removeEventListener('change', handleChange)
+    }
   }, [theme, mounted])
 
   const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light')
+    const newTheme = resolvedTheme === 'light' ? 'dark' : 'light'
+    setTheme(newTheme)
   }
 
   // Prevent flash of wrong theme
@@ -53,7 +81,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, resolvedTheme, toggleTheme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   )

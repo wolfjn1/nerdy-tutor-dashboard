@@ -8,7 +8,7 @@ import {
   Smartphone, Monitor, Moon, Sun, Languages,
   CreditCard, FileText, LogOut, Trash2
 } from 'lucide-react'
-import { Button, Badge, Avatar, Modal, ThemeToggle } from '@/components/ui'
+import { Button, Badge, Avatar, Modal } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useTutorStore } from '@/lib/stores/tutorStore'
 import { useToastHelpers } from '@/components/ui'
@@ -460,7 +460,11 @@ export default function SettingsPage() {
             Theme
           </label>
           <div className="flex items-center gap-4">
-            <ThemeToggle showLabel />
+            <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 dark:border-gray-600">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+              <option value="system">System</option>
+            </select>
             <span className="text-sm text-gray-500 dark:text-gray-400">
               Choose your preferred color scheme
             </span>

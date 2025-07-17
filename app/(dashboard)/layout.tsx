@@ -19,7 +19,7 @@ import {
   Zap
 } from 'lucide-react'
 import Header from '@/components/layout/Header'
-import { Button, Badge, Avatar, NotificationBell } from '@/components/ui'
+import { Button, Badge, Avatar, NotificationBell, ThemeToggleCompact } from '@/components/ui'
 import { AuthDebug } from '@/components/debug/AuthDebug'
 import { cn } from '@/lib/utils'
 import { useTutorStore } from '@/lib/stores/tutorStore'
@@ -383,6 +383,9 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                 onMarkAsRead={markNotificationAsRead}
                 onClearAll={() => setNotifications([])}
               />
+              
+              {/* Theme Toggle */}
+              <ThemeToggleCompact />
             </div>
           </div>
         </header>

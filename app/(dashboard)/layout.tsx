@@ -46,6 +46,9 @@ declare global {
   }
 }
 
+// Feature flag to enable/disable Assembled integration
+const ENABLE_ASSEMBLED_CHAT = false // Set to true when ready to use
+
 function DashboardContent({ children }: { children: React.ReactNode }) {
   const { user, tutor, loading } = useAuth()
   const router = useRouter()
@@ -200,11 +203,30 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
 
   // Load Assembled chat widget script - MUST be before any conditional returns
   useEffect(() => {
+    // Skip if feature is disabled
+    if (!ENABLE_ASSEMBLED_CHAT) return
+    
+    // Only load in production/deployed environment
+    if (typeof window === 'undefined') return
+
     const script = document.createElement('script')
     script.src = 'https://cal.assembledhq.com/static/js/public-chat.js'
     script.setAttribute('data-company-id', 'ec88077a-64ee-44e2-a813-925b45de7908')
     script.setAttribute('data-profile-id', '649cf0fd-813f-4464-b8e3-2e23ab04aad6')
     script.async = true
+    
+    // Add error handling
+    script.onerror = (error) => {
+      console.error('[Assembled] Failed to load chat widget:', error)
+    }
+    
+    script.onload = () => {
+      console.log('[Assembled] Chat widget loaded successfully')
+    }
+
+    // Add crossorigin attribute to help with CORS
+    script.crossOrigin = 'anonymous'
+    
     document.body.appendChild(script)
 
     return () => {
@@ -216,6 +238,11 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
   }, [])
 
   const handleAIAssistantClick = () => {
+    if (!ENABLE_ASSEMBLED_CHAT) {
+      console.log('[AI Assistant] Chat integration is currently disabled')
+      return
+    }
+    
     // Launch Assembled widget
     if (window.Assembled && window.Assembled.openChat) {
       window.Assembled.openChat()

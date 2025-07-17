@@ -7,9 +7,8 @@ import { MessageCircle, Search, Phone, Video, Users } from 'lucide-react'
 import { Card, Button, Avatar } from '@/components/ui'
 import { useAuth } from '@/lib/auth/simple-auth-context'
 import { getConversations, createConversation } from '@/lib/api/messages'
-import { getStudents } from '@/lib/api/students'
+import { getStudents, StudentData } from '@/lib/api/students'
 import type { Conversation } from '@/lib/api/messages'
-import type { Student } from '@/lib/types'
 import { formatDistanceToNow } from '@/lib/utils'
 
 export default function MessagesPage() {
@@ -17,7 +16,7 @@ export default function MessagesPage() {
   const searchParams = useSearchParams()
   const { tutor, loading: authLoading } = useAuth()
   const [conversations, setConversations] = useState<Conversation[]>([])
-  const [students, setStudents] = useState<Student[]>([])
+  const [students, setStudents] = useState<StudentData[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [error, setError] = useState<string | null>(null)

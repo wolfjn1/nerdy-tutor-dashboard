@@ -21,7 +21,6 @@ import {
 import Header from '@/components/layout/Header'
 import { Button, Badge, Avatar, NotificationBell } from '@/components/ui'
 import { AuthDebug } from '@/components/debug/AuthDebug'
-import { StorageWarning } from '@/components/ui/StorageWarning'
 import { cn } from '@/lib/utils'
 import { useTutorStore } from '@/lib/stores/tutorStore'
 import { SimpleAuthProvider, useAuth } from '@/lib/auth/simple-auth-context'
@@ -343,7 +342,6 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 lg:ml-64">
         {/* Storage Warning Banner */}
-        <StorageWarning />
         
         {/* Header */}
         <header className="bg-white/60 dark:bg-gray-800/90 backdrop-blur-sm border-b border-white/30 dark:border-gray-700 sticky top-0 z-30">

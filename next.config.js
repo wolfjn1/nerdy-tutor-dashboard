@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  // Remove standalone output for Netlify
   images: {
     remotePatterns: [
       {
@@ -18,18 +18,16 @@ const nextConfig = {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   },
+  // Optimize for serverless
   webpack: (config, { isServer }) => {
-    // Suppress specific warnings
-    config.infrastructureLogging = {
-      level: 'error',
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      }
     }
-    
-    // Ignore specific warnings
-    config.ignoreWarnings = [
-      { module: /node_modules/ },
-      { message: /Using the user object as returned from supabase/ },
-    ]
-    
     return config
   },
 }

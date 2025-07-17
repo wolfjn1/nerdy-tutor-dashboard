@@ -43,13 +43,20 @@ export default function RegisterPage() {
       return
     }
 
+    if (!signUp) {
+      setError('Authentication service not available')
+      return
+    }
+
     setIsLoading(true)
 
     const { error } = await signUp(
       formData.email, 
       formData.password,
-      formData.firstName,
-      formData.lastName
+      {
+        firstName: formData.firstName,
+        lastName: formData.lastName
+      }
     )
     
     if (error) {

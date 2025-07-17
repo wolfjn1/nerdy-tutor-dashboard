@@ -47,11 +47,20 @@ declare global {
 }
 
 function DashboardContent({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
+  const { user, tutor, loading } = useAuth()
   const router = useRouter()
-  const { tutor, user, loading } = useAuth()
+  const pathname = usePathname()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const { setTutor } = useTutorStore()
   
+  // Sync tutor data from auth to store
+  useEffect(() => {
+    if (tutor) {
+      console.log('[Dashboard] Syncing tutor to store:', tutor)
+      setTutor(tutor as any)
+    }
+  }, [tutor, setTutor])
+
   // Add timeout to refresh auth if loading takes too long
   useEffect(() => {
     if (loading) {
@@ -463,24 +472,6 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const pathname = usePathname()
-  const { tutor, loading: authLoading } = useAuth()
-  const { setTutor } = useTutorStore()
-  const [students, setStudents] = useState<any[]>([])
-  const [upcomingSessions, setUpcomingSessions] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  
-  // Sync tutor data from auth to store
-  useEffect(() => {
-    if (tutor) {
-      console.log('[Layout] Syncing tutor to store:', tutor)
-      setTutor(tutor as any)
-    }
-  }, [tutor, setTutor])
-
-  // Remove the duplicate useEffect and handleAIAssistantClick from here
-
   return (
     <SimpleAuthProvider>
       <DashboardContent>{children}</DashboardContent>

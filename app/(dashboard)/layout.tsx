@@ -326,10 +326,12 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
             </div>
             
             <Link href="/settings" onClick={() => setSidebarOpen(false)}>
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full border-white/30 text-white hover:bg-white/10 dark:border-purple-500/30 dark:text-purple-300 dark:hover:bg-purple-600/20"
+              <Button 
+                variant="ghost" 
+                className={cn(
+                  "w-full justify-start",
+                  pathname === '/settings' && 'bg-purple-50 text-purple-600'
+                )}
                 leftIcon={<Settings className="w-4 h-4" />}
               >
                 Settings

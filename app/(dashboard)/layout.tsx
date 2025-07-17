@@ -198,6 +198,32 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     setNotifications(prev => prev.filter(n => n.id !== id))
   }
 
+  // Load Assembled chat widget script - MUST be before any conditional returns
+  useEffect(() => {
+    const script = document.createElement('script')
+    script.src = 'https://cal.assembledhq.com/static/js/public-chat.js'
+    script.setAttribute('data-company-id', 'ec88077a-64ee-44e2-a813-925b45de7908')
+    script.setAttribute('data-profile-id', '649cf0fd-813f-4464-b8e3-2e23ab04aad6')
+    script.async = true
+    document.body.appendChild(script)
+
+    return () => {
+      // Cleanup script on unmount
+      if (document.body.contains(script)) {
+        document.body.removeChild(script)
+      }
+    }
+  }, [])
+
+  const handleAIAssistantClick = () => {
+    // Launch Assembled widget
+    if (window.Assembled && window.Assembled.openChat) {
+      window.Assembled.openChat()
+    } else {
+      console.log('[AI Assistant] Widget not loaded yet')
+    }
+  }
+
   // Handle authentication redirects
   useEffect(() => {
     if (!loading && !user) {
@@ -249,32 +275,6 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         </div>
       </div>
     )
-  }
-
-  // Load Assembled chat widget script
-  useEffect(() => {
-    const script = document.createElement('script')
-    script.src = 'https://cal.assembledhq.com/static/js/public-chat.js'
-    script.setAttribute('data-company-id', 'ec88077a-64ee-44e2-a813-925b45de7908')
-    script.setAttribute('data-profile-id', '649cf0fd-813f-4464-b8e3-2e23ab04aad6')
-    script.async = true
-    document.body.appendChild(script)
-
-    return () => {
-      // Cleanup script on unmount
-      if (document.body.contains(script)) {
-        document.body.removeChild(script)
-      }
-    }
-  }, [])
-
-  const handleAIAssistantClick = () => {
-    // Launch Assembled widget
-    if (window.Assembled && window.Assembled.openChat) {
-      window.Assembled.openChat()
-    } else {
-      console.log('[AI Assistant] Widget not loaded yet')
-    }
   }
 
   return (

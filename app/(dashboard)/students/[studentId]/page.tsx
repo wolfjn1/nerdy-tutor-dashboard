@@ -29,7 +29,7 @@ import {
 } from 'lucide-react'
 import { Card, Button, Badge, Avatar } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import { useAuth } from '@/lib/auth/auth-context'
+import { useAuth } from '@/lib/auth/simple-auth-context'
 import { getStudent, getIndividualStudentStats } from '@/lib/api/students'
 import { getSessions } from '@/lib/api/sessions'
 

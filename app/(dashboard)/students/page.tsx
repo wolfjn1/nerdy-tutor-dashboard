@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils'
 import { getStudents, getStudentStats, StudentData } from '@/lib/api/students'
 import { getSessions } from '@/lib/api/sessions'
 import { useTutorStore } from '@/lib/stores/tutorStore'
-import { useAuth } from '@/lib/auth/auth-context'
+import { useAuth } from '@/lib/auth/simple-auth-context'
 
 interface StudentWithStats extends StudentData {
   stats: {

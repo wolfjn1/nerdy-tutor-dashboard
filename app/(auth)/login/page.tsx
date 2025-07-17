@@ -63,10 +63,10 @@ export default function LoginPage() {
         setIsLoading(false)
       } else {
         console.log('Login successful, redirecting to dashboard...')
-        // Add a small delay to ensure auth state is updated
+        // Use window.location for full page reload to ensure auth state is properly set
         setTimeout(() => {
-          router.push('/dashboard')
-        }, 100)
+          window.location.href = '/dashboard'
+        }, 500)
       }
     } catch (err: any) {
       console.error('Unexpected error during login:', err)

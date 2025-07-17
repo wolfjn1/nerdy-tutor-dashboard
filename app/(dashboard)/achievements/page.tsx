@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Trophy, Star, Target, Award, Zap, Users, Loader, TrendingUp, Book, Clock, Sparkles, Medal } from 'lucide-react'
 import { Card, Button, Badge } from '@/components/ui'
-import { useAuth } from '@/lib/auth/auth-context'
+import { useAuth } from '@/lib/auth/simple-auth-context'
 import { getTutorAchievements, getAchievementStats, groupAchievementsByTier } from '@/lib/api/achievements'
 import { cn } from '@/lib/utils'
 

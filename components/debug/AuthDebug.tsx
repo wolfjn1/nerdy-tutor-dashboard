@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@/lib/auth/auth-context'
+import { useAuth } from '@/lib/auth/simple-auth-context'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase-browser'
 

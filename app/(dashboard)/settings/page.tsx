@@ -12,7 +12,7 @@ import { Button, Badge, Avatar, Modal, ThemeToggle } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useTutorStore } from '@/lib/stores/tutorStore'
 import { useToastHelpers } from '@/components/ui'
-import { useAuth } from '@/lib/auth/auth-context'
+import { useAuth } from '@/lib/auth/simple-auth-context'
 import { useRouter } from 'next/navigation'
 
 export default function SettingsPage() {

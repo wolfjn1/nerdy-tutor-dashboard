@@ -21,7 +21,7 @@ import {
 } from 'lucide-react'
 import { Card, Button, Badge } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import { useAuth } from '@/lib/auth/auth-context'
+import { useAuth } from '@/lib/auth/simple-auth-context'
 import { getEarningsSummary, getMonthlyEarnings, getInvoices } from '@/lib/api/earnings'
 
 interface EarningsSummary {

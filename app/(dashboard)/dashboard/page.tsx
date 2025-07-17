@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { Calendar, Clock, TrendingUp, Users, DollarSign, Target, BookOpen, Trophy } from 'lucide-react'
 import { useTutorStore } from '@/lib/stores/tutorStore'
-import { useAuth } from '@/lib/auth/auth-context'
+import { useAuth } from '@/lib/auth/simple-auth-context'
 import { useGameification } from '@/lib/hooks/useGameification'
 import { 
   getTodaysSessions, 

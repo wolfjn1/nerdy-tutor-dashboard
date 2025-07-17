@@ -3,7 +3,7 @@
 import React from 'react'
 import { AlertTriangle, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAuth } from '@/lib/auth/auth-context'
+import { useAuth } from '@/lib/auth/simple-auth-context'
 
 export function StorageWarning() {
   const { storageWarning } = useAuth()

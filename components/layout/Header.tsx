@@ -4,7 +4,7 @@ import React from 'react'
 import { Bell, Search, Menu, LogOut } from 'lucide-react'
 import { Button, Avatar, NotificationBell } from '@/components/ui'
 import { useTutorStore } from '@/lib/stores/tutorStore'
-import { useAuth } from '@/lib/auth/auth-context'
+import { useAuth } from '@/lib/auth/simple-auth-context'
 import { createClient } from '@/lib/supabase-browser'
 import { useRouter } from 'next/navigation'
 

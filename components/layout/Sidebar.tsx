@@ -23,7 +23,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Avatar, Badge } from '@/components/ui'
-import { useAuth } from '@/lib/auth/auth-context'
+import { useAuth } from '@/lib/auth/simple-auth-context'
 import { useTutorStore } from '@/lib/stores/tutorStore'
 import { getStudents } from '@/lib/api/students'
 import { getUpcomingSessions } from '@/lib/api/dashboard'

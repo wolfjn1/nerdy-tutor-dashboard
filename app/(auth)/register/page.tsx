@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useAuth } from '@/lib/auth/auth-context'
+import { useAuth } from '@/lib/auth/simple-auth-context'
 import { Button } from '@/components/ui'
 import { Mail, Lock, User, AlertCircle, Loader2, Check } from 'lucide-react'
 

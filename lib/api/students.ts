@@ -21,11 +21,13 @@ export interface StudentData {
   updated_at: string
 }
 
-// Get all students for a tutor
-export async function getStudents(tutorId: string) {
-  const { data, error } = await supabase
-    .from('students')
-    .select(`
+export async function getStudents(tutorId: string): Promise<StudentData[]> {
+  console.log('[API] getStudents called with tutorId:', tutorId)
+  
+  try {
+    const { data, error } = await supabase
+      .from('students')
+      .select(`
       *,
       sessions!sessions_student_id_fkey (
         id,
@@ -33,33 +35,38 @@ export async function getStudents(tutorId: string) {
         status
       )
     `)
-    .eq('tutor_id', tutorId)
-    .order('last_name', { ascending: true })
+      .eq('tutor_id', tutorId)
+      .order('last_name', { ascending: true })
+    
+    if (error) {
+      console.error('[API] getStudents error:', error)
+      throw error
+    }
+    
+    console.log('[API] getStudents success, found:', data?.length || 0, 'students')
+    // Process each student to determine next session
+    const studentsWithNextSession = data?.map(student => {
+      const upcomingSessions = student.sessions
+        ?.filter((s: any) => 
+          new Date(s.scheduled_at) > new Date() && 
+          ['scheduled', 'confirmed'].includes(s.status)
+        )
+        .sort((a: any, b: any) => 
+          new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime()
+        )
 
-  if (error) {
-    console.error('Error fetching students:', error)
+      return {
+        ...student,
+        next_session: upcomingSessions?.[0]?.scheduled_at || null,
+        sessions: undefined // Remove the sessions array from the response
+      }
+    })
+
+    return studentsWithNextSession || []
+  } catch (error) {
+    console.error('[API] getStudents catch error:', error)
     return []
   }
-
-  // Process each student to determine next session
-  const studentsWithNextSession = data?.map(student => {
-    const upcomingSessions = student.sessions
-      ?.filter((s: any) => 
-        new Date(s.scheduled_at) > new Date() && 
-        ['scheduled', 'confirmed'].includes(s.status)
-      )
-      .sort((a: any, b: any) => 
-        new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime()
-      )
-
-    return {
-      ...student,
-      next_session: upcomingSessions?.[0]?.scheduled_at || null,
-      sessions: undefined // Remove the sessions array from the response
-    }
-  })
-
-  return studentsWithNextSession || []
 }
 
 // Get a single student by ID

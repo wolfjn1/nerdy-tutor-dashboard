@@ -29,7 +29,7 @@ export default function ConnectionTest() {
       testResults.apiHealth = {
         success: false,
         time: Date.now() - start1,
-        error: error.message
+        error: error instanceof Error ? error.message : 'Unknown error'
       }
     }
 
@@ -48,7 +48,7 @@ export default function ConnectionTest() {
       testResults.supabaseAuth = {
         success: false,
         time: Date.now() - start2,
-        error: error.message
+        error: error instanceof Error ? error.message : 'Unknown error'
       }
     }
 
@@ -69,7 +69,7 @@ export default function ConnectionTest() {
       testResults.database = {
         success: false,
         time: Date.now() - start3,
-        error: error.message
+        error: error instanceof Error ? error.message : 'Unknown error'
       }
     }
 

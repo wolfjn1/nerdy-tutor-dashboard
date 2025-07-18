@@ -49,16 +49,18 @@ export default function LoginPage() {
       if (error) {
         console.error('Login error:', error)
         // Provide more user-friendly error messages
-        if (error.message.includes('Invalid login credentials')) {
+        const errorMessage = error.message || 'An error occurred during sign in. Please try again.'
+        
+        if (errorMessage.includes('Invalid login credentials')) {
           setError('Invalid email or password. Please check your credentials and try again.')
-        } else if (error.message.includes('Email not confirmed')) {
+        } else if (errorMessage.includes('Email not confirmed')) {
           setError('Please verify your email address before signing in.')
-        } else if (error.message.includes('User not found')) {
+        } else if (errorMessage.includes('User not found')) {
           setError('No account found with this email address.')
-        } else if (error.message.includes('network')) {
+        } else if (errorMessage.includes('network')) {
           setError('Network error. Please check your connection and try again.')
         } else {
-          setError(error.message || 'An error occurred during sign in. Please try again.')
+          setError(errorMessage)
         }
         setIsLoading(false)
       } else {

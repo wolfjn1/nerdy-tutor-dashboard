@@ -2,7 +2,7 @@
 
 A modern tutor dashboard application built with Next.js 14, TypeScript, and Tailwind CSS. Features a vibrant purple/pink "nerdy" theme with comprehensive student management, session scheduling, earnings tracking, and gamification elements.
 
-🚀 **Live Demo**: [https://nerdy-tutor-dashboard.vercel.app/](https://nerdy-tutor-dashboard.vercel.app/)
+🚀 **Live Demo**: [https://nerdy-tutor-dashboard.netlify.app/](https://nerdy-tutor-dashboard.netlify.app/)
 
 ## 🎨 Design System
 
@@ -196,8 +196,8 @@ npm run lint         # Run ESLint
 
 ## 🚢 Deployment
 
-The application is deployed on Vercel:
-- **Production URL**: https://nerdy-tutor-dashboard.vercel.app/
+The application is deployed on Netlify:
+- **Production URL**: https://nerdy-tutor-dashboard.netlify.app/
 - **Auto-deployment**: Enabled from main branch
 - **Environment**: Node.js 18.x
 

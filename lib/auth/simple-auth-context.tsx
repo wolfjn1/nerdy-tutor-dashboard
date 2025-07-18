@@ -50,41 +50,86 @@ export function SimpleAuthProvider({ children }: { children: React.ReactNode }) 
     // Only run auth check on client side after mounting
     if (!mounted) return
 
-    // Simple auth check
+    let isSubscribed = true
+    let retryCount = 0
+    const maxRetries = 3
+
+    // Simple auth check with timeout
     const checkAuth = async () => {
+      const startTime = Date.now()
+      
+      // Create a timeout promise
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Auth check timeout')), 5000) // 5 second timeout
+      })
+
       try {
         console.log('[SimpleAuth] Checking session...')
-        const { data: { session } } = await supabase.auth.getSession()
+        
+        // Race between auth check and timeout
+        const result = await Promise.race([
+          supabase.auth.getSession(),
+          timeoutPromise
+        ])
+        
+        const { data: { session } } = result as any
+        
+        console.log(`[SimpleAuth] Session check took ${Date.now() - startTime}ms`)
+        
+        if (!isSubscribed) return
         
         if (session?.user) {
           console.log('[SimpleAuth] User found:', session.user.id)
           setUser(session.user)
           
-          // Fetch tutor profile
-          const { data: tutorData } = await supabase
-            .from('tutors')
-            .select('*')
-            .eq('auth_user_id', session.user.id)
-            .single()
+          const tutorStartTime = Date.now()
           
-          if (tutorData) {
+          // Fetch tutor profile with timeout
+          const tutorResult = await Promise.race([
+            supabase
+              .from('tutors')
+              .select('*')
+              .eq('auth_user_id', session.user.id)
+              .single(),
+            timeoutPromise
+          ])
+          
+          const { data: tutorData } = tutorResult as any
+          
+          console.log(`[SimpleAuth] Tutor fetch took ${Date.now() - tutorStartTime}ms`)
+          
+          if (tutorData && isSubscribed) {
             console.log('[SimpleAuth] Tutor found:', tutorData.name)
             setTutor(tutorData)
           }
         }
+        
+        console.log(`[SimpleAuth] Total auth check took ${Date.now() - startTime}ms`)
       } catch (error) {
         console.error('[SimpleAuth] Error:', error)
+        
+        // Retry if we haven't exceeded max retries
+        if (retryCount < maxRetries && isSubscribed) {
+          retryCount++
+          console.log(`[SimpleAuth] Retrying... (attempt ${retryCount}/${maxRetries})`)
+          setTimeout(checkAuth, 1000 * retryCount) // Exponential backoff
+          return
+        }
       } finally {
-        console.log('[SimpleAuth] Loading complete')
-        setLoading(false)
+        if (isSubscribed) {
+          console.log('[SimpleAuth] Loading complete')
+          setLoading(false)
+        }
       }
     }
 
-    // Run check with a small delay for Vercel
-    const timer = setTimeout(checkAuth, 100)
+    // Start auth check immediately (no delay needed for Netlify)
+    checkAuth()
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!isSubscribed) return
+      
       console.log('[SimpleAuth] Auth state changed:', event)
       if (session?.user) {
         setUser(session.user)
@@ -105,7 +150,7 @@ export function SimpleAuthProvider({ children }: { children: React.ReactNode }) 
     })
 
     return () => {
-      clearTimeout(timer)
+      isSubscribed = false
       subscription.unsubscribe()
     }
   }, [mounted, supabase])

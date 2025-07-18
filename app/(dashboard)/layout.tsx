@@ -68,10 +68,12 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (loading) {
       const timeout = setTimeout(() => {
-        console.log('[Dashboard] Loading timeout, attempting refresh...')
-        // The refreshAuth function is no longer available from useAuth,
-        // so this block is effectively removed.
-      }, 10000) // 10 second timeout
+        console.log('[Dashboard] Loading timeout, forcing page refresh...')
+        // Force a page refresh as a last resort
+        if (typeof window !== 'undefined') {
+          window.location.reload()
+        }
+      }, 15000) // 15 second timeout (longer than auth timeout)
       
       return () => clearTimeout(timeout)
     }

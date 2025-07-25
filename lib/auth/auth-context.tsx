@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const resetStore = useTutorStore((state) => state.reset)
 
   // Fetch tutor profile when user changes
-  const fetchTutorProfile = async (userId: string) => {
+  const fetchTutorProfile = async (userId: string, userEmail?: string) => {
     try {
       console.log('[Auth] Fetching tutor profile for user:', userId)
       const { data, error } = await supabase
@@ -57,8 +57,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) {
         console.log('[Auth] Error fetching tutor profile:', error)
         
-        // If no tutor exists, create a default one for demo purposes
+        // If no tutor exists, try to fetch by email as fallback
         if (error.code === 'PGRST116') {
+          console.log('[Auth] No tutor record found by auth_user_id, trying by email')
+          
+          // Use the passed email
+          if (userEmail) {
+            const { data: tutorByEmail, error: emailError } = await supabase
+              .from('tutors')
+              .select('*')
+              .eq('email', userEmail)
+              .single()
+            
+            if (tutorByEmail && !emailError) {
+              console.log('[Auth] Found tutor by email, using that data')
+              setTutor(tutorByEmail)
+              setTutorInStore(tutorByEmail)
+              return
+            }
+          }
+          
           console.log('[Auth] No tutor record found, creating default data')
           const defaultTutor = {
             id: 'demo-tutor-001',
@@ -154,7 +172,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         if (session) {
           setUser(session.user)
-          const tutorData = await fetchTutorProfile(session.user.id)
+          const tutorData = await fetchTutorProfile(session.user.id, session.user.email)
           console.log('[Auth] After fetchTutorProfile, tutor data:', tutorData)
         } else {
           // Check for stored tokens
@@ -163,7 +181,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const { data: { user } } = await supabase.auth.getUser(tokens.access_token)
             if (user) {
               setUser(user)
-              await fetchTutorProfile(user.id)
+              await fetchTutorProfile(user.id, user.email)
             }
           } else {
             // Last resort: check URL token
@@ -221,7 +239,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (data.user) {
         setUser(data.user)  // Set the user state
-        await fetchTutorProfile(data.user.id)
+        await fetchTutorProfile(data.user.id, email)
         
         // Store tokens for fallback
         if (data.session) {

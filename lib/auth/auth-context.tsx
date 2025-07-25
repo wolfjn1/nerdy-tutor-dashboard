@@ -47,15 +47,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Fetch tutor profile when user changes
   const fetchTutorProfile = async (userId: string, userEmail?: string) => {
     try {
-      console.log('[Auth] Fetching tutor profile for user:', userId)
+      console.log('[Auth] Fetching tutor profile for user:', userId, 'email:', userEmail)
       const { data, error } = await supabase
         .from('tutors')
         .select('*')
         .eq('auth_user_id', userId)
         .single()
 
+      console.log('[Auth] Query by auth_user_id result:', { data, error })
+
       if (error) {
-        console.log('[Auth] Error fetching tutor profile:', error)
+        console.log('[Auth] Error fetching tutor profile:', error.code, error.message, error.details)
         
         // If no tutor exists, try to fetch by email as fallback
         if (error.code === 'PGRST116') {
@@ -63,17 +65,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           // Use the passed email
           if (userEmail) {
+            console.log('[Auth] Trying email fallback with:', userEmail)
             const { data: tutorByEmail, error: emailError } = await supabase
               .from('tutors')
               .select('*')
               .eq('email', userEmail)
               .single()
             
+            console.log('[Auth] Query by email result:', { data: tutorByEmail, error: emailError })
+            
             if (tutorByEmail && !emailError) {
               console.log('[Auth] Found tutor by email, using that data')
               setTutor(tutorByEmail)
               setTutorInStore(tutorByEmail)
               return
+            } else {
+              console.log('[Auth] Email fallback failed:', emailError?.message)
             }
           }
           

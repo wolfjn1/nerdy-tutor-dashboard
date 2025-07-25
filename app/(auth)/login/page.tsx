@@ -57,18 +57,15 @@ export default function LoginPage() {
       setIsLoading(false)
     } else {
       console.log('Login successful, redirecting to dashboard...')
+      setIsLoading(false)
+      
       // Check if we have a session
       const { data: { session } } = await supabase.auth.getSession()
       console.log('Current session after login:', session)
       
-      // First refresh the router to update auth state
-      router.refresh()
-      
-      // Then redirect
-      setTimeout(() => {
-        console.log('Executing redirect to /dashboard')
-        router.push('/dashboard')
-      }, 100)
+      // Navigate immediately
+      console.log('Executing redirect to /dashboard')
+      router.push('/dashboard')
     }
   }
 

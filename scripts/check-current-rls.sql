@@ -8,19 +8,16 @@ WHERE schemaname = 'public'
 
 -- Check all existing policies on tutors table
 SELECT 
-  polname as policy_name,
-  polcmd as command,
-  CASE 
-    WHEN polpermissive THEN 'PERMISSIVE'
-    ELSE 'RESTRICTIVE'
-  END as type,
-  polroles::text as roles,
-  polqual::text as using_clause,
-  polwithcheck::text as with_check_clause
+  policyname as policy_name,
+  cmd as command,
+  permissive as type,
+  roles::text as roles,
+  qual::text as using_clause,
+  with_check::text as with_check_clause
 FROM pg_policies 
 WHERE schemaname = 'public' 
   AND tablename = 'tutors'
-ORDER BY polname;
+ORDER BY policyname;
 
 -- Test what happens with different auth contexts
 -- This shows why queries are failing

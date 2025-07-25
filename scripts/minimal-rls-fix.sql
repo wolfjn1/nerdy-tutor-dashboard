@@ -2,7 +2,7 @@
 -- This allows the app to query tutor data during login
 
 -- First, check current policies
-SELECT polname FROM pg_policies 
+SELECT policyname FROM pg_policies 
 WHERE schemaname = 'public' AND tablename = 'tutors';
 
 -- Option 1: Allow authenticated users to see all tutors

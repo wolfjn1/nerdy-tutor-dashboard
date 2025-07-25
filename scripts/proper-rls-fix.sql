@@ -1,11 +1,11 @@
 -- First, let's check what policies currently exist
 SELECT 
-  polname as policy_name,
-  polcmd as command,
-  polpermissive as permissive,
-  polroles as roles,
-  polqual as using_expression,
-  polwithcheck as with_check_expression
+  policyname as policy_name,
+  cmd as command,
+  permissive,
+  roles,
+  qual as using_expression,
+  with_check as with_check_expression
 FROM pg_policies 
 WHERE schemaname = 'public' 
   AND tablename = 'tutors';
@@ -46,9 +46,9 @@ USING (auth.uid() = auth_user_id);
 
 -- Verify the policies are created
 SELECT 
-  polname as policy_name,
-  polcmd as command
+  policyname as policy_name,
+  cmd as command
 FROM pg_policies 
 WHERE schemaname = 'public' 
   AND tablename = 'tutors'
-ORDER BY polname; 
+ORDER BY policyname; 

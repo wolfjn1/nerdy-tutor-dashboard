@@ -8,6 +8,8 @@ export function useHydratedStore() {
   const sessions = useTutorStore((state) => state.sessions)
   const level = useTutorStore((state) => state.level)
   const totalXP = useTutorStore((state) => state.totalXP)
+  const xpForNextLevel = useTutorStore((state) => state.xpForNextLevel)
+  const streak = useTutorStore((state) => state.streak)
 
   useEffect(() => {
     // This ensures the store is hydrated on the client
@@ -20,6 +22,8 @@ export function useHydratedStore() {
     sessions,
     level,
     totalXP,
+    xpForNextLevel,
+    streak,
     isHydrated
   }
 } 

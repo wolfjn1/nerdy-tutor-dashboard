@@ -22,6 +22,7 @@ import { Avatar, Button, NotificationBell, useToastHelpers } from '@/components/
 import { cn } from '@/lib/utils'
 import { StorageWarning } from '@/components/ui/StorageWarning'
 import { useTutorStore } from '@/lib/stores/tutorStore'
+import { useHydratedStore } from '@/lib/hooks/useHydratedStore'
 
 interface NavItem {
   id: string
@@ -86,7 +87,7 @@ export default function DashboardLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isLargeScreen, setIsLargeScreen] = useState(false)
-  const { tutor, level } = useTutorStore()
+  const { tutor, level, isHydrated } = useHydratedStore()
 
   React.useEffect(() => {
     const checkScreenSize = () => {
@@ -207,15 +208,27 @@ export default function DashboardLayout({
           <div className="flex-shrink-0 p-3 border-t border-white/20 dark:border-gray-700 bg-black/10 dark:bg-gray-800/50 backdrop-blur-sm">
             <div className="flex items-center gap-3 mb-3">
               <Avatar
-                src={tutor?.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"}
-                fallback={tutor?.first_name && tutor?.last_name ? `${tutor.first_name[0]}${tutor.last_name[0]}` : "JD"}
+                src={isHydrated && tutor?.avatar_url ? tutor.avatar_url : undefined}
+                fallback={isHydrated && tutor?.first_name && tutor?.last_name ? `${tutor.first_name[0]}${tutor.last_name[0]}` : "?"}
                 size="sm"
                 className="ring-2 ring-pink-400/50 dark:ring-purple-500/50"
                 animate={false}
               />
               <div className="flex-1 min-w-0">
-                <div className="text-white font-medium text-sm">{tutor ? `${tutor.first_name} ${tutor.last_name}` : 'John Doe'}</div>
-                <div className="text-white/80 dark:text-purple-300 text-xs">Expert Tutor • Level {level}</div>
+                <div className="text-white font-medium text-sm">
+                  {!isHydrated ? (
+                    <span className="inline-block w-24 h-4 bg-white/20 rounded animate-pulse" />
+                  ) : (
+                    tutor ? `${tutor.first_name} ${tutor.last_name}` : 'Loading...'
+                  )}
+                </div>
+                <div className="text-white/80 dark:text-purple-300 text-xs">
+                  {!isHydrated ? (
+                    <span className="inline-block w-32 h-3 bg-white/20 rounded animate-pulse" />
+                  ) : (
+                    `Expert Tutor • Level ${level}`
+                  )}
+                </div>
               </div>
             </div>
             

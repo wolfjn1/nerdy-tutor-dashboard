@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import { Calendar, Clock, TrendingUp, Users, DollarSign, Target, BookOpen, Trophy } from 'lucide-react'
-import { useTutorStore } from '@/lib/stores/tutorStore'
 import { useAuth } from '@/lib/auth/auth-context'
+import { useHydratedStore } from '@/lib/hooks/useHydratedStore'
 import { 
   getTodaysSessions, 
   getTodaysEarnings, 
@@ -16,7 +16,7 @@ import {
 import { format } from 'date-fns'
 
 export default function DashboardPage() {
-  const { tutor, level, totalXP, xpForNextLevel, streak, students, sessions } = useTutorStore()
+  const { tutor, level, totalXP, xpForNextLevel, streak, students, sessions, isHydrated } = useHydratedStore()
   const { loading: authLoading } = useAuth()
   const [mounted, setMounted] = React.useState(false)
   
@@ -97,7 +97,7 @@ export default function DashboardPage() {
   }
   
   // Show loading skeleton while store is hydrating or auth is initializing
-  if (!mounted) {
+  if (!mounted || !isHydrated) {
     return (
       <div className="space-y-4 animate-pulse">
         <div className="flex items-center gap-6">

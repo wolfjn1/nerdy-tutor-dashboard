@@ -40,6 +40,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const tokenManager = new TokenAuthManager()
   const supabase = createClient()
   
+  // Debug Supabase client
+  console.log('[Auth] Supabase client initialized with URL:', process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 30) + '...')
+  
   // Get setTutor and reset from the global store
   const setTutorInStore = useTutorStore((state) => state.setTutor)
   const resetStore = useTutorStore((state) => state.reset)
@@ -48,13 +51,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchTutorProfile = async (userId: string, userEmail?: string) => {
     try {
       console.log('[Auth] Fetching tutor profile for user:', userId, 'email:', userEmail)
+      
+      // First check if we have a valid session
+      const { data: { session } } = await supabase.auth.getSession()
+      console.log('[Auth] Current session:', { 
+        hasSession: !!session, 
+        userId: session?.user?.id,
+        email: session?.user?.email 
+      })
+      
+      // Log the exact query we're making
+      console.log('[Auth] Making query: tutors.select(*).eq(auth_user_id, ' + userId + ').single()')
+      
       const { data, error } = await supabase
         .from('tutors')
         .select('*')
         .eq('auth_user_id', userId)
         .single()
 
-      console.log('[Auth] Query by auth_user_id result:', { data, error })
+      console.log('[Auth] Query by auth_user_id result:', { 
+        data, 
+        error,
+        errorCode: error?.code,
+        errorMessage: error?.message,
+        errorDetails: error?.details
+      })
 
       if (error) {
         console.log('[Auth] Error fetching tutor profile:', error.code, error.message, error.details)

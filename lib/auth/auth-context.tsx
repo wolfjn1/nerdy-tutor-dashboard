@@ -246,6 +246,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (data.user) {
         setUser(data.user)  // Set the user state
+        
+        // Small delay to ensure session is established
+        await new Promise(resolve => setTimeout(resolve, 100))
+        
         await fetchTutorProfile(data.user.id, email)
         
         // Store tokens for fallback
@@ -257,6 +261,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             token_type: 'Bearer'
           })
         }
+        
+        // Redirect to dashboard after successful login
+        router.push('/dashboard')
       }
 
       return { error: null }

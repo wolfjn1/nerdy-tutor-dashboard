@@ -143,7 +143,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { data, error } = await supabase.auth.getUser(token)
         if (!error && data.user) {
           setUser(data.user)
-          await fetchTutorProfile(data.user.id)
+          await fetchTutorProfile(data.user.id, data.user.email)
           
           // Clean URL
           window.history.replaceState({}, document.title, window.location.pathname)
@@ -201,7 +201,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
         setUser(session.user)
-        await fetchTutorProfile(session.user.id)
+        await fetchTutorProfile(session.user.id, session.user.email)
         
         // Store tokens for fallback
         if (session.access_token && session.refresh_token) {
@@ -289,7 +289,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (profileError) throw profileError
 
-        await fetchTutorProfile(authData.user.id)
+        await fetchTutorProfile(authData.user.id, email)
         
         // Store tokens if available
         if (authData.session) {
@@ -330,7 +330,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Refresh tutor data
       if (user) {
-        await fetchTutorProfile(user.id)
+        await fetchTutorProfile(user.id, user.email)
       }
 
       return { error: null }

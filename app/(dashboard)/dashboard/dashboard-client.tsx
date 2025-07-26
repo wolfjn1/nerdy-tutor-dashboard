@@ -131,17 +131,6 @@ export default function DashboardClient({
         )}
       </div>
 
-      {/* Debug Info - Shows in development and when deployed */}
-      <div className="mb-8 p-4 bg-yellow-100 dark:bg-yellow-900 rounded-lg">
-        <h3 className="font-semibold mb-2">Debug Info</h3>
-        <p className="text-sm">Total Students: {students.length}</p>
-        <p className="text-sm">Total Sessions Passed: {sessions.length}</p>
-        <p className="text-sm">Stats - Today Sessions: {stats.todaysSessions}</p>
-        <p className="text-sm">Stats - Active Students: {stats.activeStudentsCount}</p>
-        <p className="text-sm">Last Updated: {new Date().toISOString()}</p>
-        <p className="text-sm text-gray-600">Build: 2025-07-26-v2</p>
-      </div>
-
       {/* Quick Actions */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Link href="/sessions/new" className="block">

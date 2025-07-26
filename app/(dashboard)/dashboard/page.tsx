@@ -81,17 +81,6 @@ export default async function DashboardPage() {
   const totalStudents = students?.length || 0
   const todaysSessions = todaySessionsData?.length || 0
   
-  // Debug logging
-  console.log('Dashboard data debug:', {
-    todayStart: today.toISOString(),
-    todayEnd: tomorrow.toISOString(),
-    todaySessionsCount: todaySessionsData?.length,
-    todaySessionsData: todaySessionsData?.map(s => ({
-      time: new Date(s.scheduled_at).toISOString(),
-      student: s.students
-    }))
-  })
-  
   // Format sessions for the client
   const formattedSessions = upcomingSessions?.map(s => ({
     ...s,

@@ -40,9 +40,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const tokenManager = new TokenAuthManager()
   const supabase = createClient()
   
-  // Debug Supabase client
-  console.log('[Auth] Supabase client initialized with URL:', process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 30) + '...')
-  
   // Get setTutor and reset from the global store
   const setTutorInStore = useTutorStore((state) => state.setTutor)
   const resetStore = useTutorStore((state) => state.reset)

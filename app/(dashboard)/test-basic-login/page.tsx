@@ -9,9 +9,9 @@ export default function TestBasicLoginPage() {
     setStatus('Testing...')
     
     try {
-      // Import dynamically to avoid SSR issues
-      const { createClient } = await import('@/lib/supabase-browser')
-      const supabase = createClient()
+      // Import the safe client
+      const { createClientSafe } = await import('@/lib/supabase-client-safe')
+      const supabase = createClientSafe()
       
       setStatus('Client created, attempting login...')
       

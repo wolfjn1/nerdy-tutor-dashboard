@@ -63,8 +63,11 @@ export default function LoginPage() {
       const { data: { session } } = await supabase.auth.getSession()
       console.log('Current session after login:', session)
       
+      // Force session refresh to ensure cookies are set
+      await supabase.auth.refreshSession()
+      
       // Give cookies time to be set
-      await new Promise(resolve => setTimeout(resolve, 500))
+      await new Promise(resolve => setTimeout(resolve, 1000))
       
       // Force a hard navigation to ensure cookies are carried over
       console.log('Executing redirect to /dashboard')

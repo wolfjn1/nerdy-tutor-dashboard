@@ -5,12 +5,21 @@
 [build.environment]
   NODE_VERSION = "18"
   NEXT_USE_NETLIFY_EDGE = "true"
+  NETLIFY_NEXT_PLUGIN_SKIP = "false"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
 [functions]
   node_bundler = "esbuild"
+  
+# Redirect root to dashboard
+[[redirects]]
+  from = "/"
+  to = "/dashboard"
+  status = 302
+  force = false
+  conditions = {Role = ["user"]}
 
 
 

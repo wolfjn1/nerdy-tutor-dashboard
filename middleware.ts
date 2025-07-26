@@ -56,7 +56,27 @@ export async function middleware(req: NextRequest) {
   }
 
   // List of public routes that don't require authentication
-  const publicRoutes = ['/login', '/register', '/forgot-password', '/reset-password', '/env-check', '/api/env-check', '/test-xp', '/test-cookies', '/force-refresh', '/logout']
+  const publicRoutes = [
+    '/login', 
+    '/register', 
+    '/forgot-password', 
+    '/reset-password', 
+    '/env-check', 
+    '/api/env-check', 
+    '/test-xp', 
+    '/test-cookies', 
+    '/force-refresh', 
+    '/logout',
+    '/test-login',
+    '/test-login-detailed',
+    '/test-login-timeout',
+    '/test-storage',
+    '/test-init',
+    '/fix-session',
+    '/test-auth',
+    '/simple-dashboard',
+    '/server-dashboard'
+  ]
   const isPublicRoute = publicRoutes.some(route => req.nextUrl.pathname.startsWith(route))
 
   // If user is not authenticated and trying to access protected route
@@ -67,8 +87,11 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(redirectUrl)
   }
 
-  // If user is authenticated and trying to access auth pages
-  if (session && isPublicRoute) {
+  // If user is authenticated and trying to access auth pages (but not test pages)
+  const authPages = ['/login', '/register', '/forgot-password', '/reset-password']
+  const isAuthPage = authPages.some(route => req.nextUrl.pathname === route)
+  
+  if (session && isAuthPage) {
     const redirectUrl = req.nextUrl.clone()
     redirectUrl.pathname = '/dashboard'
     return NextResponse.redirect(redirectUrl)

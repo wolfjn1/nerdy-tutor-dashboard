@@ -20,7 +20,7 @@ export default function TestInitPage() {
     // Try to create client
     let clientStatus = {}
     try {
-      const { createClient } = require('@/lib/supabase-browser')
+      const { createClient } = require('@/utils/supabase/client')
       const supabase = createClient()
       clientStatus = {
         created: true,

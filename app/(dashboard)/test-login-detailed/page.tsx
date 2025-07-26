@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase-browser'
+import { createClient } from '@/utils/supabase/client'
 
 export default function TestLoginDetailedPage() {
   const [email, setEmail] = useState('sarah_chen@hotmail.com')

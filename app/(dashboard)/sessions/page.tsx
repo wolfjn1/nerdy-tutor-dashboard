@@ -64,7 +64,7 @@ export default async function SessionsPage() {
       subjects: session.students.subjects || [],
       avatar: session.students.avatar_url,
       isActive: session.students.is_active
-    } : null
+    } : undefined
   })) || []
 
   return <SessionsClient sessions={formattedSessions} />

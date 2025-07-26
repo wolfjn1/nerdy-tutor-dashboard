@@ -8,14 +8,11 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# Headers for better cookie handling
-[[headers]]
-  for = "/*"
-  [headers.values]
-    # Allow cookies to be set properly
-    Set-Cookie = "SameSite=Lax; Secure"
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["**"]
 
-# Ensure environment variables are properly exposed
-[context.production.environment]
-  NEXT_PUBLIC_SUPABASE_URL = "${NEXT_PUBLIC_SUPABASE_URL}"
-  NEXT_PUBLIC_SUPABASE_ANON_KEY = "${NEXT_PUBLIC_SUPABASE_ANON_KEY}" 
+
+
+# Environment variables are automatically inherited from Netlify UI
+# No need to redefine them here 

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase-browser'
+import { createClient } from '@/lib/supabase-browser-v2'
 
 export default function TestSimplePage() {
   const [data, setData] = useState<any>(null)

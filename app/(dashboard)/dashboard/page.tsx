@@ -33,8 +33,18 @@ export default function DashboardPage() {
     setMounted(true)
   }, [])
   
+  // Debug auth changes
+  React.useEffect(() => {
+    console.log('[Dashboard] Auth state changed:', {
+      authLoading,
+      user: user?.email,
+      authTutor: authTutor?.email,
+      storeTutor: tutor?.email
+    })
+  }, [authLoading, user, authTutor, tutor])
+  
   // Use tutor from auth if store is not ready
-  const actualTutor = tutor || authTutor
+  const actualTutor = authTutor || tutor
   
   // Fetch dashboard data
   useEffect(() => {
@@ -107,7 +117,7 @@ export default function DashboardPage() {
   }
   
   // Show loading skeleton while store is hydrating or auth is initializing
-  if (!mounted || !isHydrated || (!actualTutor && authLoading)) {
+  if (!mounted || (!actualTutor && authLoading)) {
     console.log('[Dashboard] Showing skeleton - mounted:', mounted, 'isHydrated:', isHydrated, 'actualTutor:', !!actualTutor, 'authLoading:', authLoading)
     return (
       <div className="space-y-4 animate-pulse">

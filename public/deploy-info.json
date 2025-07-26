@@ -1,0 +1,11 @@
+{
+  "version": "2025-07-26-v2",
+  "timestamp": "2025-07-26T10:45:00-08:00",
+  "changes": [
+    "Fixed sidebar badge from 12 to 16",
+    "Added debug info box to dashboard",
+    "Created debug endpoints",
+    "Made debug info always visible"
+  ],
+  "note": "Check if this file updates on Netlify to verify deployment"
+} 

@@ -23,6 +23,17 @@ export default function DashboardClient({
   sessions = [],
   stats = { activeStudentsCount: 0, todaysSessions: 0, totalStudents: 0 }
 }: DashboardClientProps) {
+  // Debug logging
+  console.log('Dashboard Client Data:', {
+    studentsCount: students.length,
+    sessionsCount: sessions.length,
+    stats,
+    sessions: sessions.map(s => ({
+      date: s.scheduled_at,
+      student: s.student_name
+    }))
+  })
+  
   // Initialize the tutor store with the server data
   const setTutor = useTutorStore(state => state.setTutor)
   
@@ -102,7 +113,7 @@ export default function DashboardClient({
                     {session.student_name || 'Student'}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {new Date(session.scheduled_at).toLocaleString()} • {session.subject}
+                    {new Date(session.scheduled_at).toISOString().replace('T', ' ').slice(0, 16)} • {session.subject}
                   </p>
                 </div>
                 <span className={`px-3 py-1 rounded text-sm ${
@@ -118,6 +129,17 @@ export default function DashboardClient({
         ) : (
           <p className="text-gray-600 dark:text-gray-400">No upcoming sessions scheduled</p>
         )}
+      </div>
+
+      {/* Debug Info - Shows in development and when deployed */}
+      <div className="mb-8 p-4 bg-yellow-100 dark:bg-yellow-900 rounded-lg">
+        <h3 className="font-semibold mb-2">Debug Info</h3>
+        <p className="text-sm">Total Students: {students.length}</p>
+        <p className="text-sm">Total Sessions Passed: {sessions.length}</p>
+        <p className="text-sm">Stats - Today Sessions: {stats.todaysSessions}</p>
+        <p className="text-sm">Stats - Active Students: {stats.activeStudentsCount}</p>
+        <p className="text-sm">Last Updated: {new Date().toISOString()}</p>
+        <p className="text-sm text-gray-600">Build: 2025-07-26-v2</p>
       </div>
 
       {/* Quick Actions */}

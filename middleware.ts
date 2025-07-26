@@ -1,7 +1,15 @@
-import { type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/utils/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
+  // Log for debugging on Netlify
+  console.log(`[Middleware] ${request.method} ${request.nextUrl.pathname}`)
+  
+  // Skip middleware for API routes to ensure they work
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    return NextResponse.next()
+  }
+  
   return await updateSession(request)
 }
 

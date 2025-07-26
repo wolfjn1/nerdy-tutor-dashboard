@@ -46,7 +46,7 @@ const navigation: NavItem[] = [
     label: 'Students',
     href: '/students',
     icon: Users,
-    badge: '12',
+    badge: '16',
     description: 'Manage your students'
   },
   {

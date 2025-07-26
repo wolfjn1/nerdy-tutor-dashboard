@@ -5,11 +5,33 @@ const nextConfig = {
   images: {
     domains: ['images.unsplash.com'],
   },
+  
+  // Force dynamic rendering for all pages to prevent build-time caching
+  experimental: {
+    appDir: true,
+  },
+  
   // Ensure environment variables are available
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   },
+  
+  // Add headers to prevent caching
+  async headers() {
+    return [
+      {
+        source: '/api/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, must-revalidate',
+          },
+        ],
+      },
+    ]
+  },
+  
   webpack: (config, { isServer }) => {
     // Suppress specific warnings
     config.infrastructureLogging = {

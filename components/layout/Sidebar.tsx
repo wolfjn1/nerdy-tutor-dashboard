@@ -46,7 +46,7 @@ const sidebarItems: SidebarItem[] = [
     label: 'Students',
     icon: Users,
     href: '/students',
-    badge: '12'
+    badge: '16'
   },
   {
     id: 'sessions',

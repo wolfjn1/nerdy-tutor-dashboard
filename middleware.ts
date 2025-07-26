@@ -56,7 +56,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // List of public routes that don't require authentication
-  const publicRoutes = ['/login', '/register', '/forgot-password', '/reset-password', '/env-check', '/api/env-check', '/test-xp']
+  const publicRoutes = ['/login', '/register', '/forgot-password', '/reset-password', '/env-check', '/api/env-check', '/test-xp', '/test-cookies', '/force-refresh', '/logout']
   const isPublicRoute = publicRoutes.some(route => req.nextUrl.pathname.startsWith(route))
 
   // If user is not authenticated and trying to access protected route

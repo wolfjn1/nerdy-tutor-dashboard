@@ -64,10 +64,21 @@ export default function LoginPage() {
       console.log('Current session after login:', session)
       
       // Force session refresh to ensure cookies are set
-      await supabase.auth.refreshSession()
+      const { data: refreshData } = await supabase.auth.refreshSession()
+      console.log('Session refresh result:', refreshData)
+      
+      // Log cookie status
+      const cookies = document.cookie.split('; ')
+      const supabaseCookies = cookies.filter(c => c.includes('supabase'))
+      console.log('Supabase cookies after refresh:', supabaseCookies.length, supabaseCookies)
       
       // Give cookies time to be set
       await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // Check cookies again
+      const cookiesAfterDelay = document.cookie.split('; ')
+      const supabaseCookiesAfterDelay = cookiesAfterDelay.filter(c => c.includes('supabase'))
+      console.log('Supabase cookies after delay:', supabaseCookiesAfterDelay.length, supabaseCookiesAfterDelay)
       
       // Force a hard navigation to ensure cookies are carried over
       console.log('Executing redirect to /dashboard')

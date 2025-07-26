@@ -46,7 +46,7 @@ const navigation: NavItem[] = [
     label: 'Students',
     href: '/students',
     icon: Users,
-    badge: '16',
+    badge: '15',
     description: 'Manage your students'
   },
   {
@@ -54,7 +54,7 @@ const navigation: NavItem[] = [
     label: 'Sessions',
     href: '/sessions',
     icon: Calendar,
-    badge: '3',
+    badge: '4',
     description: 'Schedule and track sessions'
   },
   {

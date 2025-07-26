@@ -49,4 +49,4 @@ logs
 
 # temp files
 *.tmp
-*.temp 
+*.temp .netlify/

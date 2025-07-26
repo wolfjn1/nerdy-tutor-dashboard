@@ -1,7 +1,0 @@
-{
-  "version": 1,
-  "cacheDirectories": [
-    ".next/cache",
-    "node_modules/.cache"
-  ]
-} 

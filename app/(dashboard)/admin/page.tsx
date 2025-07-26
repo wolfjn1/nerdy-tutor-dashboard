@@ -5,7 +5,6 @@ import { motion } from 'framer-motion'
 import { Settings, Database, Activity, Shield, Bell, User } from 'lucide-react'
 import { AdministrativeTasks } from '@/components/dashboard'
 import { Card, Button } from '@/components/ui'
-import SupabaseConnectionTest from '@/components/test/SupabaseConnectionTest'
 import dashboardDataRaw from '@/lib/mock-data/dashboard.json'
 
 // Type assertion to ensure proper types
@@ -79,20 +78,11 @@ export default function AdminPage() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Left Column */}
         <div className="xl:col-span-2 space-y-6">
-          {/* Database Connection Test */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <SupabaseConnectionTest />
-          </motion.div>
-
           {/* System Settings */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           >
             <Card className="glass-effect border-white/30 p-6">
               <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
@@ -151,7 +141,7 @@ export default function AdminPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
           >
             <AdministrativeTasks tasks={dashboardData.administrativeTasks} />
           </motion.div>
@@ -160,7 +150,7 @@ export default function AdminPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
           >
             <Card className="glass-effect border-white/30 p-6">
               <h2 className="text-xl font-bold text-slate-800 mb-4">Quick Actions</h2>
@@ -212,7 +202,7 @@ export default function AdminPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
           >
             <Card className="glass-effect border-white/30 p-6">
               <h2 className="text-xl font-bold text-slate-800 mb-4">System Information</h2>

@@ -34,16 +34,54 @@ export default async function DashboardPage() {
     )
   }
   
-  // Log what we're passing to the client
-  console.log('[Dashboard Server] Passing tutor data:', {
-    id: tutor.id,
-    name: `${tutor.first_name} ${tutor.last_name}`,
-    email: tutor.email,
-    hasFirstName: !!tutor.first_name,
-    hasLastName: !!tutor.last_name,
-    allFields: Object.keys(tutor)
-  })
+  // Fetch students
+  const { data: students } = await supabase
+    .from('students')
+    .select('*')
+    .eq('tutor_id', tutor.id)
+    
+  // Fetch sessions with student names
+  const { data: sessions } = await supabase
+    .from('sessions')
+    .select(`
+      *,
+      students:student_id (
+        first_name,
+        last_name
+      )
+    `)
+    .eq('tutor_id', tutor.id)
+    .gte('scheduled_at', new Date().toISOString())
+    .order('scheduled_at', { ascending: true })
+    .limit(10)
+    
+  // Calculate stats
+  const activeStudentsCount = students?.filter(s => s.is_active).length || 0
+  const totalStudents = students?.length || 0
+  const todaysSessions = sessions?.filter(s => 
+    new Date(s.scheduled_at).toDateString() === new Date().toDateString()
+  ).length || 0
   
-  // Pass the tutor data to the client component
-  return <DashboardClient initialTutor={tutor} user={user} />
+  // Format sessions for the client
+  const formattedSessions = sessions?.map(s => ({
+    ...s,
+    student_name: s.students ? `${s.students.first_name} ${s.students.last_name}` : 'Unknown Student'
+  })) || []
+  
+  const stats = {
+    activeStudentsCount,
+    todaysSessions,
+    totalStudents
+  }
+  
+  // Pass all data to the client component
+  return (
+    <DashboardClient 
+      initialTutor={tutor} 
+      user={user}
+      students={students || []}
+      sessions={formattedSessions}
+      stats={stats}
+    />
+  )
 } 

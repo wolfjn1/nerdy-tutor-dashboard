@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase-browser-v2'
+import { createClient } from '@/lib/supabase-browser'
 
 export default function TestLoginTimeoutPage() {
   const [status, setStatus] = useState<any>({})

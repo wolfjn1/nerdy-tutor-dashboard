@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase-browser-v2'
+import { createClient } from '@/lib/supabase-browser'
 
 export default function TestTutorQuery() {
   const [result, setResult] = useState<any>(null)

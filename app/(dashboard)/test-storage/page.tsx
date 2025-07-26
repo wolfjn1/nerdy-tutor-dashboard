@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase-browser-v2'
+import { createClient } from '@/lib/supabase-browser'
 
 export default function TestStoragePage() {
   const [storageData, setStorageData] = useState<any>({})

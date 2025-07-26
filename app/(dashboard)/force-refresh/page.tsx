@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase-browser-v2'
+import { createClient } from '@/lib/supabase-browser'
 
 export default function ForceRefreshPage() {
   const router = useRouter()

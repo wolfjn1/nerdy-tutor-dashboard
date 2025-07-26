@@ -34,6 +34,16 @@ export default async function DashboardPage() {
     )
   }
   
+  // Log what we're passing to the client
+  console.log('[Dashboard Server] Passing tutor data:', {
+    id: tutor.id,
+    name: `${tutor.first_name} ${tutor.last_name}`,
+    email: tutor.email,
+    hasFirstName: !!tutor.first_name,
+    hasLastName: !!tutor.last_name,
+    allFields: Object.keys(tutor)
+  })
+  
   // Pass the tutor data to the client component
   return <DashboardClient initialTutor={tutor} user={user} />
 } 

@@ -8,7 +8,7 @@ const nextConfig = {
   
   // Force dynamic rendering for all pages to prevent build-time caching
   experimental: {
-    appDir: true,
+    // App directory is enabled by default in Next.js 13+
   },
   
   // Ensure environment variables are available

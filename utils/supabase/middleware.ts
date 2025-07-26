@@ -66,6 +66,7 @@ export async function updateSession(request: NextRequest) {
     '/test-cookie-config',
     '/test-ssr-auth',
     '/test-direct-login',
+    '/test-auth-debug',
     // Add other public routes as needed
   ]
   

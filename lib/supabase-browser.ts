@@ -17,7 +17,8 @@ export function createClient() {
         },
         set(name: string, value: string, options?: any) {
           console.log(`[Supabase] Setting cookie ${name}`)
-          document.cookie = `${name}=${value}; path=/; ${options?.maxAge ? `max-age=${options.maxAge};` : ''}`
+          const isSecure = window.location.protocol === 'https:'
+          document.cookie = `${name}=${value}; path=/; ${options?.maxAge ? `max-age=${options.maxAge};` : ''} ${isSecure ? 'secure;' : ''} SameSite=Lax`
         },
         remove(name: string, options?: any) {
           console.log(`[Supabase] Removing cookie ${name}`)

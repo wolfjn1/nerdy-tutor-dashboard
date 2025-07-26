@@ -40,8 +40,29 @@ export default async function DashboardPage() {
     .select('*')
     .eq('tutor_id', tutor.id)
     
-  // Fetch sessions with student names
-  const { data: sessions } = await supabase
+  // Get today's date range
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  
+  // Fetch today's sessions
+  const { data: todaySessionsData } = await supabase
+    .from('sessions')
+    .select(`
+      *,
+      students:student_id (
+        first_name,
+        last_name
+      )
+    `)
+    .eq('tutor_id', tutor.id)
+    .gte('scheduled_at', today.toISOString())
+    .lt('scheduled_at', tomorrow.toISOString())
+    .order('scheduled_at', { ascending: true })
+    
+  // Fetch upcoming sessions (for the "Upcoming Sessions" section)
+  const { data: upcomingSessions } = await supabase
     .from('sessions')
     .select(`
       *,
@@ -58,12 +79,10 @@ export default async function DashboardPage() {
   // Calculate stats
   const activeStudentsCount = students?.filter(s => s.is_active).length || 0
   const totalStudents = students?.length || 0
-  const todaysSessions = sessions?.filter(s => 
-    new Date(s.scheduled_at).toDateString() === new Date().toDateString()
-  ).length || 0
+  const todaysSessions = todaySessionsData?.length || 0
   
   // Format sessions for the client
-  const formattedSessions = sessions?.map(s => ({
+  const formattedSessions = upcomingSessions?.map(s => ({
     ...s,
     student_name: s.students ? `${s.students.first_name} ${s.students.last_name}` : 'Unknown Student'
   })) || []

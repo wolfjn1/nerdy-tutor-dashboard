@@ -17,7 +17,7 @@ import { format } from 'date-fns'
 
 export default function DashboardPage() {
   const { tutor, level, totalXP, xpForNextLevel, streak, students, sessions, isHydrated } = useHydratedStore()
-  const { loading: authLoading } = useAuth()
+  const { loading: authLoading, user, tutor: authTutor } = useAuth()
   const [mounted, setMounted] = React.useState(false)
   
   // Dashboard data state
@@ -33,10 +33,17 @@ export default function DashboardPage() {
     setMounted(true)
   }, [])
   
+  // Use tutor from auth if store is not ready
+  const actualTutor = tutor || authTutor
+  
   // Fetch dashboard data
   useEffect(() => {
     async function fetchDashboardData() {
-      if (!tutor?.id) return
+      console.log('[Dashboard] Fetch attempt - tutor:', actualTutor)
+      if (!actualTutor?.id) {
+        console.log('[Dashboard] No tutor ID, skipping fetch')
+        return
+      }
       
       setDataLoading(true)
       try {
@@ -48,12 +55,12 @@ export default function DashboardPage() {
           upcoming,
           actions
         ] = await Promise.all([
-          getTodaysSessions(tutor.id),
-          getTodaysEarnings(tutor.id),
-          getActiveStudentsCount(tutor.id),
-          getSuccessRate(tutor.id),
-          getUpcomingSessions(tutor.id, 3),
-          getRequiredActions(tutor.id)
+          getTodaysSessions(actualTutor.id),
+          getTodaysEarnings(actualTutor.id),
+          getActiveStudentsCount(actualTutor.id),
+          getSuccessRate(actualTutor.id),
+          getUpcomingSessions(actualTutor.id, 3),
+          getRequiredActions(actualTutor.id)
         ])
         
         setTodaysSessions(sessionsData.length)
@@ -69,15 +76,18 @@ export default function DashboardPage() {
       }
     }
     
-    if (mounted && tutor?.id) {
+    if (mounted && actualTutor?.id) {
       fetchDashboardData()
     }
-  }, [mounted, tutor?.id])
+  }, [mounted, actualTutor?.id])
   
   // Debug log
-  console.log('[Dashboard] Tutor data:', tutor)
+  console.log('[Dashboard] Tutor data from store:', tutor)
+  console.log('[Dashboard] Tutor data from auth:', authTutor)
+  console.log('[Dashboard] User from auth:', user)
   console.log('[Dashboard] Auth loading:', authLoading)
   console.log('[Dashboard] Mounted:', mounted)
+  console.log('[Dashboard] isHydrated:', isHydrated)
   console.log('[Dashboard] Environment:', {
     NODE_ENV: process.env.NODE_ENV,
     hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -134,14 +144,14 @@ export default function DashboardPage() {
           {/* Tutor Image */}
           <div className="flex-shrink-0">
             <img 
-              src={tutor?.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"}
-              alt={tutor ? `${tutor.first_name} ${tutor.last_name}` : "Tutor"}
+                              src={actualTutor?.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"}
+              alt={actualTutor ? `${actualTutor.first_name} ${actualTutor.last_name}` : "Tutor"}
               className="w-16 h-16 rounded-full object-cover ring-4 ring-pink-200 dark:ring-pink-800 shadow-lg"
             />
           </div>
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-              Welcome back{tutor ? `, ${tutor.first_name} ${tutor.last_name}` : ''}! 👋
+              Welcome back{actualTutor ? `, ${actualTutor.first_name} ${actualTutor.last_name}` : ''}! 👋
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
               Here's your tutoring overview for today

@@ -1,16 +1,16 @@
 import React from 'react'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
 import SessionsClient from './sessions-client'
 
 export default async function SessionsPage() {
-  const supabase = createServerComponentClient({ cookies })
+  const supabase = await createClient()
   
   // Get authenticated user
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
   
-  if (!user) {
-    return <div>Please log in to view sessions</div>
+  if (userError || !user) {
+    redirect('/login')
   }
 
   // Get tutor profile

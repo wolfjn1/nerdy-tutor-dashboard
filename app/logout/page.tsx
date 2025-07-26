@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { createClient } from '@/lib/supabase-browser'
+import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 
 export default function LogoutPage() {

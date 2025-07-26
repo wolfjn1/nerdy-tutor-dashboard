@@ -1,6 +1,6 @@
 'use client'
 
-import { createClient } from '@/lib/supabase-browser'
+import { createClient } from '@/utils/supabase/client'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
 import {

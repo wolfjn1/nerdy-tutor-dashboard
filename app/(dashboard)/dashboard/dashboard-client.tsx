@@ -20,17 +20,21 @@ export default function DashboardClient({ initialTutor, user }: DashboardClientP
   const [todaysSessions, setTodaysSessions] = useState(0)
   const [activeStudentsCount, setActiveStudentsCount] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   
   useEffect(() => {
+    console.log('DashboardClient mounted with tutor:', initialTutor)
     // Set the tutor data in the store
     setTutor(initialTutor)
     // Load dashboard data
     loadDashboardData()
-  }, [initialTutor])
+  }, [])
   
   async function loadDashboardData() {
     try {
       const supabase = createClient()
+      
+      console.log('Loading dashboard data for tutor:', initialTutor.id)
       
       // Fetch students
       const { data: studentsData, error: studentsError } = await supabase
@@ -40,7 +44,9 @@ export default function DashboardClient({ initialTutor, user }: DashboardClientP
         
       if (studentsError) {
         console.error('Error fetching students:', studentsError)
+        setError(`Failed to load students: ${studentsError.message}`)
       } else {
+        console.log('Loaded students:', studentsData?.length)
         setStudents(studentsData || [])
         // Count active students
         const activeCount = studentsData?.filter(s => s.is_active).length || 0
@@ -63,7 +69,9 @@ export default function DashboardClient({ initialTutor, user }: DashboardClientP
         
       if (sessionsError) {
         console.error('Error fetching sessions:', sessionsError)
+        setError(prev => prev ? `${prev}; Failed to load sessions: ${sessionsError.message}` : `Failed to load sessions: ${sessionsError.message}`)
       } else {
+        console.log('Loaded sessions:', sessionsData?.length)
         setSessions(sessionsData || [])
         
         // Calculate today's sessions
@@ -75,23 +83,44 @@ export default function DashboardClient({ initialTutor, user }: DashboardClientP
       }
     } catch (error) {
       console.error('Error loading dashboard data:', error)
+      setError('Failed to load dashboard data')
     } finally {
       setLoading(false)
     }
   }
   
-  // Use initialTutor directly to avoid type issues
+  // Use initialTutor directly
   const tutor = initialTutor
+  
+  // Show error state if tutor is missing
+  if (!tutor) {
+    return (
+      <div className="p-6">
+        <div className="bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <h2 className="text-lg font-semibold text-red-700 dark:text-red-400">Error Loading Dashboard</h2>
+          <p className="text-red-600 dark:text-red-300 mt-2">Unable to load tutor profile data.</p>
+          <pre className="mt-2 text-xs">{JSON.stringify({ user, initialTutor }, null, 2)}</pre>
+        </div>
+      </div>
+    )
+  }
   
   // Calculate today's earnings (assuming $50 per session)
   const todaysEarnings = todaysSessions * 50
   
   return (
     <div className="p-6">
+      {/* Error Banner */}
+      {error && (
+        <div className="mb-4 bg-yellow-100 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
+          <p className="text-sm text-yellow-700 dark:text-yellow-400">{error}</p>
+        </div>
+      )}
+      
       {/* Welcome Section */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-          Welcome back, {tutor.first_name} {tutor.last_name}! 👋
+          Welcome back, {tutor.first_name || 'Tutor'} {tutor.last_name || ''}! 👋
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
           Here's your tutoring overview for today
@@ -103,7 +132,7 @@ export default function DashboardClient({ initialTutor, user }: DashboardClientP
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold">Level {tutor.level || 1}</h2>
-            <p className="text-purple-100">{tutor.title || 'Expert'}</p>
+            <p className="text-purple-100">{tutor.title || 'Expert Tutor'}</p>
           </div>
           <div className="text-right">
             <p className="text-sm text-purple-100">Total XP</p>
@@ -199,10 +228,21 @@ export default function DashboardClient({ initialTutor, user }: DashboardClientP
       <details className="mt-8">
         <summary className="cursor-pointer text-sm text-gray-500">Debug Info</summary>
         <pre className="mt-2 p-4 bg-gray-100 dark:bg-gray-800 rounded text-xs overflow-auto">
-          Tutor ID: {tutor.id}
-          Students: {students.length} total, {activeStudentsCount} active
-          Sessions: {sessions.length} upcoming, {todaysSessions} today
-          Loading: {loading ? 'true' : 'false'}
+{JSON.stringify({
+  tutor: {
+    id: tutor.id,
+    name: `${tutor.first_name} ${tutor.last_name}`,
+    email: tutor.email,
+    level: tutor.level,
+    title: tutor.title
+  },
+  stats: {
+    students: `${students.length} total, ${activeStudentsCount} active`,
+    sessions: `${sessions.length} upcoming, ${todaysSessions} today`,
+    loading: loading,
+    error: error
+  }
+}, null, 2)}
         </pre>
       </details>
     </div>

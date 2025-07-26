@@ -158,32 +158,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Error fetching tutor profile:', error)
       
-      // If we have a user but can't fetch tutor, create a basic profile
-      if (userId && userEmail) {
-        const fallbackTutor = {
-          id: userId,
-          auth_user_id: userId,
-          email: userEmail,
-          first_name: userEmail.split('@')[0],
-          last_name: 'User',
-          avatar_url: undefined,
-          bio: '',
-          subjects: [],
-          hourly_rate: 0,
-          rating: 0,
-          total_earnings: 0,
-          total_hours: 0,
-          is_verified: false,
-          badges: [],
-          availability: {},
-          created_at: new Date(),
-          updated_at: new Date()
-        }
-        console.log('[Auth] Using fallback tutor:', fallbackTutor)
-        setTutor(fallbackTutor)
-        setTutorInStore(fallbackTutor)
-        return fallbackTutor
-      }
+
       
       return null
     }

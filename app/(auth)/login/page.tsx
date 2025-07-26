@@ -67,18 +67,30 @@ export default function LoginPage() {
       const { data: refreshData } = await supabase.auth.refreshSession()
       console.log('Session refresh result:', refreshData)
       
-      // Log cookie status
-      const cookies = document.cookie.split('; ')
-      const supabaseCookies = cookies.filter(c => c.includes('supabase'))
-      console.log('Supabase cookies after refresh:', supabaseCookies.length, supabaseCookies)
+      // Call server endpoint to set cookies properly
+      if (session) {
+        console.log('Setting auth cookies server-side...')
+        const response = await fetch('/api/set-auth-cookie', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            access_token: session.access_token,
+            refresh_token: session.refresh_token,
+            expires_at: session.expires_at,
+          }),
+        })
+        
+        if (!response.ok) {
+          console.error('Failed to set auth cookie server-side')
+        } else {
+          console.log('Auth cookies set successfully')
+        }
+      }
       
       // Give cookies time to be set
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Check cookies again
-      const cookiesAfterDelay = document.cookie.split('; ')
-      const supabaseCookiesAfterDelay = cookiesAfterDelay.filter(c => c.includes('supabase'))
-      console.log('Supabase cookies after delay:', supabaseCookiesAfterDelay.length, supabaseCookiesAfterDelay)
+      await new Promise(resolve => setTimeout(resolve, 500))
       
       // Force a hard navigation to ensure cookies are carried over
       console.log('Executing redirect to /dashboard')

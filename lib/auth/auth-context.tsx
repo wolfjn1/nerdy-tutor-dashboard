@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase-browser'
+import { createClient } from '@/lib/supabase-browser-v2'
 import { AuthStorageAdapter } from './storage-adapter'
 import { TokenAuthManager } from './token-auth'
 import { useTutorStore } from '@/lib/stores/tutorStore'

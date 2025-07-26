@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase-browser'
+import { createClient } from '@/lib/supabase-browser-v2'
 import { startOfDay, endOfDay } from 'date-fns'
 
 const supabase = createClient()

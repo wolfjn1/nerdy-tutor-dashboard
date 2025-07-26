@@ -107,7 +107,8 @@ export default function DashboardPage() {
   }
   
   // Show loading skeleton while store is hydrating or auth is initializing
-  if (!mounted || !isHydrated) {
+  if (!mounted || !isHydrated || (!actualTutor && authLoading)) {
+    console.log('[Dashboard] Showing skeleton - mounted:', mounted, 'isHydrated:', isHydrated, 'actualTutor:', !!actualTutor, 'authLoading:', authLoading)
     return (
       <div className="space-y-4 animate-pulse">
         <div className="flex items-center gap-6">

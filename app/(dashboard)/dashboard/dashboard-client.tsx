@@ -1,7 +1,9 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTutorStore } from '@/lib/stores/tutorStore'
+import { createClient } from '@/utils/supabase/client'
+import Link from 'next/link'
 
 interface DashboardClientProps {
   initialTutor: any
@@ -12,13 +14,77 @@ export default function DashboardClient({ initialTutor, user }: DashboardClientP
   // Initialize the tutor store with the server data
   const setTutor = useTutorStore(state => state.setTutor)
   
+  // State for dashboard data
+  const [students, setStudents] = useState<any[]>([])
+  const [sessions, setSessions] = useState<any[]>([])
+  const [todaysSessions, setTodaysSessions] = useState(0)
+  const [activeStudentsCount, setActiveStudentsCount] = useState(0)
+  const [loading, setLoading] = useState(true)
+  
   useEffect(() => {
     // Set the tutor data in the store
     setTutor(initialTutor)
+    // Load dashboard data
+    loadDashboardData()
   }, [initialTutor])
+  
+  async function loadDashboardData() {
+    try {
+      const supabase = createClient()
+      
+      // Fetch students
+      const { data: studentsData, error: studentsError } = await supabase
+        .from('students')
+        .select('*')
+        .eq('tutor_id', initialTutor.id)
+        
+      if (studentsError) {
+        console.error('Error fetching students:', studentsError)
+      } else {
+        setStudents(studentsData || [])
+        // Count active students
+        const activeCount = studentsData?.filter(s => s.is_active).length || 0
+        setActiveStudentsCount(activeCount)
+      }
+      
+      // Fetch sessions
+      const { data: sessionsData, error: sessionsError } = await supabase
+        .from('sessions')
+        .select(`
+          *,
+          students:student_id (
+            first_name,
+            last_name
+          )
+        `)
+        .eq('tutor_id', initialTutor.id)
+        .gte('scheduled_at', new Date().toISOString())
+        .order('scheduled_at', { ascending: true })
+        
+      if (sessionsError) {
+        console.error('Error fetching sessions:', sessionsError)
+      } else {
+        setSessions(sessionsData || [])
+        
+        // Calculate today's sessions
+        const today = new Date().toDateString()
+        const todaysCount = sessionsData?.filter(s => 
+          new Date(s.scheduled_at).toDateString() === today
+        ).length || 0
+        setTodaysSessions(todaysCount)
+      }
+    } catch (error) {
+      console.error('Error loading dashboard data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
   
   // Use initialTutor directly to avoid type issues
   const tutor = initialTutor
+  
+  // Calculate today's earnings (assuming $50 per session)
+  const todaysEarnings = todaysSessions * 50
   
   return (
     <div className="p-6">
@@ -54,17 +120,17 @@ export default function DashboardClient({ initialTutor, user }: DashboardClientP
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
         <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
           <p className="text-sm text-gray-600 dark:text-gray-400">Sessions Today</p>
-          <p className="text-2xl font-bold">0</p>
+          <p className="text-2xl font-bold">{loading ? '...' : todaysSessions}</p>
         </div>
         
         <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
           <p className="text-sm text-gray-600 dark:text-gray-400">Today's Earnings</p>
-          <p className="text-2xl font-bold">$0</p>
+          <p className="text-2xl font-bold">${loading ? '...' : todaysEarnings}</p>
         </div>
         
         <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
           <p className="text-sm text-gray-600 dark:text-gray-400">Active Students</p>
-          <p className="text-2xl font-bold">10</p>
+          <p className="text-2xl font-bold">{loading ? '...' : activeStudentsCount}</p>
         </div>
         
         <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
@@ -76,26 +142,69 @@ export default function DashboardClient({ initialTutor, user }: DashboardClientP
       {/* Upcoming Sessions */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-8">
         <h3 className="text-lg font-semibold mb-4">Upcoming Sessions</h3>
-        <p className="text-gray-600 dark:text-gray-400">No upcoming sessions scheduled</p>
+        {loading ? (
+          <p className="text-gray-600 dark:text-gray-400">Loading sessions...</p>
+        ) : sessions.length > 0 ? (
+          <div className="space-y-3">
+            {sessions.slice(0, 5).map((session) => (
+              <div key={session.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded">
+                <div>
+                  <p className="font-medium">
+                    {session.students?.first_name} {session.students?.last_name}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {new Date(session.scheduled_at).toLocaleString()} • {session.subject}
+                  </p>
+                </div>
+                <span className={`px-3 py-1 rounded text-sm ${
+                  session.status === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
+                  session.status === 'scheduled' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' :
+                  'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                }`}>
+                  {session.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-600 dark:text-gray-400">No upcoming sessions scheduled</p>
+        )}
       </div>
 
       {/* Quick Actions */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <button className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow text-left">
-          <h4 className="font-semibold mb-2">Schedule Session</h4>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Book a new tutoring session</p>
-        </button>
+        <Link href="/sessions/new" className="block">
+          <button className="w-full p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow text-left">
+            <h4 className="font-semibold mb-2">Schedule Session</h4>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Book a new tutoring session</p>
+          </button>
+        </Link>
         
-        <button className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow text-left">
-          <h4 className="font-semibold mb-2">View Students</h4>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Manage your student roster</p>
-        </button>
+        <Link href="/students" className="block">
+          <button className="w-full p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow text-left">
+            <h4 className="font-semibold mb-2">View Students</h4>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Manage your student roster</p>
+          </button>
+        </Link>
         
-        <button className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow text-left">
-          <h4 className="font-semibold mb-2">Check Messages</h4>
-          <p className="text-sm text-gray-600 dark:text-gray-400">View your inbox</p>
-        </button>
+        <Link href="/messages" className="block">
+          <button className="w-full p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow text-left">
+            <h4 className="font-semibold mb-2">Check Messages</h4>
+            <p className="text-sm text-gray-600 dark:text-gray-400">View your inbox</p>
+          </button>
+        </Link>
       </div>
+
+      {/* Debug info for troubleshooting */}
+      <details className="mt-8">
+        <summary className="cursor-pointer text-sm text-gray-500">Debug Info</summary>
+        <pre className="mt-2 p-4 bg-gray-100 dark:bg-gray-800 rounded text-xs overflow-auto">
+          Tutor ID: {tutor.id}
+          Students: {students.length} total, {activeStudentsCount} active
+          Sessions: {sessions.length} upcoming, {todaysSessions} today
+          Loading: {loading ? 'true' : 'false'}
+        </pre>
+      </details>
     </div>
   )
 } 

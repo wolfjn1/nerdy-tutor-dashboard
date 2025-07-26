@@ -64,6 +64,7 @@ export async function updateSession(request: NextRequest) {
     '/forgot-password', 
     '/reset-password',
     '/test-cookie-config',
+    '/test-ssr-auth',
     // Add other public routes as needed
   ]
   

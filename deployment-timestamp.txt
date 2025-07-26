@@ -1,9 +1,0 @@
-Deployment Timestamp: 2025-07-26 10:55:00 PST
-
-This deployment includes:
-- Simplified netlify.toml
-- Middleware fix to skip API routes
-- Test endpoints: /api/test, /test-simple, /test.html
-- Debug endpoints: /api/debug-env, /api/check-data
-
-If this file shows an old timestamp on Netlify, the deployment didn't update properly. 

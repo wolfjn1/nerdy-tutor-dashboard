@@ -18,6 +18,7 @@ import {
   TUTOR_LEVELS,
   PROGRESSIVE_BADGE_THRESHOLDS
 } from './constants'
+import { BadgeManager } from './BadgeManager'
 
 export type PointsReason = keyof typeof POINTS_VALUES
 
@@ -265,24 +266,9 @@ export class GamificationEngine {
    * Check if tutor has earned any new badges
    */
   private async checkForBadges(tutorId: string): Promise<void> {
-    // Get tutor's current stats
-    const tutorData = await this.getTutorData(tutorId)
-    
-    // Check each badge type
-    for (const [badgeType, definition] of Object.entries(BADGE_DEFINITIONS)) {
-      const hasEarned = await this.hasBadge(tutorId, badgeType as BadgeType)
-      
-      if (!hasEarned) {
-        const qualified = await this.checkBadgeQualification(tutorId, badgeType as BadgeType, tutorData)
-        
-        if (qualified) {
-          await this.awardBadge(tutorId, badgeType as BadgeType)
-        }
-      }
-    }
-
-    // Check progressive badges
-    await this.checkProgressiveBadges(tutorId, tutorData)
+    // Use BadgeManager for comprehensive badge checking
+    const badgeManager = new BadgeManager(this.supabase)
+    await badgeManager.checkAndAwardBadges(tutorId)
   }
 
   /**

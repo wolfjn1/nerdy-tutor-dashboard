@@ -1,180 +1,19 @@
-'use client'
+import { redirect } from 'next/navigation';
+import { createClient } from '@/utils/supabase/server';
+import { GamificationCenter } from '@/components/gamification';
 
-import React from 'react'
-import { motion } from 'framer-motion'
-import { Trophy, Star, Target, Award, Zap, Users } from 'lucide-react'
-import { Card, Button, Badge } from '@/components/ui'
-
-export default function AchievementsPage() {
-  const achievements = [
-    {
-      id: '1',
-      title: 'First Session',
-      description: 'Complete your first tutoring session',
-      icon: Target,
-      color: 'bg-green-500',
-      earned: true,
-      xp: 10
-    },
-    {
-      id: '2',
-      title: 'Century Club',
-      description: 'Complete 100 tutoring sessions',
-      icon: Trophy,
-      color: 'bg-gold-500',
-      earned: true,
-      xp: 100
-    },
-    {
-      id: '3',
-      title: 'Perfect Week',
-      description: 'Maintain 5-star rating for a week',
-      icon: Star,
-      color: 'bg-purple-500',
-      earned: true,
-      xp: 50
-    },
-    {
-      id: '4',
-      title: 'Master Tutor',
-      description: 'Reach level 50',
-      icon: Award,
-      color: 'bg-blue-500',
-      earned: false,
-      xp: 200
-    },
-    {
-      id: '5',
-      title: 'Speed Demon',
-      description: 'Complete 10 sessions in one day',
-      icon: Zap,
-      color: 'bg-orange-500',
-      earned: false,
-      xp: 75
-    },
-    {
-      id: '6',
-      title: 'Student Favorite',
-      description: 'Get 50 five-star reviews',
-      icon: Users,
-      color: 'bg-pink-500',
-      earned: false,
-      xp: 150
-    }
-  ]
-
-  const earnedAchievements = achievements.filter(a => a.earned)
-  const totalXP = earnedAchievements.reduce((sum, a) => sum + a.xp, 0)
+export default async function AchievementsPage() {
+  const supabase = await createClient();
+  
+  const { data: { user }, error } = await supabase.auth.getUser();
+  
+  if (error || !user) {
+    redirect('/login');
+  }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center"
-      >
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-          Achievements 🏆
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Track your progress and unlock rewards
-        </p>
-      </motion.div>
-
-      {/* Stats */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-4"
-      >
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-purple-200 dark:border-purple-800 p-4 shadow-sm text-center">
-          <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
-            {earnedAchievements.length}
-          </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Achievements Earned</div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-green-200 dark:border-green-800 p-4 shadow-sm text-center">
-          <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
-            {totalXP}
-          </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">XP from Achievements</div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-blue-200 dark:border-blue-800 p-4 shadow-sm text-center">
-          <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-            42
-          </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Current Level</div>
-        </div>
-      </motion.div>
-
-      {/* Achievements Grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-      >
-        {achievements.map((achievement, index) => {
-          const Icon = achievement.icon
-          return (
-            <motion.div
-              key={achievement.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ y: -4 }}
-            >
-              <div className={`bg-white dark:bg-gray-800 rounded-xl border shadow-sm p-6 h-full transition-all duration-300 ${
-                achievement.earned 
-                  ? 'border-gray-200 dark:border-gray-700 hover:shadow-lg' 
-                  : 'border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 opacity-75'
-              }`}>
-                <div className={`w-12 h-12 ${achievement.color} rounded-lg flex items-center justify-center mb-4 ${
-                  !achievement.earned && 'opacity-50'
-                }`}>
-                  <Icon className="w-6 h-6 text-white" />
-                </div>
-                
-                <div className="flex items-center gap-2 mb-2">
-                  <h3 className={`text-lg font-semibold ${
-                    achievement.earned ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-600'
-                  }`}>
-                    {achievement.title}
-                  </h3>
-                  {achievement.earned && (
-                    <Badge variant="success" size="sm" className="bg-green-100 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800">
-                      Earned
-                    </Badge>
-                  )}
-                </div>
-                
-                <p className={`text-sm mb-4 ${
-                  achievement.earned ? 'text-gray-600 dark:text-gray-400' : 'text-gray-400 dark:text-gray-600'
-                }`}>
-                  {achievement.description}
-                </p>
-                
-                <div className="flex items-center justify-between">
-                  <div className={`text-sm font-medium ${
-                    achievement.earned ? 'text-purple-600 dark:text-purple-400' : 'text-gray-400 dark:text-gray-600'
-                  }`}>
-                    +{achievement.xp} XP
-                  </div>
-                  {achievement.earned && (
-                    <div className="text-green-600 dark:text-green-400 font-medium">
-                      ✓ Completed
-                    </div>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          )
-        })}
-      </motion.div>
+    <div className="container max-w-7xl mx-auto p-6">
+      <GamificationCenter tutorId={user.id} />
     </div>
-  )
+  );
 } 

@@ -4,6 +4,9 @@ import React, { useEffect } from 'react'
 import { useTutorStore } from '@/lib/stores/tutorStore'
 import Link from 'next/link'
 import { OnboardingCompletionBanner } from './OnboardingCompletionBanner'
+import GamificationWidget from '@/components/dashboard/GamificationWidget'
+import GamificationSummaryCard from '@/components/dashboard/GamificationSummaryCard'
+import { AchievementNotificationContainer } from '@/components/gamification'
 
 interface DashboardClientProps {
   initialTutor: any
@@ -15,6 +18,22 @@ interface DashboardClientProps {
     todaysSessions: number
     totalStudents: number
   }
+  gamificationData?: {
+    totalPoints: number
+    currentLevel: string
+    currentTier: string
+    badges: Array<{ badge_type: string; earned_at: string }>
+    recentAchievements: Array<{
+      id: string
+      type: string
+      title: string
+      earned_at: string
+      points?: number
+    }>
+    weeklyPoints: number
+    currentStreak: number
+    nextMilestone: any
+  }
 }
 
 export default function DashboardClient({ 
@@ -22,13 +41,15 @@ export default function DashboardClient({
   user,
   students = [],
   sessions = [],
-  stats = { activeStudentsCount: 0, todaysSessions: 0, totalStudents: 0 }
+  stats = { activeStudentsCount: 0, todaysSessions: 0, totalStudents: 0 },
+  gamificationData
 }: DashboardClientProps) {
   // Debug logging
   console.log('Dashboard Client Data:', {
     studentsCount: students.length,
     sessionsCount: sessions.length,
     stats,
+    gamificationData,
     sessions: sessions.map(s => ({
       date: s.scheduled_at,
       student: s.student_name
@@ -51,6 +72,14 @@ export default function DashboardClient({
   
   return (
     <div className="p-6">
+      {/* Achievement Notifications */}
+      <AchievementNotificationContainer 
+        tutorId={user.id}
+        position="bottom-right"
+        showBadges={true}
+        showAchievements={true}
+      />
+      
       {/* Onboarding Completion Banner */}
       <OnboardingCompletionBanner />
       
@@ -64,23 +93,23 @@ export default function DashboardClient({
         </p>
       </div>
 
-      {/* Gamification Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl p-6 mb-8 text-white">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold">Level {tutor.level || 1}</h2>
-            <p className="text-purple-100">{tutor.title || 'Expert Tutor'}</p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-purple-100">Total XP</p>
-            <p className="text-2xl font-bold">{tutor.total_xp || 0}</p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-purple-100">Streak</p>
-            <p className="text-2xl font-bold">🔥 {tutor.streak || 0} days</p>
-          </div>
+      {/* Replace mock gamification header with real gamification widget */}
+      {gamificationData && (
+        <div className="mb-8">
+          <GamificationWidget 
+            data={{
+              totalPoints: gamificationData.totalPoints,
+              currentLevel: gamificationData.currentLevel,
+              levelProgress: 0, // Will be calculated in the widget
+              currentTier: gamificationData.currentTier,
+              recentAchievements: gamificationData.recentAchievements,
+              badges: gamificationData.badges,
+              nextMilestone: gamificationData.nextMilestone
+            }}
+            tutorId={user.id}
+          />
         </div>
-      </div>
+      )}
 
       {/* Main Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -105,38 +134,58 @@ export default function DashboardClient({
         </div>
       </div>
 
-      {/* Upcoming Sessions */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-8">
-        <h3 className="text-lg font-semibold mb-4">Upcoming Sessions</h3>
-        {sessions.length > 0 ? (
-          <div className="space-y-3">
-            {sessions.slice(0, 5).map((session) => (
-              <div key={session.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded">
-                <div>
-                  <p className="font-medium">
-                    {session.student_name || 'Student'}
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {new Date(session.scheduled_at).toISOString().replace('T', ' ').slice(0, 16)} • {session.subject}
-                  </p>
+      {/* Two column layout for sessions and gamification summary */}
+      <div className="grid gap-8 lg:grid-cols-2 mb-8">
+        {/* Upcoming Sessions */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+          <h3 className="text-lg font-semibold mb-4">Upcoming Sessions</h3>
+          {sessions.length > 0 ? (
+            <div className="space-y-3">
+              {sessions.slice(0, 5).map((session) => (
+                <div key={session.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded">
+                  <div>
+                    <p className="font-medium">
+                      {session.student_name || 'Student'}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {new Date(session.scheduled_at).toISOString().replace('T', ' ').slice(0, 16)} • {session.subject}
+                    </p>
+                  </div>
+                  <span className={`px-3 py-1 rounded text-sm ${
+                    session.status === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
+                    session.status === 'scheduled' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' :
+                    'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                  }`}>
+                    {session.status}
+                  </span>
                 </div>
-                <span className={`px-3 py-1 rounded text-sm ${
-                  session.status === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
-                  session.status === 'scheduled' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' :
-                  'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                }`}>
-                  {session.status}
-                </span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-600 dark:text-gray-400">No upcoming sessions scheduled</p>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-600 dark:text-gray-400">No upcoming sessions scheduled</p>
+          )}
+          {sessions.length > 5 && (
+            <Link href="/sessions" className="block mt-4">
+              <p className="text-sm text-center text-blue-600 dark:text-blue-400 font-medium">
+                View All Sessions →
+              </p>
+            </Link>
+          )}
+        </div>
+
+        {/* Gamification Summary */}
+        {gamificationData && (
+          <GamificationSummaryCard 
+            totalPoints={gamificationData.totalPoints}
+            currentLevel={gamificationData.currentLevel}
+            currentStreak={gamificationData.currentStreak}
+            weeklyPoints={gamificationData.weeklyPoints}
+          />
         )}
       </div>
 
       {/* Quick Actions */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Link href="/sessions/new" className="block">
           <button className="w-full p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow text-left">
             <h4 className="font-semibold mb-2">Schedule Session</h4>
@@ -155,6 +204,13 @@ export default function DashboardClient({
           <button className="w-full p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow text-left">
             <h4 className="font-semibold mb-2">Check Messages</h4>
             <p className="text-sm text-gray-600 dark:text-gray-400">View your inbox</p>
+          </button>
+        </Link>
+        
+        <Link href="/achievements" className="block">
+          <button className="w-full p-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg shadow-sm hover:shadow-md transition-shadow text-left">
+            <h4 className="font-semibold mb-2">View Achievements</h4>
+            <p className="text-sm text-purple-100">Track your progress & rewards</p>
           </button>
         </Link>
       </div>

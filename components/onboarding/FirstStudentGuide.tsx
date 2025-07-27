@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { UserPlus, Calendar, Target, MessageSquare, Rocket, ArrowRight } from 'lucide-react'
+import { Search, MessageSquare, Target, Calendar, Rocket, ArrowRight, TrendingUp, Star } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 
 interface FirstStudentGuideProps {
@@ -23,50 +23,50 @@ export function FirstStudentGuide({ onComplete, isCompleted }: FirstStudentGuide
   const steps: GuideStep[] = [
     {
       number: 1,
-      title: 'Add Your First Student',
-      description: 'Create a student profile with their basic information and learning preferences',
-      icon: <UserPlus className="w-5 h-5" />,
+      title: 'Browse Available Opportunities',
+      description: 'Explore student requests that match your expertise and schedule',
+      icon: <Search className="w-5 h-5" />,
       color: 'purple',
       tips: [
-        'Include their grade level and subjects',
-        'Note any special learning needs',
-        'Add parent contact information'
+        'Filter by subject and pay rate',
+        'Look for high match scores (90%+)',
+        'Check student needs carefully'
       ]
     },
     {
       number: 2,
-      title: 'Set Learning Goals',
-      description: 'Work with your student to establish clear, achievable objectives',
-      icon: <Target className="w-5 h-5" />,
+      title: 'Respond to Opportunities',
+      description: 'Express interest in students who are a good fit for your teaching style',
+      icon: <TrendingUp className="w-5 h-5" />,
       color: 'blue',
       tips: [
-        'Make goals specific and measurable',
-        'Set both short-term and long-term goals',
-        'Align with student/parent expectations'
+        'Respond quickly to urgent requests',
+        'Highlight relevant experience',
+        'Be genuine in your interest'
       ]
     },
     {
       number: 3,
-      title: 'Schedule Your First Session',
-      description: 'Book your initial session and prepare your lesson plan',
-      icon: <Calendar className="w-5 h-5" />,
+      title: 'Connect & Set Goals',
+      description: 'Once matched, establish clear learning objectives with your student',
+      icon: <Target className="w-5 h-5" />,
       color: 'green',
       tips: [
-        'Send a welcome message beforehand',
-        'Prepare assessment materials',
-        'Test your tech setup'
+        'Send a warm welcome message',
+        'Discuss specific goals together',
+        'Set expectations early'
       ]
     },
     {
       number: 4,
-      title: 'Maintain Communication',
-      description: 'Keep students and parents engaged with regular updates',
-      icon: <MessageSquare className="w-5 h-5" />,
+      title: 'Schedule & Start Teaching',
+      description: 'Book your first session and begin making a difference',
+      icon: <Calendar className="w-5 h-5" />,
       color: 'orange',
       tips: [
-        'Send session summaries',
-        'Share progress updates',
-        'Be responsive to messages'
+        'Confirm time zones',
+        'Prepare your first lesson',
+        'Test tech setup beforehand'
       ]
     }
   ]
@@ -99,10 +99,10 @@ export function FirstStudentGuide({ onComplete, isCompleted }: FirstStudentGuide
         transition={{ duration: 0.5 }}
       >
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          Your First Student Awaits! 🎓
+          Find Your First Student! 🎓
         </h2>
         <p className="text-lg text-gray-600 dark:text-gray-400">
-          Follow these steps to create an amazing experience for your first student.
+          Students are waiting to learn from you. Here's how to get matched with your first student.
         </p>
       </motion.div>
 
@@ -175,6 +175,26 @@ export function FirstStudentGuide({ onComplete, isCompleted }: FirstStudentGuide
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7, duration: 0.5 }}
+        className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-6 border border-amber-200 dark:border-amber-800"
+      >
+        <div className="flex items-start gap-3">
+          <Star className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5" />
+          <div>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+              Pro Tip: Look for High Match Scores
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Opportunities with 90%+ match scores are based on your expertise, availability, and preferences. 
+              These students are most likely to be a great fit for your teaching style!
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.8, duration: 0.5 }}
         className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-6 border border-purple-200 dark:border-purple-800"
       >
         <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-3">
@@ -187,11 +207,11 @@ export function FirstStudentGuide({ onComplete, isCompleted }: FirstStudentGuide
           </label>
           <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300 cursor-pointer">
             <input type="checkbox" className="rounded border-gray-300 text-purple-600 focus:ring-purple-500" />
-            Availability calendar set
+            Teaching preferences set
           </label>
           <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300 cursor-pointer">
             <input type="checkbox" className="rounded border-gray-300 text-purple-600 focus:ring-purple-500" />
-            Teaching materials ready
+            Availability calendar updated
           </label>
           <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300 cursor-pointer">
             <input type="checkbox" className="rounded border-gray-300 text-purple-600 focus:ring-purple-500" />
@@ -209,7 +229,7 @@ export function FirstStudentGuide({ onComplete, isCompleted }: FirstStudentGuide
         {!isCompleted && (
           <div className="text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              You're all set! Time to start your tutoring journey.
+              Ready to start browsing opportunities and finding your perfect student match?
             </p>
             <Button
               onClick={onComplete}

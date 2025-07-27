@@ -44,16 +44,76 @@ export class OnboardingService {
   constructor(private supabase: SupabaseClient) {}
 
   /**
+   * Ensure a tutor record exists for the authenticated user
+   * Creates one if it doesn't exist
+   */
+  private async ensureTutorExists(authUserId: string): Promise<string> {
+    try {
+      // First check if tutor already exists
+      const { data: existingTutor, error: selectError } = await this.supabase
+        .from('tutors')
+        .select('id')
+        .eq('auth_user_id', authUserId)
+        .single()
+
+      if (existingTutor) {
+        return existingTutor.id
+      }
+
+      // If not found and it's not a "not found" error, throw
+      if (selectError && selectError.code !== 'PGRST116') {
+        throw selectError
+      }
+
+      // Get user details from auth
+      const { data: { user }, error: authError } = await this.supabase.auth.getUser()
+      if (authError || !user) {
+        throw new Error('Unable to get authenticated user')
+      }
+
+      // Create new tutor record
+      const { data: newTutor, error: insertError } = await this.supabase
+        .from('tutors')
+        .insert({
+          auth_user_id: authUserId,
+          email: user.email || '',
+          first_name: user.user_metadata?.first_name || 'New',
+          last_name: user.user_metadata?.last_name || 'Tutor',
+          // Set defaults for required fields
+          subjects: [],
+          hourly_rate: 50,
+          availability: {},
+          rating: 0,
+          total_earnings: 0
+        })
+        .select('id')
+        .single()
+
+      if (insertError) {
+        throw insertError
+      }
+
+      return newTutor.id
+    } catch (error) {
+      console.error('Error ensuring tutor exists:', error)
+      throw error
+    }
+  }
+
+  /**
    * Get the current onboarding status for a tutor
-   * Creates initial onboarding record if none exists (lazy initialization)
+   * Returns empty status if no onboarding has started
    */
   async getOnboardingStatus(tutorId: string): Promise<OnboardingStatus> {
     try {
-      // Fetch completed steps from database
+      // First ensure tutor record exists
+      const tutorRecordId = await this.ensureTutorExists(tutorId)
+
+      // Get completed steps
       const { data: completedSteps, error } = await this.supabase
         .from('tutor_onboarding')
         .select('step_completed, completed_at')
-        .eq('tutor_id', tutorId)
+        .eq('tutor_id', tutorRecordId)
         .order('completed_at', { ascending: true })
 
       if (error) {
@@ -102,8 +162,11 @@ export class OnboardingService {
    * Complete a specific onboarding step
    * Validates step order and prevents duplicate completions
    */
-  async completeStep(tutorId: string, stepId: string): Promise<void> {
+  async completeStep(authUserId: string, stepId: string): Promise<void> {
     try {
+      // Ensure tutor record exists and get the tutor ID
+      const tutorId = await this.ensureTutorExists(authUserId)
+
       // Validate step exists
       const step = ONBOARDING_STEPS.find(s => s.id === stepId)
       if (!step) {
@@ -111,7 +174,7 @@ export class OnboardingService {
       }
 
       // Get current status to check prerequisites
-      const currentStatus = await this.getOnboardingStatus(tutorId)
+      const currentStatus = await this.getOnboardingStatus(authUserId)
 
       // Check if step is already completed
       if (currentStatus.completedSteps.includes(stepId)) {
@@ -163,7 +226,7 @@ export class OnboardingService {
    * Track progress for analytics
    * Returns detailed progress information
    */
-  async trackProgress(tutorId: string): Promise<{
+  async trackProgress(authUserId: string): Promise<{
     currentStep: OnboardingStep
     completedSteps: OnboardingStep[]
     remainingSteps: OnboardingStep[]
@@ -171,7 +234,7 @@ export class OnboardingService {
     estimatedTimeRemaining: number // in minutes
   }> {
     try {
-      const status = await this.getOnboardingStatus(tutorId)
+      const status = await this.getOnboardingStatus(authUserId)
       
       const completedSteps = ONBOARDING_STEPS.filter(
         step => status.completedSteps.includes(step.id)
@@ -204,9 +267,9 @@ export class OnboardingService {
   /**
    * Check if onboarding is complete for a tutor
    */
-  async isOnboardingComplete(tutorId: string): Promise<boolean> {
+  async isOnboardingComplete(authUserId: string): Promise<boolean> {
     try {
-      const status = await this.getOnboardingStatus(tutorId)
+      const status = await this.getOnboardingStatus(authUserId)
       return status.completedSteps.length === ONBOARDING_STEPS.length
     } catch (error) {
       console.error('Error in isOnboardingComplete:', error)
@@ -274,8 +337,11 @@ export class OnboardingService {
   /**
    * Reset onboarding for a tutor (mainly for testing)
    */
-  async resetOnboarding(tutorId: string): Promise<void> {
+  async resetOnboarding(authUserId: string): Promise<void> {
     try {
+      // Get the tutor record ID
+      const tutorId = await this.ensureTutorExists(authUserId)
+      
       const { error } = await this.supabase
         .from('tutor_onboarding')
         .delete()

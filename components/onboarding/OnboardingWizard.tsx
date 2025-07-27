@@ -33,18 +33,31 @@ export function OnboardingWizard({ tutorId, className }: OnboardingWizardProps) 
   const router = useRouter()
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [completedSteps, setCompletedSteps] = useState<string[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true) // Start with loading true
   const [error, setError] = useState<string | null>(null)
+  const [isAuthenticated, setIsAuthenticated] = useState(true)
 
   // Load onboarding status on mount
   useEffect(() => {
-    loadOnboardingStatus()
+    if (tutorId) {
+      loadOnboardingStatus()
+    } else {
+      setIsAuthenticated(false)
+      setIsLoading(false)
+    }
   }, [tutorId])
 
   const loadOnboardingStatus = async () => {
     try {
+      setIsLoading(true)
       // Use the API endpoint to get status
       const response = await fetch(`/api/onboarding/status/${tutorId}`)
+      
+      if (response.status === 401) {
+        setIsAuthenticated(false)
+        router.push('/login')
+        return
+      }
       
       if (!response.ok) {
         const error = await response.json()
@@ -62,6 +75,8 @@ export function OnboardingWizard({ tutorId, className }: OnboardingWizardProps) 
     } catch (err: any) {
       console.error('Failed to load onboarding status:', err)
       setError(err.message || 'Failed to load your progress. Please refresh the page.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -80,14 +95,19 @@ export function OnboardingWizard({ tutorId, className }: OnboardingWizardProps) 
     setError(null)
 
     try {
-      // Use the API endpoint instead of direct service call
       const response = await fetch('/api/onboarding/complete-step', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ stepId: currentStep.id })
+        body: JSON.stringify({ stepId: currentStep.id }),
       })
+
+      if (response.status === 401) {
+        setIsAuthenticated(false)
+        router.push('/login')
+        return
+      }
 
       if (!response.ok) {
         const error = await response.json()
@@ -152,6 +172,35 @@ export function OnboardingWizard({ tutorId, className }: OnboardingWizardProps) 
   }
 
   const progressPercentage = (completedSteps.length / ONBOARDING_STEPS.length) * 100
+
+  // Show loading state initially
+  if (isLoading && completedSteps.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading your progress...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show authentication error
+  if (!isAuthenticated) {
+    return (
+      <Card className="max-w-2xl mx-auto mt-16 p-8">
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold mb-4">Authentication Required</h2>
+          <p className="text-muted-foreground mb-6">
+            You must be logged in to complete onboarding steps.
+          </p>
+          <Button onClick={() => router.push('/login')}>
+            Go to Login
+          </Button>
+        </div>
+      </Card>
+    )
+  }
 
   return (
     <div className={cn('min-h-screen bg-gradient-nerdy-bg-light dark:bg-gray-900 p-4', className)}>

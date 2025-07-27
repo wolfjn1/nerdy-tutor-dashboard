@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { User, Mail, Phone, MapPin, Briefcase, Check, AlertCircle } from 'lucide-react'
+import { User, Mail, Phone, MapPin, Briefcase, Check, AlertCircle, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { useRouter } from 'next/navigation'
 
 interface ProfileSetupStepProps {
   onComplete: () => void
@@ -16,9 +17,13 @@ interface ProfileField {
   icon: React.ReactNode
   description: string
   completed: boolean
+  actionLabel?: string
 }
 
 export function ProfileSetupStep({ onComplete, isCompleted }: ProfileSetupStepProps) {
+  const router = useRouter()
+  const [showAlert, setShowAlert] = useState(false)
+  
   // In a real implementation, these would be fetched from the user's profile
   const [profileFields] = useState<ProfileField[]>([
     {
@@ -41,6 +46,7 @@ export function ProfileSetupStep({ onComplete, isCompleted }: ProfileSetupStepPr
       icon: <MapPin className="w-5 h-5" />,
       description: 'Time zone and available hours',
       completed: false,
+      actionLabel: 'Set Location',
     },
     {
       id: 'expertise',
@@ -48,11 +54,25 @@ export function ProfileSetupStep({ onComplete, isCompleted }: ProfileSetupStepPr
       icon: <Briefcase className="w-5 h-5" />,
       description: 'Subjects you teach and experience level',
       completed: false,
+      actionLabel: 'Add Subjects',
     },
   ])
 
   const allFieldsCompleted = profileFields.every(field => field.completed)
   const completedCount = profileFields.filter(field => field.completed).length
+
+  const handleFieldAction = (fieldId: string) => {
+    // Show a temporary alert that this would navigate to profile
+    setShowAlert(true)
+    setTimeout(() => setShowAlert(false), 3000)
+    
+    // In a real app, this would navigate to the profile page with the specific section
+    // For now, we'll just log it
+    console.log(`Would navigate to profile section: ${fieldId}`)
+    
+    // Uncomment this to actually navigate to the profile page:
+    // router.push(`/profile?section=${fieldId}`)
+  }
 
   return (
     <div className="space-y-6">
@@ -85,6 +105,19 @@ export function ProfileSetupStep({ onComplete, isCompleted }: ProfileSetupStepPr
         </div>
       </motion.div>
 
+      {showAlert && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 border border-amber-200 dark:border-amber-800"
+        >
+          <p className="text-sm text-amber-800 dark:text-amber-200">
+            In a full app, this would take you to your profile page to edit this section.
+          </p>
+        </motion.div>
+      )}
+
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -101,9 +134,10 @@ export function ProfileSetupStep({ onComplete, isCompleted }: ProfileSetupStepPr
               relative rounded-lg border-2 p-4 transition-all duration-200
               ${field.completed 
                 ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-800' 
-                : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700'
+                : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700 cursor-pointer'
               }
             `}
+            onClick={() => !field.completed && handleFieldAction(field.id)}
           >
             <div className="flex items-start gap-4">
               <div className={`
@@ -132,12 +166,14 @@ export function ProfileSetupStep({ onComplete, isCompleted }: ProfileSetupStepPr
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    // In a real app, this would open a modal or navigate to profile edit
-                    console.log(`Edit ${field.id}`)
+                  onClick={(e) => {
+                    e.stopPropagation() // Prevent double trigger from parent div
+                    handleFieldAction(field.id)
                   }}
+                  className="flex items-center gap-1"
                 >
-                  Complete
+                  {field.actionLabel || 'Set Up'}
+                  <ChevronRight className="w-4 h-4" />
                 </Button>
               )}
             </div>

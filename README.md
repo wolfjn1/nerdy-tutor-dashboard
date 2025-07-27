@@ -127,13 +127,31 @@ Comprehensive settings page with sections for:
   - Gamification stats
   - UI preferences
 
+### Gamification System (New)
+- **Points Engine** for outcome-based rewards
+- **Badge System** with 8 achievement types
+- **Tier Progression** (Standard → Silver → Gold → Elite)
+- **Monetary Bonuses** tracking ($10-$50 rewards)
+- **AI Integration** ready for nudges and insights
+- Full TypeScript support with comprehensive types
+
 ### UI Components
 - Custom component library with consistent styling
 - Reusable Card, Button, Badge, Avatar components
 - Modal system for overlays
 - Toast notifications for user feedback
 
-### Data
+### Data & Database
+- **Supabase** for data persistence and auth
+- **8 New Gamification Tables**:
+  - `tutor_onboarding` - Onboarding progress tracking
+  - `gamification_points` - Points transactions
+  - `tutor_badges` - Badge achievements
+  - `tutor_tiers` - Performance tiers
+  - `tutor_bonuses` - Monetary rewards
+  - `ai_tool_usage` - AI feature tracking
+  - `nudge_deliveries` - Behavioral nudges
+  - `student_outcomes` - Outcome metrics
 - Mock data system for development
 - Structured JSON files for students, sessions, etc.
 - Realistic sample data for testing
@@ -156,6 +174,12 @@ npm install
 # Set up environment variables (if needed)
 cp .env.example .env.local
 
+# Run database migrations (for gamification system)
+# 1. Apply main schema in Supabase SQL Editor:
+#    lib/supabase-schema.sql
+# 2. Apply gamification tables:
+#    scripts/add-gamification-tables.sql
+
 # Start development server
 npm run dev
 ```
@@ -168,6 +192,9 @@ npm run dev          # Start development server
 npm run build        # Build for production
 npm run start        # Start production server
 npm run lint         # Run ESLint
+npm run test         # Run Jest tests
+npm run test:watch   # Run tests in watch mode
+npm run test:coverage # Run tests with coverage
 ```
 
 ## 📱 Key Pages

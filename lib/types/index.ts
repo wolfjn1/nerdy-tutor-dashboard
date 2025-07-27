@@ -1,3 +1,10 @@
+import { 
+  OnboardingStatus, 
+  GamificationStats, 
+  TutorTier, 
+  MonetaryBalance 
+} from './gamification'
+
 // User and Profile Types
 export interface TutorProfile {
   id: string
@@ -19,6 +26,12 @@ export interface TutorProfile {
   phone?: string
   timezone?: string
   language?: string
+  
+  // Gamification fields (optional for backward compatibility)
+  onboardingStatus?: OnboardingStatus
+  gamificationStats?: GamificationStats
+  currentTier?: TutorTier
+  monetaryBalance?: MonetaryBalance
 }
 
 export interface Contact {
@@ -285,4 +298,7 @@ export interface AnalyticsData {
     earnings: number
     hours: number
   }>
-} 
+}
+
+// Re-export all gamification types
+export * from './gamification' 

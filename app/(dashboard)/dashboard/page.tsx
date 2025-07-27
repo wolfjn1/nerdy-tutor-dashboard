@@ -11,6 +11,18 @@ export default async function DashboardPage() {
   if (userError || !user) {
     redirect('/login')
   }
+
+  // Check if user has completed onboarding
+  const { data: onboardingData } = await supabase
+    .from('tutor_onboarding')
+    .select('step_completed')
+    .eq('tutor_id', user.id)
+
+  // If they haven't completed all 5 steps, redirect to onboarding
+  const REQUIRED_ONBOARDING_STEPS = 5
+  if (!onboardingData || onboardingData.length < REQUIRED_ONBOARDING_STEPS) {
+    redirect('/onboarding')
+  }
   
   // Fetch tutor profile
   const { data: tutor, error: tutorError } = await supabase

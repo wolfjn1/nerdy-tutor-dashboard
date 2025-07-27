@@ -1,0 +1,6 @@
+export { OnboardingWizard } from './OnboardingWizard'
+export { WelcomeStep } from './WelcomeStep'
+export { ProfileSetupStep } from './ProfileSetupStep'
+export { BestPracticesStep } from './BestPracticesStep'
+export { AIToolsIntroStep } from './AIToolsIntroStep'
+export { FirstStudentGuide } from './FirstStudentGuide' 

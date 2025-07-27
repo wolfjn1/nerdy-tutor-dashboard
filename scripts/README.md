@@ -1,5 +1,37 @@
 # Database Scripts
 
+## Gamification System Migration
+
+The `add-gamification-tables.sql` file contains the migration to add the AI-driven tutor onboarding and gamification system tables.
+
+### Running the Gamification Migration
+
+1. First ensure the main schema is applied:
+   ```bash
+   # In Supabase SQL Editor, run the contents of:
+   lib/supabase-schema.sql
+   ```
+
+2. Then apply the gamification migration:
+   ```bash
+   # In Supabase SQL Editor, run the contents of:
+   scripts/add-gamification-tables.sql
+   ```
+
+### What Gets Created
+
+The migration adds 8 new tables:
+- **tutor_onboarding** - Tracks onboarding wizard progress
+- **gamification_points** - Detailed outcome-based points transactions
+- **tutor_badges** - Enhanced badge tracking system
+- **tutor_tiers** - Performance tier tracking (Standard/Silver/Gold/Elite)
+- **tutor_bonuses** - Monetary bonus calculations and tracking
+- **ai_tool_usage** - AI tool usage and effectiveness metrics
+- **nudge_deliveries** - Behavioral nudge tracking
+- **student_outcomes** - Measurable student outcome metrics
+
+Note: The migration reuses existing `achievements`, `tutor_achievements`, and `xp_activities` tables.
+
 ## Seed Database Script
 
 This script populates your Supabase database with realistic test data.

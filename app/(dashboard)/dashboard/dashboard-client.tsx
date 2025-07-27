@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react'
 import { useTutorStore } from '@/lib/stores/tutorStore'
 import Link from 'next/link'
+import { OnboardingCompletionBanner } from './OnboardingCompletionBanner'
 
 interface DashboardClientProps {
   initialTutor: any
@@ -50,6 +51,9 @@ export default function DashboardClient({
   
   return (
     <div className="p-6">
+      {/* Onboarding Completion Banner */}
+      <OnboardingCompletionBanner />
+      
       {/* Welcome Section */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">

@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { BonusStatus } from '@/lib/gamification/BonusCalculator';
+import { BonusStatus, BonusType } from '@/lib/gamification/BonusCalculator';
 
-interface BonusData {
+export interface BonusData {
   id: string;
   tutor_id: string;
   tutor_name: string;
   tutor_email: string;
   tutor_tier?: string;
-  bonus_type: string;
+  bonus_type: BonusType;
   amount: number;
   status: BonusStatus;
   reference_id?: string;
@@ -85,7 +85,12 @@ export const useBonusManagement = (): UseBonusManagementReturn => {
       }
 
       const data = await response.json();
-      setBonuses(data.bonuses || []);
+      // Ensure bonus_type is properly typed
+      const typedBonuses = (data.bonuses || []).map((bonus: any) => ({
+        ...bonus,
+        bonus_type: bonus.bonus_type as BonusType,
+      }));
+      setBonuses(typedBonuses);
       setStats(data.stats || null);
     } catch (err) {
       console.error('Error fetching bonuses:', err);

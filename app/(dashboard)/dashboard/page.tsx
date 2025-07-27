@@ -11,20 +11,8 @@ export default async function DashboardPage() {
   if (userError || !user) {
     redirect('/login')
   }
-
-  // Check if user has completed onboarding
-  const { data: onboardingData } = await supabase
-    .from('tutor_onboarding')
-    .select('step_completed')
-    .eq('tutor_id', user.id)
-
-  // If they haven't completed all 5 steps, redirect to onboarding
-  const REQUIRED_ONBOARDING_STEPS = 5
-  if (!onboardingData || onboardingData.length < REQUIRED_ONBOARDING_STEPS) {
-    redirect('/onboarding')
-  }
   
-  // Fetch tutor profile
+  // Fetch tutor profile first
   const { data: tutor, error: tutorError } = await supabase
     .from('tutors')
     .select('*')
@@ -33,24 +21,31 @@ export default async function DashboardPage() {
     
   if (tutorError || !tutor) {
     console.error('Tutor fetch error:', tutorError)
-    return (
-      <div className="p-8">
-        <h1 className="text-2xl font-bold mb-4">Profile Setup Required</h1>
-        <p>Your tutor profile needs to be set up. Please contact support.</p>
-        <pre className="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded text-xs">
-          User ID: {user.id}
-          Email: {user.email}
-          Error: {tutorError?.message || 'No tutor profile found'}
-        </pre>
-      </div>
-    )
+    // If no tutor record exists, they need onboarding
+    redirect('/onboarding')
   }
-  
-  // Fetch students
+
+  // Fetch students to check if this is an established tutor
   const { data: students } = await supabase
     .from('students')
     .select('*')
     .eq('tutor_id', tutor.id)
+
+  // Check if user has completed onboarding using the tutor ID
+  const { data: onboardingData } = await supabase
+    .from('tutor_onboarding')
+    .select('step_completed')
+    .eq('tutor_id', tutor.id)
+
+  // If they haven't completed all 5 steps, redirect to onboarding
+  // BUT skip this check for established tutors (those with students or significant earnings)
+  const REQUIRED_ONBOARDING_STEPS = 5
+  const hasStudents = students && students.length > 0
+  const isEstablishedTutor = tutor.total_earnings > 0 || hasStudents
+  
+  if (!isEstablishedTutor && (!onboardingData || onboardingData.length < REQUIRED_ONBOARDING_STEPS)) {
+    redirect('/onboarding')
+  }
     
   // Get today's date range
   const today = new Date()

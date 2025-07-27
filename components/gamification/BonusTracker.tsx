@@ -1,254 +1,315 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Card } from '@/components/ui';
-import { DollarSign, Clock, CheckCircle, AlertCircle } from 'lucide-react';
-import { createClient } from '@/utils/supabase/client';
+import React, { useState } from 'react';
+import { Card, Button } from '@/components/ui';
+import { 
+  DollarSign, 
+  TrendingUp, 
+  Star, 
+  Users, 
+  Trophy,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  RefreshCw,
+  ChevronDown,
+  ChevronUp,
+  Calendar
+} from 'lucide-react';
+import { useBonuses } from '@/lib/hooks/useBonuses';
+import { BonusStatus, BonusType } from '@/lib/gamification/BonusCalculator';
+import { cn } from '@/lib/utils/cn';
+import { formatDistanceToNow } from 'date-fns';
 
-interface BonusTrackerProps {
-  tutorId: string;
-}
-
-interface BonusData {
-  pendingBonuses: number;
-  approvedBonuses: number;
-  paidBonuses: number;
-  recentBonuses: Array<{
-    id: string;
-    type: string;
-    amount: number;
-    status: 'pending' | 'approved' | 'paid';
-    created_at: string;
-  }>;
-  nextPayout?: string;
-}
-
-const bonusTypeLabels: Record<string, string> = {
-  student_retention: 'Student Retention',
-  session_milestone: 'Session Milestone',
-  quality_bonus: '5-Star Review',
-  referral_bonus: 'Student Referral',
-  new_student_bonus: 'New Student',
-  monthly_excellence: 'Monthly Excellence'
+const bonusTypeConfig: Record<BonusType, { label: string; icon: any; color: string }> = {
+  student_retention: { label: 'Student Retention Bonus', icon: Users, color: 'text-blue-600' },
+  session_milestone: { label: 'Session Milestone', icon: Trophy, color: 'text-purple-600' },
+  five_star_review: { label: '5-Star Review Bonus', icon: Star, color: 'text-yellow-600' },
+  student_referral: { label: 'Referral Bonus', icon: TrendingUp, color: 'text-green-600' },
 };
 
-export default function BonusTracker({ tutorId }: BonusTrackerProps) {
-  const [bonusData, setBonusData] = useState<BonusData>({
-    pendingBonuses: 0,
-    approvedBonuses: 0,
-    paidBonuses: 0,
-    recentBonuses: []
-  });
-  const [loading, setLoading] = useState(true);
+const statusConfig: Record<BonusStatus, { label: string; color: string; bgColor: string }> = {
+  pending: { label: 'Pending', color: 'text-yellow-700', bgColor: 'bg-yellow-100' },
+  approved: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100' },
+  paid: { label: 'Paid', color: 'text-blue-700', bgColor: 'bg-blue-100' },
+  cancelled: { label: 'Cancelled', color: 'text-gray-700', bgColor: 'bg-gray-100' },
+};
 
-  useEffect(() => {
-    fetchBonusData();
-  }, [tutorId]);
-
-  const fetchBonusData = async () => {
-    try {
-      const supabase = createClient();
-      
-      // Fetch all bonuses for this tutor
-      const { data: bonuses, error } = await supabase
-        .from('tutor_bonuses')
-        .select('*')
-        .eq('tutor_id', tutorId)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      // Calculate totals by status
-      let pending = 0;
-      let approved = 0;
-      let paid = 0;
-
-      bonuses?.forEach(bonus => {
-        switch (bonus.status) {
-          case 'pending':
-            pending += Number(bonus.amount);
-            break;
-          case 'approved':
-            approved += Number(bonus.amount);
-            break;
-          case 'paid':
-            paid += Number(bonus.amount);
-            break;
-        }
-      });
-
-      setBonusData({
-        pendingBonuses: pending,
-        approvedBonuses: approved,
-        paidBonuses: paid,
-        recentBonuses: bonuses?.slice(0, 5).map(b => ({
-          id: b.id,
-          type: b.bonus_type,
-          amount: Number(b.amount),
-          status: b.status,
-          created_at: b.created_at
-        })) || [],
-        nextPayout: calculateNextPayout()
-      });
-    } catch (error) {
-      console.error('Error fetching bonus data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const calculateNextPayout = (): string => {
-    // Calculate next Friday
-    const today = new Date();
-    const dayOfWeek = today.getDay();
-    const daysUntilFriday = (5 - dayOfWeek + 7) % 7 || 7;
-    const nextFriday = new Date(today);
-    nextFriday.setDate(today.getDate() + daysUntilFriday);
-    return nextFriday.toLocaleDateString();
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return <Clock className="w-4 h-4 text-yellow-500" />;
-      case 'approved':
-        return <AlertCircle className="w-4 h-4 text-blue-500" />;
-      case 'paid':
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
-      default:
-        return null;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'text-yellow-600 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-900/20';
-      case 'approved':
-        return 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20';
-      case 'paid':
-        return 'text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-900/20';
-      default:
-        return '';
-    }
-  };
+export function BonusTracker() {
+  const { summary, bonuses, loading, error, refetch } = useBonuses();
+  const [filter, setFilter] = useState<BonusStatus | 'all'>('all');
+  const [expandedBonus, setExpandedBonus] = useState<string | null>(null);
 
   if (loading) {
     return (
-      <Card className="p-6">
+      <Card className="p-6" data-testid="bonus-tracker-skeleton">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="h-20 bg-gray-200 rounded"></div>
-            <div className="h-20 bg-gray-200 rounded"></div>
-            <div className="h-20 bg-gray-200 rounded"></div>
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="h-24 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+          <div className="space-y-3">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-20 bg-gray-200 rounded"></div>
+            ))}
           </div>
         </div>
       </Card>
     );
   }
 
-  const totalEarnings = bonusData.pendingBonuses + bonusData.approvedBonuses + bonusData.paidBonuses;
+  if (error) {
+    return (
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2 text-red-600">
+            <AlertCircle className="w-5 h-5" />
+            <span>{error}</span>
+          </div>
+          <Button
+            onClick={refetch}
+            size="sm"
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Retry
+          </Button>
+        </div>
+      </Card>
+    );
+  }
+
+  const filteredBonuses = filter === 'all' 
+    ? bonuses 
+    : bonuses.filter(b => b.status === filter);
+
+  const formatBonusDescription = (bonus: any) => {
+    const { metadata } = bonus;
+    
+    switch (bonus.bonus_type) {
+      case 'student_retention':
+        return `${metadata?.studentName || 'Student'} - ${metadata?.monthsRetained || 0} months`;
+      case 'session_milestone':
+        return `${metadata?.milestone || metadata?.totalSessions || 0} sessions completed`;
+      case 'five_star_review':
+        return 'Excellent feedback received';
+      case 'student_referral':
+        return 'Successfully referred student';
+      default:
+        return '';
+    }
+  };
+
+  const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+    
+    if (diffInHours < 24) {
+      return `Today at ${date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+    }
+    
+    return formatDistanceToNow(date, { addSuffix: true });
+  };
 
   return (
-    <Card className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-          Bonus Tracker
-        </h2>
-        <DollarSign className="w-5 h-5 text-green-500" />
-      </div>
-
-      {/* Summary Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Pending</p>
-          <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-            ${bonusData.pendingBonuses.toFixed(2)}
-          </p>
-        </div>
-        <div className="text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Approved</p>
-          <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-            ${bonusData.approvedBonuses.toFixed(2)}
-          </p>
-        </div>
-        <div className="text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Paid</p>
-          <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-            ${bonusData.paidBonuses.toFixed(2)}
-          </p>
-        </div>
-      </div>
-
-      {/* Total Earnings */}
-      <div className="p-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Total Bonus Earnings</p>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white">
-              ${totalEarnings.toFixed(2)}
-            </p>
-          </div>
-          {bonusData.nextPayout && bonusData.approvedBonuses > 0 && (
-            <div className="text-right">
-              <p className="text-xs text-gray-600 dark:text-gray-400">Next payout</p>
-              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                {bonusData.nextPayout}
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Recent Bonuses */}
-      <div>
-        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-          Recent Bonuses
-        </h3>
-        {bonusData.recentBonuses.length === 0 ? (
-          <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
-            No bonuses earned yet. Keep up the great work!
-          </p>
-        ) : (
-          <div className="space-y-2">
-            {bonusData.recentBonuses.map((bonus) => (
-              <div
-                key={bonus.id}
-                className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50"
-              >
-                <div className="flex items-center gap-3">
-                  {getStatusIcon(bonus.status)}
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
-                      {bonusTypeLabels[bonus.type] || bonus.type}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {new Date(bonus.created_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                    ${bonus.amount.toFixed(2)}
-                  </span>
-                  <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(bonus.status)}`}>
-                    {bonus.status}
-                  </span>
-                </div>
+    <div className="space-y-6">
+      {/* Summary Cards */}
+      {summary && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Pending</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  ${summary.pendingTotal}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {summary.pendingCount} bonuses
+                </p>
               </div>
+              <Clock className="w-8 h-8 text-yellow-500" />
+            </div>
+          </Card>
+
+          <Card className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Approved</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  ${summary.approvedTotal}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {summary.approvedCount} bonuses
+                </p>
+              </div>
+              <CheckCircle className="w-8 h-8 text-green-500" />
+            </div>
+          </Card>
+
+          <Card className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">This Month</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  ${summary.paidThisMonth}
+                </p>
+              </div>
+              <Calendar className="w-8 h-8 text-blue-500" />
+            </div>
+          </Card>
+
+          <Card className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Lifetime Earnings</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  ${summary.lifetimeEarnings || 0}
+                </p>
+              </div>
+              <DollarSign className="w-8 h-8 text-purple-500" />
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Bonus List */}
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            Bonus History
+          </h2>
+          
+          {/* Filter Buttons */}
+          <div className="flex gap-2">
+            {(['all', 'pending', 'approved', 'paid'] as const).map(status => (
+              <Button
+                key={status}
+                size="sm"
+                variant={filter === status ? 'solid' : 'outline'}
+                onClick={() => setFilter(status)}
+              >
+                {status.charAt(0).toUpperCase() + status.slice(1)}
+              </Button>
             ))}
           </div>
-        )}
-      </div>
+        </div>
 
-      {/* Bonus Information */}
-      <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-        <p className="text-xs text-blue-800 dark:text-blue-300">
-          💡 Earn bonuses by maintaining student retention, completing session milestones, 
-          receiving 5-star reviews, and referring new students!
-        </p>
-      </div>
-    </Card>
+        {filteredBonuses.length === 0 ? (
+          <div className="text-center py-12">
+            <DollarSign className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-lg font-medium text-gray-900 dark:text-white">
+              No bonuses yet
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+              Keep up the great work and earn bonuses for your achievements!
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {filteredBonuses.map(bonus => {
+              const config = bonusTypeConfig[bonus.bonus_type];
+              const statusCfg = statusConfig[bonus.status];
+              const Icon = config.icon;
+              const isExpanded = expandedBonus === bonus.id;
+
+              return (
+                <div
+                  key={bonus.id}
+                  className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-3">
+                      <div 
+                        className={cn("p-2 rounded-full bg-gray-100 dark:bg-gray-800", config.color)}
+                        data-testid={`icon-${bonus.bonus_type.split('_')[0]}`}
+                      >
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      
+                      <div className="flex-1">
+                        <h3 className="font-medium text-gray-900 dark:text-white">
+                          {config.label}
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {formatBonusDescription(bonus)}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {formatDate(bonus.created_at)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                          ${bonus.amount}
+                        </p>
+                        {bonus.metadata?.baseAmount && bonus.metadata.baseAmount !== bonus.amount && (
+                          <p className="text-xs text-gray-500">
+                            (base: ${bonus.metadata.baseAmount})
+                          </p>
+                        )}
+                      </div>
+                      
+                      <span 
+                        className={cn(
+                          "px-2 py-1 text-xs font-medium rounded",
+                          statusCfg.bgColor,
+                          statusCfg.color
+                        )}
+                        data-testid={`status-${bonus.status}`}
+                      >
+                        {statusCfg.label}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Expandable Details */}
+                  {bonus.metadata && Object.keys(bonus.metadata).length > 0 && (
+                    <div className="mt-3">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setExpandedBonus(isExpanded ? null : (bonus.id || null))}
+                        className="flex items-center gap-1 text-sm"
+                      >
+                        View Details
+                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </Button>
+                      
+                      {isExpanded && (
+                        <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded text-sm">
+                          {bonus.bonus_type === 'student_retention' && (
+                            <>
+                              <p>Months retained: {bonus.metadata.monthsRetained}</p>
+                              <p>Bonus months: {bonus.metadata.bonusMonths}</p>
+                              <p>Rate: $10/month</p>
+                            </>
+                          )}
+                          {bonus.metadata.tierMultiplier && (
+                            <p className="text-green-600 dark:text-green-400 mt-2">
+                              Tier bonus applied: +{((bonus.metadata.tierMultiplier - 1) * 100).toFixed(0)}%
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+
+      </Card>
+    </div>
   );
-} 
+}
+
+export default BonusTracker; 

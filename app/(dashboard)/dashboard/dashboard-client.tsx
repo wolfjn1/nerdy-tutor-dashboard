@@ -7,6 +7,8 @@ import { OnboardingCompletionBanner } from './OnboardingCompletionBanner'
 import GamificationWidget from '@/components/dashboard/GamificationWidget'
 import GamificationSummaryCard from '@/components/dashboard/GamificationSummaryCard'
 import { AchievementNotificationContainer } from '@/components/gamification'
+import { TierProgress } from '@/components/gamification/TierProgress'
+import { BonusTracker } from '@/components/gamification/BonusTracker'
 
 interface DashboardClientProps {
   initialTutor: any
@@ -182,6 +184,9 @@ export default function DashboardClient({
             weeklyPoints={gamificationData.weeklyPoints}
           />
         )}
+
+        {/* Tier Progress */}
+        <TierProgress />
       </div>
 
       {/* Quick Actions */}
@@ -213,6 +218,11 @@ export default function DashboardClient({
             <p className="text-sm text-purple-100">Track your progress & rewards</p>
           </button>
         </Link>
+      </div>
+
+      {/* Bonus Tracker */}
+      <div className="mt-8">
+        <BonusTracker />
       </div>
     </div>
   )

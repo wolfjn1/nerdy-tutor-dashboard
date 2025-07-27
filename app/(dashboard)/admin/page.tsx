@@ -2,10 +2,11 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Settings, Database, Activity, Shield, Bell, User } from 'lucide-react'
+import { Settings, Database, Activity, Shield, Bell, User, DollarSign } from 'lucide-react'
 import { AdministrativeTasks } from '@/components/dashboard'
 import { Card, Button } from '@/components/ui'
 import dashboardDataRaw from '@/lib/mock-data/dashboard.json'
+import Link from 'next/link'
 
 // Type assertion to ensure proper types
 const dashboardData = dashboardDataRaw as any
@@ -155,6 +156,18 @@ export default function AdminPage() {
             <Card className="glass-effect border-white/30 p-6">
               <h2 className="text-xl font-bold text-slate-800 mb-4">Quick Actions</h2>
               <div className="space-y-3">
+                <Link href="/admin/bonuses" className="block">
+                  <Button 
+                    variant="gradient" 
+                    gradientType="pink-cyan" 
+                    size="sm" 
+                    className="w-full"
+                    leftIcon={<DollarSign className="w-4 h-4" />}
+                  >
+                    Manage Bonuses
+                  </Button>
+                </Link>
+                
                 <Button 
                   variant="gradient" 
                   gradientType="yellow-pink" 

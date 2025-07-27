@@ -1,5 +1,8 @@
 import { useTutorStore } from '@/lib/stores/tutorStore'
 import { formatXP, formatLevel } from '@/lib/utils'
+import { useState, useEffect } from 'react'
+import { TierSystem, TierProgress, TutorTier } from '@/lib/gamification/TierSystem'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 export const useGameification = () => {
   const {
@@ -15,6 +18,70 @@ export const useGameification = () => {
     unlockAchievement,
     getUnlockedAchievements
   } = useTutorStore()
+
+  const [tierData, setTierData] = useState<{
+    stats: {
+      currentTier: TutorTier;
+      tierProgress: TierProgress | null;
+      tierBenefits?: string[];
+      currentRateIncrease?: number;
+      nextTierRateIncrease?: number;
+    } | null;
+    loading: boolean;
+    error: string | null;
+  }>({
+    stats: null,
+    loading: true,
+    error: null
+  })
+
+  const supabase = createClientComponentClient()
+
+  const fetchTierData = async () => {
+    try {
+      setTierData(prev => ({ ...prev, loading: true, error: null }))
+      
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('User not authenticated')
+
+      const tierSystem = new TierSystem()
+      const progress = await tierSystem.getTierProgress(user.id)
+      
+      // Get tier benefits
+      const benefits = tierSystem.getTierBenefits(progress.currentTier)
+      
+      // Calculate rate increases
+      const tierRates: Record<TutorTier, number> = {
+        standard: 0,
+        silver: 5,
+        gold: 10,
+        elite: 15
+      }
+      
+      setTierData({
+        stats: {
+          currentTier: progress.currentTier,
+          tierProgress: progress,
+          tierBenefits: benefits,
+          currentRateIncrease: tierRates[progress.currentTier],
+          nextTierRateIncrease: progress.nextTier ? tierRates[progress.nextTier] : undefined
+        },
+        loading: false,
+        error: null
+      })
+    } catch (error) {
+      console.error('Error fetching tier data:', error)
+      setTierData({
+        stats: null,
+        loading: false,
+        error: 'Failed to load tier information'
+      })
+    }
+  }
+
+  useEffect(() => {
+    fetchTierData()
+  }, [])
 
   const earnXP = (amount: number, source: string, studentId?: string, sessionId?: string) => {
     addXP(amount, source, studentId, sessionId)
@@ -108,6 +175,12 @@ export const useGameification = () => {
     streak,
     achievements,
     xpActivities,
+    
+    // Tier data
+    stats: tierData.stats,
+    loading: tierData.loading,
+    error: tierData.error,
+    refetch: fetchTierData,
     
     // Actions
     earnXP,

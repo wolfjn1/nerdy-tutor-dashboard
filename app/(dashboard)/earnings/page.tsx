@@ -4,6 +4,8 @@ import React, { useState } from 'react'
 import { DollarSign, TrendingUp, CreditCard, Calendar, Download, FileText, Clock, ChevronDown, ChevronUp, Filter, Search, BanknoteIcon, Receipt, TrendingDown, AlertCircle, CheckCircle, XCircle, Send, Eye, Plus, Check } from 'lucide-react'
 import { Button, Badge, Modal } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { BonusTracker } from '@/components/gamification/BonusTracker'
+import Link from 'next/link'
 
 // Mock completed sessions that need invoicing
 const uninvoicedSessions = [
@@ -409,6 +411,32 @@ export default function EarningsPage() {
           </div>
         </div>
       </div>
+
+      {/* Rate Summary */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-purple-600" />
+              Current Rate
+            </h2>
+            <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">
+              $75.00<span className="text-lg font-normal text-gray-600 dark:text-gray-400">/hour</span>
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Base rate with tier adjustments applied
+            </p>
+          </div>
+          <Link href="/rates">
+            <Button variant="outline" size="sm">
+              Manage Rates
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      {/* Bonus Tracker */}
+      <BonusTracker />
 
       {/* Uninvoiced Sessions */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">

@@ -17,9 +17,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user is a tutor
-    const userRole = user.user_metadata?.role;
-    if (userRole !== 'tutor') {
+    // Check if user is a tutor by looking up in tutors table
+    const { data: tutor, error: tutorError } = await supabase
+      .from('tutors')
+      .select('id')
+      .eq('auth_user_id', user.id)
+      .single();
+    
+    if (tutorError || !tutor) {
       return NextResponse.json(
         { error: 'Only tutors can calculate bonuses' },
         { status: 403 }

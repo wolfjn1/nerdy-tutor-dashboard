@@ -31,7 +31,9 @@ export const useRateAdjustment = (): UseRateAdjustmentReturn => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/rates');
+      const response = await fetch('/api/rates', {
+        credentials: 'include'
+      });
       
       if (!response.ok) {
         throw new Error('Failed to fetch rate data');
@@ -54,6 +56,7 @@ export const useRateAdjustment = (): UseRateAdjustmentReturn => {
       // Fetch comparison data
       const comparisonResponse = await fetch('/api/rates/compare', {
         method: 'POST',
+        credentials: 'include'
       });
 
       if (comparisonResponse.ok) {
@@ -83,6 +86,7 @@ export const useRateAdjustment = (): UseRateAdjustmentReturn => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ baseRate: newRate }),
+        credentials: 'include'
       });
 
       const data = await response.json();
@@ -115,6 +119,7 @@ export const useRateAdjustment = (): UseRateAdjustmentReturn => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ customAdjustment: percentage }),
+        credentials: 'include'
       });
 
       const data = await response.json();

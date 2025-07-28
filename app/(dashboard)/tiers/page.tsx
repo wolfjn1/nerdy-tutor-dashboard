@@ -12,7 +12,9 @@ export default function TiersPage() {
   const checkTier = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/gamification/tier-check');
+      const response = await fetch('/api/gamification/tier-check', {
+        credentials: 'include'
+      });
       const data = await response.json();
       setTierCheckResult(data);
     } catch (error) {

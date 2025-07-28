@@ -78,7 +78,9 @@ export const useBonusManagement = (): UseBonusManagementReturn => {
       if (debouncedSearchTerm) params.append('search', debouncedSearchTerm);
       if (sortBy) params.append('sort', sortBy);
 
-      const response = await fetch(`/api/admin/bonuses?${params.toString()}`);
+      const response = await fetch(`/api/admin/bonuses?${params.toString()}`, {
+        credentials: 'include'
+      });
       
       if (!response.ok) {
         throw new Error('Failed to fetch bonuses');
@@ -131,6 +133,7 @@ export const useBonusManagement = (): UseBonusManagementReturn => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ status: 'approved' }),
       });
 
@@ -153,6 +156,7 @@ export const useBonusManagement = (): UseBonusManagementReturn => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ 
           status: 'cancelled',
           metadata: { rejection_reason: reason }
@@ -178,6 +182,7 @@ export const useBonusManagement = (): UseBonusManagementReturn => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ 
           action: 'approve',
           bonusIds: ids

@@ -1,4 +1,5 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/utils/supabase/client'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { 
   GamificationStats, 
   TutorLevel, 
@@ -43,9 +44,9 @@ interface TutorBadgeRow {
 }
 
 export class GamificationEngine {
-  private supabase: ReturnType<typeof createClient>
+  private supabase: SupabaseClient
 
-  constructor(supabaseClient: ReturnType<typeof createClient>) {
+  constructor(supabaseClient: SupabaseClient) {
     this.supabase = supabaseClient
   }
 

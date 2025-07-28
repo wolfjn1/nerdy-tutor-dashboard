@@ -1,19 +1,13 @@
-import { createClient } from '@supabase/supabase-js'
+/**
+ * @deprecated This file creates a global Supabase instance which causes "Multiple GoTrueClient instances" warnings.
+ * Please use:
+ * - Server components: import { createClient } from '@/utils/supabase/server'
+ * - Client components: import { createClient } from '@/utils/supabase/client'
+ */
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables. Please check your .env.local file.')
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true
-  }
-})
+// This export is kept temporarily for backward compatibility
+// TODO: Remove this file after updating all references
+export { createClient as supabase } from '@/utils/supabase/client'
 
 // Database type definitions
 export interface Database {

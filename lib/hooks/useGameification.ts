@@ -2,7 +2,7 @@ import { useTutorStore } from '@/lib/stores/tutorStore'
 import { formatXP, formatLevel } from '@/lib/utils'
 import { useState, useEffect } from 'react'
 import { TierSystem, TierProgress, TutorTier } from '@/lib/gamification/TierSystem'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/utils/supabase/client'
 
 export const useGameification = () => {
   const {
@@ -35,7 +35,7 @@ export const useGameification = () => {
     error: null
   })
 
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   const fetchTierData = async () => {
     try {

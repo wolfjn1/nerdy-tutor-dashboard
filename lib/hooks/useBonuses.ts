@@ -20,7 +20,9 @@ export const useBonuses = (): UseBonusesReturn => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/bonuses/summary');
+      const response = await fetch('/api/bonuses/summary', {
+        credentials: 'include'
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch bonuses');
       }
@@ -47,6 +49,7 @@ export const useBonuses = (): UseBonusesReturn => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ type, ...params }),
       });
 

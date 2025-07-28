@@ -37,6 +37,7 @@ export function useBadgeNotifications(tutorId: string) {
       const response = await fetch('/api/gamification/check-badges', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ tutorId })
       });
 

@@ -1,4 +1,5 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/utils/supabase/client';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { TutorTier } from './TierSystem';
 
 // Types
@@ -43,10 +44,10 @@ const TIER_PERCENTAGES: Record<TutorTier, number> = {
 };
 
 export class RateAdjustmentService {
-  private supabase: any;
+  private supabase: SupabaseClient;
 
-  constructor(supabaseClient?: any) {
-    this.supabase = supabaseClient || createClientComponentClient();
+  constructor(supabaseClient?: SupabaseClient) {
+    this.supabase = supabaseClient || createClient();
   }
 
   /**

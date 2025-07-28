@@ -1,4 +1,5 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/utils/supabase/client';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { TutorTier } from './TierSystem';
 
 export type BonusType = 'student_retention' | 'session_milestone' | 'five_star_review' | 'student_referral';
@@ -51,10 +52,10 @@ const TIER_MULTIPLIERS: Record<TutorTier, number> = {
 };
 
 export class BonusCalculator {
-  private supabase: any;
+  private supabase: SupabaseClient;
 
-  constructor(supabaseClient?: any) {
-    this.supabase = supabaseClient || createClientComponentClient();
+  constructor(supabaseClient?: SupabaseClient) {
+    this.supabase = supabaseClient || createClient();
   }
 
   async calculateRetentionBonus(

@@ -51,7 +51,9 @@ export function OnboardingWizard({ tutorId, className }: OnboardingWizardProps) 
     try {
       setIsLoading(true)
       // Use the API endpoint to get status
-      const response = await fetch(`/api/onboarding/status/${tutorId}`)
+      const response = await fetch(`/api/onboarding/status/${tutorId}`, {
+        credentials: 'include'
+      })
       
       if (response.status === 401) {
         setIsAuthenticated(false)
@@ -100,6 +102,7 @@ export function OnboardingWizard({ tutorId, className }: OnboardingWizardProps) 
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ stepId: currentStep.id }),
       })
 
@@ -153,6 +156,7 @@ export function OnboardingWizard({ tutorId, className }: OnboardingWizardProps) 
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify({ stepId: currentStep.id })
         })
 

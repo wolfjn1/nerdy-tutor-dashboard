@@ -1,4 +1,5 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/utils/supabase/client';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export type TutorTier = 'standard' | 'silver' | 'gold' | 'elite';
 
@@ -84,10 +85,10 @@ const TIER_POINTS: Record<TutorTier, number> = {
 };
 
 export class TierSystem {
-  private supabase: any;
+  private supabase: SupabaseClient;
 
-  constructor(supabaseClient?: any) {
-    this.supabase = supabaseClient || createClientComponentClient();
+  constructor(supabaseClient?: SupabaseClient) {
+    this.supabase = supabaseClient || createClient();
   }
 
   async calculateTier(stats: TutorStats): Promise<TutorTier> {

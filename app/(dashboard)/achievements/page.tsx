@@ -11,9 +11,22 @@ export default async function AchievementsPage() {
     redirect('/login');
   }
 
+  // Fetch the tutor record to get the correct tutor ID
+  const { data: tutor, error: tutorError } = await supabase
+    .from('tutors')
+    .select('id')
+    .eq('auth_user_id', user.id)
+    .single();
+  
+  if (tutorError || !tutor) {
+    // If no tutor record exists, redirect to dashboard or onboarding
+    console.error('No tutor record found for user:', user.id);
+    redirect('/dashboard');
+  }
+
   return (
     <div className="container max-w-7xl mx-auto p-6">
-      <GamificationCenter tutorId={user.id} />
+      <GamificationCenter tutorId={tutor.id} />
     </div>
   );
 } 

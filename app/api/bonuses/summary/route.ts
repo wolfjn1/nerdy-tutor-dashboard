@@ -59,13 +59,13 @@ export async function GET(request: NextRequest) {
     }
 
     const bonusCalculator = new BonusCalculator();
-    const summary = await bonusCalculator.getBonusSummary(user.id);
+    const summary = await bonusCalculator.getBonusSummary(tutor!.id);
 
     // Get recent bonuses
     const { data: recentBonuses, error: bonusError } = await supabase
       .from('tutor_bonuses')
       .select('*')
-      .eq('tutor_id', user.id)
+      .eq('tutor_id', tutor!.id)
       .order('created_at', { ascending: false })
       .limit(10);
 

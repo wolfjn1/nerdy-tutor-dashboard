@@ -1,8 +1,10 @@
 # Nerdy Live+AI™ - Tutor Portal
 
-A modern tutor dashboard application built with Next.js 14, TypeScript, and Tailwind CSS. Features a vibrant purple/pink "nerdy" theme with comprehensive student management, session scheduling, earnings tracking, and gamification elements.
+A modern tutor dashboard application built with Next.js 14, TypeScript, and Tailwind CSS. Features a vibrant purple/pink "nerdy" theme with comprehensive student management, session scheduling, earnings tracking, and a complete gamification system with tier progression and monetary bonuses.
 
-🚀 **Live Demo**: [https://nerdy-tutor-dashboard.vercel.app/](https://nerdy-tutor-dashboard.vercel.app/)
+🚀 **Live Demo**: [https://nerdy-tutor-dashboard.netlify.app/](https://nerdy-tutor-dashboard.netlify.app/)
+
+✅ **Phase 4 Complete**: Full gamification system with tiers, bonuses, and rate management is now live!
 
 ## 🎨 Design System
 

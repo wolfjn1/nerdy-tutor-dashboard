@@ -17,16 +17,44 @@ export async function GET(request: NextRequest) {
     }
 
     // Check if user is a tutor by looking up in tutors table
-    const { data: tutor, error: tutorError } = await supabase
+    let { data: tutor, error: tutorError } = await supabase
       .from('tutors')
       .select('id')
       .eq('auth_user_id', user.id)
       .single();
     
-    if (tutorError || !tutor) {
+    // If no tutor record exists, create one
+    if (tutorError && tutorError.code === 'PGRST116') {
+      // Create a basic tutor record
+      const { data: newTutor, error: createError } = await supabase
+        .from('tutors')
+        .insert({
+          auth_user_id: user.id,
+          email: user.email || '',
+          first_name: user.user_metadata?.first_name || 'New',
+          last_name: user.user_metadata?.last_name || 'Tutor',
+          subjects: [],
+          hourly_rate: 50,
+          availability: {},
+          rating: 0,
+          total_earnings: 0
+        })
+        .select('id')
+        .single();
+      
+      if (createError) {
+        console.error('Error creating tutor record:', createError);
+        return NextResponse.json(
+          { error: 'Unable to create tutor profile' },
+          { status: 500 }
+        );
+      }
+      
+      tutor = newTutor;
+    } else if (tutorError) {
       return NextResponse.json(
-        { error: 'Only tutors can view bonus summary' },
-        { status: 403 }
+        { error: 'Error checking tutor status' },
+        { status: 500 }
       );
     }
 

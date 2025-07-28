@@ -37,7 +37,7 @@ export default function GamificationCenter({ tutorId }: GamificationCenterProps)
       {/* Bottom Row - Achievements and Bonuses */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <AchievementsFeed tutorId={tutorId} />
-        <BonusTracker tutorId={tutorId} />
+        <BonusTracker />
       </div>
     </div>
   );

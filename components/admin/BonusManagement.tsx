@@ -19,7 +19,7 @@ import {
   Trophy,
   Star,
 } from 'lucide-react';
-import { useBonusManagement, BonusData } from '@/lib/hooks/useBonusManagement';
+import { useBonusManagement, BonusData } from '@/lib/hooks';
 import { cn } from '@/lib/utils/cn';
 import { formatDistanceToNow } from 'date-fns';
 import { BonusType, BonusStatus } from '@/lib/gamification/BonusCalculator';
@@ -151,7 +151,7 @@ export function BonusManagement() {
     );
   }
 
-  const pendingBonuses = bonuses.filter(b => b.status === 'pending');
+  const pendingBonuses = bonuses.filter((b: BonusData) => b.status === 'pending');
 
   return (
     <div className="space-y-6">
@@ -322,9 +322,9 @@ export function BonusManagement() {
           </div>
         ) : (
           <div className="space-y-4">
-            {bonuses.map(bonus => {
-              const config = bonusTypeConfig[bonus.bonus_type];
-              const statusCfg = statusConfig[bonus.status];
+            {bonuses.map((bonus: BonusData) => {
+              const config = bonusTypeConfig[bonus.bonus_type as BonusType];
+              const statusCfg = statusConfig[bonus.status as BonusStatus];
               const Icon = config.icon;
               const tierCfg = tierConfig[bonus.tutor_tier as keyof typeof tierConfig];
 
@@ -475,11 +475,11 @@ export function BonusManagement() {
                 variant="secondary" 
                 size="lg" 
                 className={cn(
-                  statusConfig[selectedBonus.status].bgColor,
-                  statusConfig[selectedBonus.status].color
+                  statusConfig[selectedBonus.status as BonusStatus].bgColor,
+                  statusConfig[selectedBonus.status as BonusStatus].color
                 )}
               >
-                {statusConfig[selectedBonus.status].label}
+                {statusConfig[selectedBonus.status as BonusStatus].label}
               </Badge>
             </div>
 
@@ -488,7 +488,7 @@ export function BonusManagement() {
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-400">Type:</span>
                 <span className="font-medium text-gray-900 dark:text-white">
-                  {bonusTypeConfig[selectedBonus.bonus_type].label}
+                  {bonusTypeConfig[selectedBonus.bonus_type as BonusType].label}
                 </span>
               </div>
               <div className="flex justify-between">

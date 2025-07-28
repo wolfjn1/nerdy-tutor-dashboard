@@ -19,7 +19,7 @@ import {
   Trophy,
   Star,
 } from 'lucide-react';
-import { useBonusManagement } from '@/lib/hooks/useBonusManagement';
+import { useBonusManagement, BonusData } from '@/lib/hooks/useBonusManagement';
 import { cn } from '@/lib/utils/cn';
 import { formatDistanceToNow } from 'date-fns';
 import { BonusType, BonusStatus } from '@/lib/gamification/BonusCalculator';
@@ -68,7 +68,7 @@ export function BonusManagement() {
   } = useBonusManagement();
 
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [selectedBonus, setSelectedBonus] = useState<any>(null);
+  const [selectedBonus, setSelectedBonus] = useState<BonusData | null>(null);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectingBonusId, setRejectingBonusId] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');

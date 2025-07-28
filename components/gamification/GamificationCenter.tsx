@@ -28,7 +28,7 @@ export default function GamificationCenter({ tutorId }: GamificationCenterProps)
       {/* Top Row - Points and Tier */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <PointsDisplay tutorId={tutorId} />
-        <TierProgress tutorId={tutorId} />
+        <TierProgress />
       </div>
 
       {/* Middle Section - Badges */}

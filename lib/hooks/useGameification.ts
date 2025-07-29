@@ -44,8 +44,17 @@ export const useGameification = () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('User not authenticated')
 
+      // Get tutor record first
+      const { data: tutor } = await supabase
+        .from('tutors')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (!tutor) throw new Error('Tutor record not found')
+
       const tierSystem = new TierSystem()
-      const progress = await tierSystem.getTierProgress(user.id)
+      const progress = await tierSystem.getTierProgress(tutor.id)
       
       // Get tier benefits
       const benefits = tierSystem.getTierBenefits(progress.currentTier)

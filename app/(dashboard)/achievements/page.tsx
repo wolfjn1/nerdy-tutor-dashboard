@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
-import { GamificationCenter } from '@/components/gamification';
+import AchievementsClient from './achievements-client';
 
 export default async function AchievementsPage() {
   const supabase = await createClient();
@@ -24,9 +24,7 @@ export default async function AchievementsPage() {
     redirect('/dashboard');
   }
 
-  return (
-    <div className="container max-w-7xl mx-auto p-6">
-      <GamificationCenter tutorId={tutor.id} />
-    </div>
-  );
+  console.log('[AchievementsPage] Passing tutorId to client:', tutor.id);
+
+  return <AchievementsClient tutorId={tutor.id} />;
 } 

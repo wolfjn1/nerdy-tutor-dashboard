@@ -28,12 +28,22 @@ export default function PointsDisplay({ tutorId }: PointsDisplayProps) {
   });
   const [loading, setLoading] = useState(true);
 
+  // Debug logging
+  console.log('[PointsDisplay] Rendering with tutorId:', tutorId);
+
   useEffect(() => {
+    if (!tutorId) {
+      console.error('[PointsDisplay] No tutorId provided!');
+      setLoading(false);
+      return;
+    }
+    console.log('[PointsDisplay] useEffect triggered, fetching data for tutorId:', tutorId);
     fetchPointsData();
   }, [tutorId]);
 
   const fetchPointsData = async () => {
     try {
+      console.log('[PointsDisplay] Starting fetchPointsData for tutorId:', tutorId);
       const supabase = createClient();
       
       // Fetch total points
@@ -41,6 +51,8 @@ export default function PointsDisplay({ tutorId }: PointsDisplayProps) {
         .from('gamification_points')
         .select('points')
         .eq('tutor_id', tutorId);
+
+      console.log('[PointsDisplay] Points query result:', { points, pointsError });
 
       if (pointsError) throw pointsError;
 
@@ -54,10 +66,14 @@ export default function PointsDisplay({ tutorId }: PointsDisplayProps) {
         .order('created_at', { ascending: false })
         .limit(5);
 
+      console.log('[PointsDisplay] Recent transactions:', { recent, recentError });
+
       if (recentError) throw recentError;
 
       // Calculate level
       const level = calculateLevel(totalPoints);
+
+      console.log('[PointsDisplay] Setting state:', { totalPoints, level, transactions: recent?.length });
 
       setPointsData({
         totalPoints,
@@ -65,7 +81,7 @@ export default function PointsDisplay({ tutorId }: PointsDisplayProps) {
         recentTransactions: recent || []
       });
     } catch (error) {
-      console.error('Error fetching points data:', error);
+      console.error('[PointsDisplay] Error fetching points data:', error);
     } finally {
       setLoading(false);
     }

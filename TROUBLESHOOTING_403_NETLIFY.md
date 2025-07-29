@@ -42,6 +42,12 @@ Old authentication tokens might be cached.
 ### 4. RLS Policy Issues
 The Row Level Security policies might not be working correctly in production.
 
+**Common Error: "permission denied for table users"**
+If you see this error, your RLS policies are trying to access `auth.users` which is not allowed. Fix with:
+```sql
+-- Run scripts/fix-rls-policy-users-error.sql
+```
+
 **Verify RLS is working:**
 ```sql
 -- Check if RLS is enabled

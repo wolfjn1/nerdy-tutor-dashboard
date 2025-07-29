@@ -41,4 +41,4 @@ AND policyname = 'Tutors can view own bonuses';
 -- 4. If policy is missing, here's the command to create it
 SELECT 
     'Create Policy Command' as action,
-    'CREATE POLICY "Tutors can view own bonuses" ON tutor_bonuses FOR SELECT USING (tutor_id IN (SELECT id FROM tutors WHERE auth_user_id = auth.uid() OR email = (SELECT email FROM auth.users WHERE id = auth.uid())));' as sql_command; 
+    'CREATE POLICY "Tutors can view own bonuses" ON tutor_bonuses FOR SELECT USING (tutor_id IN (SELECT id FROM tutors WHERE auth_user_id = auth.uid()));' as sql_command; 

@@ -26,7 +26,6 @@ CREATE POLICY "Tutors can view own bonuses"
         tutor_id IN (
             SELECT id FROM tutors 
             WHERE auth_user_id = auth.uid()
-            OR email = (SELECT email FROM auth.users WHERE id = auth.uid())
         )
     );
 
@@ -37,15 +36,13 @@ DROP POLICY IF EXISTS "Tutors can update own profile" ON tutors;
 CREATE POLICY "Tutors can view own profile" 
     ON tutors FOR SELECT 
     USING (
-        auth_user_id = auth.uid() 
-        OR email = (SELECT email FROM auth.users WHERE id = auth.uid())
+        auth_user_id = auth.uid()
     );
 
 CREATE POLICY "Tutors can update own profile" 
     ON tutors FOR UPDATE 
     USING (
-        auth_user_id = auth.uid() 
-        OR email = (SELECT email FROM auth.users WHERE id = auth.uid())
+        auth_user_id = auth.uid()
     );
 
 -- Step 7: Enable RLS on tutors table if not already enabled
@@ -204,7 +201,6 @@ CREATE POLICY "Tutors can view own points"
         tutor_id IN (
             SELECT id FROM tutors 
             WHERE auth_user_id = auth.uid()
-            OR email = (SELECT email FROM auth.users WHERE id = auth.uid())
         )
     );
 
@@ -215,7 +211,6 @@ CREATE POLICY "Tutors can view own badges"
         tutor_id IN (
             SELECT id FROM tutors 
             WHERE auth_user_id = auth.uid()
-            OR email = (SELECT email FROM auth.users WHERE id = auth.uid())
         )
     );
 
@@ -226,7 +221,6 @@ CREATE POLICY "Tutors can view own tier"
         tutor_id IN (
             SELECT id FROM tutors 
             WHERE auth_user_id = auth.uid()
-            OR email = (SELECT email FROM auth.users WHERE id = auth.uid())
         )
     );
 

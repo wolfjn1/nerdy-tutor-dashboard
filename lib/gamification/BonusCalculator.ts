@@ -313,7 +313,7 @@ export class BonusCalculator {
         approvedCount: (approvedBonuses || []).length,
         paidTotal,
         paidThisMonth: paidThisMonthTotal,
-        lifetimeEarnings: pendingTotal + approvedTotal + paidTotal,
+        lifetimeEarnings: paidTotal, // Only count paid bonuses for lifetime earnings
       };
     } catch (error) {
       console.error('Error getting bonus summary:', error);

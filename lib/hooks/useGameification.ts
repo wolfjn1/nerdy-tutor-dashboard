@@ -1,217 +1,52 @@
-import { useTutorStore } from '@/lib/stores/tutorStore'
-import { formatXP, formatLevel } from '@/lib/utils'
-import { useState, useEffect } from 'react'
-import { TierSystem, TierProgress, TutorTier } from '@/lib/gamification/TierSystem'
-import { createClient } from '@/utils/supabase/client'
+'use client';
 
-export const useGameification = () => {
-  const {
-    totalXP,
-    level,
-    levelProgress,
-    xpForNextLevel,
-    streak,
-    achievements,
-    xpActivities,
-    addXP,
-    updateStreak,
-    unlockAchievement,
-    getUnlockedAchievements
-  } = useTutorStore()
+import { useState, useEffect } from 'react';
+import { TierProgress } from '@/lib/gamification/TierSystem';
 
-  const [tierData, setTierData] = useState<{
-    stats: {
-      currentTier: TutorTier;
-      tierProgress: TierProgress | null;
-      tierBenefits?: string[];
-      currentRateIncrease?: number;
-      nextTierRateIncrease?: number;
-    } | null;
-    loading: boolean;
-    error: string | null;
-  }>({
-    stats: null,
-    loading: true,
-    error: null
-  })
+interface UseGameificationReturn {
+  stats: TierProgress | null;
+  loading: boolean;
+  error: string | null;
+  refetch: () => void;
+}
 
-  const supabase = createClient()
+export const useGameification = (): UseGameificationReturn => {
+  const [stats, setStats] = useState<TierProgress | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchTierData = async () => {
     try {
-      setTierData(prev => ({ ...prev, loading: true, error: null }))
-      
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('User not authenticated')
+      setLoading(true);
+      setError(null);
 
-      // Get tutor record first
-      const { data: tutor } = await supabase
-        .from('tutors')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
+      const response = await fetch('/api/gamification/tier', {
+        credentials: 'include'
+      });
       
-      if (!tutor) throw new Error('Tutor record not found')
-
-      const tierSystem = new TierSystem()
-      const progress = await tierSystem.getTierProgress(tutor.id)
-      
-      // Get tier benefits
-      const benefits = tierSystem.getTierBenefits(progress.currentTier)
-      
-      // Calculate rate increases
-      const tierRates: Record<TutorTier, number> = {
-        standard: 0,
-        silver: 5,
-        gold: 10,
-        elite: 15
+      if (!response.ok) {
+        throw new Error('Failed to fetch tier data');
       }
-      
-      setTierData({
-        stats: {
-          currentTier: progress.currentTier,
-          tierProgress: progress,
-          tierBenefits: benefits,
-          currentRateIncrease: tierRates[progress.currentTier],
-          nextTierRateIncrease: progress.nextTier ? tierRates[progress.nextTier] : undefined
-        },
-        loading: false,
-        error: null
-      })
-    } catch (error) {
-      console.error('Error fetching tier data:', error)
-      setTierData({
-        stats: null,
-        loading: false,
-        error: 'Failed to load tier information'
-      })
+
+      const data = await response.json();
+      setStats(data.tierProgress);
+    } catch (err) {
+      console.error('Error fetching tier data:', err);
+      setError('Failed to load tier information');
+      setStats(null);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchTierData()
-  }, [])
-
-  const earnXP = (amount: number, source: string, studentId?: string, sessionId?: string) => {
-    addXP(amount, source, studentId, sessionId)
-  }
-
-  const refreshStreak = () => {
-    updateStreak()
-  }
-
-  const unlockNewAchievement = (id: string) => {
-    unlockAchievement(id)
-  }
-
-  const getRecentXPActivities = (count: number = 10) => {
-    return xpActivities.slice(0, count)
-  }
-
-  const getXPThisWeek = () => {
-    const oneWeekAgo = new Date()
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
-    
-    return xpActivities
-      .filter(activity => activity.timestamp >= oneWeekAgo)
-      .reduce((total, activity) => total + activity.amount, 0)
-  }
-
-  const getXPThisMonth = () => {
-    const oneMonthAgo = new Date()
-    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
-    
-    return xpActivities
-      .filter(activity => activity.timestamp >= oneMonthAgo)
-      .reduce((total, activity) => total + activity.amount, 0)
-  }
-
-  const getXPProgress = () => {
-    const currentLevelXP = totalXP - (level - 1) * 100
-    const progress = (currentLevelXP / xpForNextLevel) * 100
-    return Math.min(100, Math.max(0, progress))
-  }
-
-  const getNextLevelXP = () => {
-    return xpForNextLevel - (totalXP - (level - 1) * 100)
-  }
-
-  const getStreakText = () => {
-    if (streak === 0) return 'Start your streak!'
-    if (streak === 1) return '1 day streak'
-    return `${streak} days streak`
-  }
-
-  const getStreakEmoji = () => {
-    if (streak === 0) return '🔥'
-    if (streak < 7) return '🔥'
-    if (streak < 30) return '🔥🔥'
-    return '🔥🔥🔥'
-  }
-
-  const getLevelTitle = () => {
-    if (level < 10) return 'Novice Tutor'
-    if (level < 25) return 'Skilled Tutor'
-    if (level < 50) return 'Expert Tutor'
-    if (level < 75) return 'Master Tutor'
-    return 'Legendary Tutor'
-  }
-
-  const getUnlockedAchievementsList = () => {
-    return getUnlockedAchievements()
-  }
-
-  const getAchievementProgress = (achievementId: string) => {
-    const achievement = achievements.find(a => a.id === achievementId)
-    if (!achievement) return 0
-    return (achievement.progress / achievement.maxProgress) * 100
-  }
-
-  const canLevelUp = () => {
-    return levelProgress >= 100
-  }
-
-  const getXPToNextLevel = () => {
-    return xpForNextLevel - Math.floor((levelProgress / 100) * xpForNextLevel)
-  }
+    fetchTierData();
+  }, []);
 
   return {
-    // State
-    totalXP,
-    level,
-    levelProgress,
-    xpForNextLevel,
-    streak,
-    achievements,
-    xpActivities,
-    
-    // Tier data
-    stats: tierData.stats,
-    loading: tierData.loading,
-    error: tierData.error,
+    stats,
+    loading,
+    error,
     refetch: fetchTierData,
-    
-    // Actions
-    earnXP,
-    refreshStreak,
-    unlockNewAchievement,
-    
-    // Computed values
-    formattedXP: formatXP(totalXP),
-    formattedLevel: formatLevel(level),
-    xpProgress: getXPProgress(),
-    nextLevelXP: getNextLevelXP(),
-    streakText: getStreakText(),
-    streakEmoji: getStreakEmoji(),
-    levelTitle: getLevelTitle(),
-    xpThisWeek: getXPThisWeek(),
-    xpThisMonth: getXPThisMonth(),
-    xpToNextLevel: getXPToNextLevel(),
-    
-    // Helpers
-    getRecentXPActivities,
-    getUnlockedAchievementsList,
-    getAchievementProgress,
-    canLevelUp
-  }
-} 
+  };
+}; 

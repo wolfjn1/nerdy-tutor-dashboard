@@ -19,11 +19,8 @@ export default async function AchievementsPage() {
     .single();
   
   if (tutorError || !tutor) {
-    console.error('No tutor record found for user:', user.id);
     redirect('/dashboard');
   }
-
-  console.log('[AchievementsPage] Passing tutorId to client:', tutor.id);
 
   return <AchievementsClient tutorId={tutor.id} />;
 } 

@@ -1,12 +1,14 @@
-export { useGameification } from './useGameification'
-export { useHydratedStore } from './useHydratedStore'
-export { useSessions } from './useSessions'
-export { useStudents } from './useStudents'
-export { useSupabaseData } from './useSupabaseData'
-export { useGamificationRealtime } from './useGamificationRealtime'
-export { useBadgeNotifications } from './useBadgeNotifications'
-export { useAchievementNotifications } from './useAchievementNotifications'
-export { useBonuses } from './useBonuses'
-export { useBonusManagement } from './useBonusManagement'
-export type { BonusData } from './useBonusManagement'
-export { useRateAdjustment } from './useRateAdjustment' 
+export * from './useRateAdjustment';
+export * from './useSupabaseData';
+export * from './useBonuses';
+export * from './useBonusManagement';
+export * from './useGameification';
+export * from './useGamificationRealtime';
+export * from './useHydratedStore';
+export * from './useSessions';
+export * from './useStudents';
+export * from './useAchievementNotifications';
+export * from './useBadgeNotifications';
+export * from './usePoints';
+export * from './useBadges';
+export * from './useAchievementsFeed'; 

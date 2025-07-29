@@ -1,143 +1,17 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Card } from '@/components/ui';
 import { TrendingUp, Award, Star, AlertCircle } from 'lucide-react';
-import { createClient } from '@/utils/supabase/client';
+import { usePoints } from '@/lib/hooks/usePoints';
 
 interface PointsDisplayProps {
   tutorId: string;
 }
 
-interface PointsData {
-  totalPoints: number;
-  level: string;
-  recentTransactions: Array<{
-    id: string;
-    points: number;
-    reason: string;
-    created_at: string;
-  }>;
-}
-
 export default function PointsDisplay({ tutorId }: PointsDisplayProps) {
-  const [pointsData, setPointsData] = useState<PointsData>({
-    totalPoints: 0,
-    level: 'Beginner',
-    recentTransactions: []
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Debug logging
-  console.log('[PointsDisplay] Rendering with tutorId:', tutorId);
-
-  useEffect(() => {
-    if (!tutorId) {
-      console.error('[PointsDisplay] No tutorId provided!');
-      setError('No tutor ID provided');
-      setLoading(false);
-      return;
-    }
-    
-    // Set a timeout to prevent hanging
-    const timeoutId = setTimeout(() => {
-      console.error('[PointsDisplay] Query timeout after 5s');
-      setError('Loading timeout - please refresh the page');
-      setLoading(false);
-    }, 5000);
-
-    console.log('[PointsDisplay] useEffect triggered, fetching data for tutorId:', tutorId);
-    fetchPointsData().finally(() => {
-      clearTimeout(timeoutId);
-    });
-
-    return () => clearTimeout(timeoutId);
-  }, [tutorId]);
-
-  const fetchPointsData = async () => {
-    try {
-      console.log('[PointsDisplay] Starting fetchPointsData for tutorId:', tutorId);
-      const supabase = createClient();
-      
-      // Add timeout to queries
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Query timeout')), 10000)
-      );
-      
-      // Fetch total points with timeout
-      const pointsPromise = supabase
-        .from('gamification_points')
-        .select('points')
-        .eq('tutor_id', tutorId);
-        
-      const { data: points, error: pointsError } = await Promise.race([
-        pointsPromise,
-        timeoutPromise
-      ]) as any;
-
-      console.log('[PointsDisplay] Points query result:', { points, pointsError });
-
-      if (pointsError) {
-        console.error('[PointsDisplay] Points query error:', pointsError);
-        throw pointsError;
-      }
-
-      const totalPoints = points?.reduce((sum: number, p: any) => sum + p.points, 0) || 0;
-
-      // Fetch recent transactions with timeout
-      const recentPromise = supabase
-        .from('gamification_points')
-        .select('*')
-        .eq('tutor_id', tutorId)
-        .order('created_at', { ascending: false })
-        .limit(5);
-        
-      const { data: recent, error: recentError } = await Promise.race([
-        recentPromise,
-        timeoutPromise
-      ]) as any;
-
-      console.log('[PointsDisplay] Recent transactions:', { recent, recentError });
-
-      if (recentError) {
-        console.error('[PointsDisplay] Recent query error:', recentError);
-        throw recentError;
-      }
-
-      // Calculate level
-      const level = calculateLevel(totalPoints);
-
-      console.log('[PointsDisplay] Setting state:', { totalPoints, level, transactions: recent?.length });
-
-      setPointsData({
-        totalPoints,
-        level,
-        recentTransactions: recent || []
-      });
-      setError(null);
-    } catch (error: any) {
-      console.error('[PointsDisplay] Error fetching points data:', error);
-      setError(error.message || 'Failed to load points data');
-      // Set loading to false even on error to show empty state
-      setPointsData({
-        totalPoints: 0,
-        level: 'Beginner',
-        recentTransactions: []
-      });
-    } finally {
-      console.log('[PointsDisplay] Setting loading to false');
-      setLoading(false);
-    }
-  };
-
-  const calculateLevel = (points: number): string => {
-    if (points >= 10001) return 'Master';
-    if (points >= 5001) return 'Expert';
-    if (points >= 2001) return 'Advanced';
-    if (points >= 501) return 'Proficient';
-    return 'Beginner';
-  };
+  // Now using API route instead of direct Supabase queries
+  const { pointsData, loading, error } = usePoints();
 
   const getLevelIcon = (level: string) => {
     switch (level) {
@@ -184,6 +58,10 @@ export default function PointsDisplay({ tutorId }: PointsDisplayProps) {
         </div>
       </Card>
     );
+  }
+
+  if (!pointsData) {
+    return null;
   }
 
   return (

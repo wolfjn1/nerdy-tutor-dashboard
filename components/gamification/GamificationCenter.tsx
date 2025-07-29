@@ -13,10 +13,7 @@ interface GamificationCenterProps {
 }
 
 export default function GamificationCenter({ tutorId }: GamificationCenterProps) {
-  console.log('[GamificationCenter] Rendering with tutorId:', tutorId);
-  
   if (!tutorId) {
-    console.error('[GamificationCenter] No tutorId provided!');
     return (
       <div className="text-center p-8">
         <p className="text-red-500">Error: No tutor ID provided</p>

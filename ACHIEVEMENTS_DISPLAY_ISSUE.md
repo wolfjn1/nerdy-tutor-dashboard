@@ -77,4 +77,11 @@ This approach works because:
 - Client components only need to fetch from the API endpoints
 - No more hanging queries or authentication issues
 
-The achievements page now displays all data correctly! 
+The achievements page now displays all data correctly!
+
+## Additional Fix - Deployment Error
+After implementing the API routes, a deployment error occurred due to a type mismatch in the TierProgress component:
+- The component was trying to destructure `tierProgress` from `stats`, but `stats` was already the tier progress data
+- Fixed by using `stats` directly instead of destructuring
+- Enhanced the API response to include additional properties (tierBenefits, rate increases) that the component expected
+- Created an EnhancedTierProgress interface to properly type these additional properties 

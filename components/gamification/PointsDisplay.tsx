@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card } from '@/components/ui';
-import { TrendingUp, Award, Star } from 'lucide-react';
+import { TrendingUp, Award, Star, AlertCircle } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 
 interface PointsDisplayProps {
@@ -27,6 +27,7 @@ export default function PointsDisplay({ tutorId }: PointsDisplayProps) {
     recentTransactions: []
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Debug logging
   console.log('[PointsDisplay] Rendering with tutorId:', tutorId);
@@ -34,11 +35,24 @@ export default function PointsDisplay({ tutorId }: PointsDisplayProps) {
   useEffect(() => {
     if (!tutorId) {
       console.error('[PointsDisplay] No tutorId provided!');
+      setError('No tutor ID provided');
       setLoading(false);
       return;
     }
+    
+    // Set a timeout to prevent hanging
+    const timeoutId = setTimeout(() => {
+      console.error('[PointsDisplay] Query timeout after 5s');
+      setError('Loading timeout - please refresh the page');
+      setLoading(false);
+    }, 5000);
+
     console.log('[PointsDisplay] useEffect triggered, fetching data for tutorId:', tutorId);
-    fetchPointsData();
+    fetchPointsData().finally(() => {
+      clearTimeout(timeoutId);
+    });
+
+    return () => clearTimeout(timeoutId);
   }, [tutorId]);
 
   const fetchPointsData = async () => {
@@ -46,29 +60,50 @@ export default function PointsDisplay({ tutorId }: PointsDisplayProps) {
       console.log('[PointsDisplay] Starting fetchPointsData for tutorId:', tutorId);
       const supabase = createClient();
       
-      // Fetch total points
-      const { data: points, error: pointsError } = await supabase
+      // Add timeout to queries
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Query timeout')), 10000)
+      );
+      
+      // Fetch total points with timeout
+      const pointsPromise = supabase
         .from('gamification_points')
         .select('points')
         .eq('tutor_id', tutorId);
+        
+      const { data: points, error: pointsError } = await Promise.race([
+        pointsPromise,
+        timeoutPromise
+      ]) as any;
 
       console.log('[PointsDisplay] Points query result:', { points, pointsError });
 
-      if (pointsError) throw pointsError;
+      if (pointsError) {
+        console.error('[PointsDisplay] Points query error:', pointsError);
+        throw pointsError;
+      }
 
-      const totalPoints = points?.reduce((sum, p) => sum + p.points, 0) || 0;
+      const totalPoints = points?.reduce((sum: number, p: any) => sum + p.points, 0) || 0;
 
-      // Fetch recent transactions
-      const { data: recent, error: recentError } = await supabase
+      // Fetch recent transactions with timeout
+      const recentPromise = supabase
         .from('gamification_points')
         .select('*')
         .eq('tutor_id', tutorId)
         .order('created_at', { ascending: false })
         .limit(5);
+        
+      const { data: recent, error: recentError } = await Promise.race([
+        recentPromise,
+        timeoutPromise
+      ]) as any;
 
       console.log('[PointsDisplay] Recent transactions:', { recent, recentError });
 
-      if (recentError) throw recentError;
+      if (recentError) {
+        console.error('[PointsDisplay] Recent query error:', recentError);
+        throw recentError;
+      }
 
       // Calculate level
       const level = calculateLevel(totalPoints);
@@ -80,9 +115,18 @@ export default function PointsDisplay({ tutorId }: PointsDisplayProps) {
         level,
         recentTransactions: recent || []
       });
-    } catch (error) {
+      setError(null);
+    } catch (error: any) {
       console.error('[PointsDisplay] Error fetching points data:', error);
+      setError(error.message || 'Failed to load points data');
+      // Set loading to false even on error to show empty state
+      setPointsData({
+        totalPoints: 0,
+        level: 'Beginner',
+        recentTransactions: []
+      });
     } finally {
+      console.log('[PointsDisplay] Setting loading to false');
       setLoading(false);
     }
   };
@@ -123,6 +167,20 @@ export default function PointsDisplay({ tutorId }: PointsDisplayProps) {
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-1/2 mb-4"></div>
           <div className="h-12 bg-gray-200 rounded w-3/4"></div>
+        </div>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="p-6">
+        <div className="flex items-center gap-3 text-red-600">
+          <AlertCircle className="w-5 h-5" />
+          <div>
+            <p className="font-medium">Failed to load points</p>
+            <p className="text-sm text-red-500">{error}</p>
+          </div>
         </div>
       </Card>
     );

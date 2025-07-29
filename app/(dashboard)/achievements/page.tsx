@@ -19,7 +19,6 @@ export default async function AchievementsPage() {
     .single();
   
   if (tutorError || !tutor) {
-    // If no tutor record exists, redirect to dashboard or onboarding
     console.error('No tutor record found for user:', user.id);
     redirect('/dashboard');
   }

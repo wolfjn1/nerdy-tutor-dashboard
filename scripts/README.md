@@ -1,92 +1,72 @@
 # Database Scripts
 
-## Gamification System Migration
+This directory contains SQL scripts for database setup, migrations, and testing.
 
-The `add-gamification-tables.sql` file contains the migration to add the AI-driven tutor onboarding and gamification system tables.
+## Core Migration Scripts
 
-### Running the Gamification Migration
+### Gamification Setup
+- **add-gamification-tables.sql** - Creates all gamification-related tables (points, badges, tiers, bonuses)
+- **fix-achievements-403-error.sql** - Comprehensive fix for auth linkage and RLS policies
+- **verify-gamification-tables.sql** - Verifies all gamification tables are properly set up
 
-1. First ensure the main schema is applied:
-   ```bash
-   # In Supabase SQL Editor, run the contents of:
-   lib/supabase-schema.sql
-   ```
+### User Management
+- **ensure-demo-tutor.sql** - Ensures demo user (sarah_chen@hotmail.com) has proper tutor record
+- **ensure-sarah-chen-complete.sql** - Complete setup for Sarah Chen test user
+- **delete-orphaned-tutors.sql** - Removes tutor records with no auth users
+- **link-remaining-tutors.sql** - Links tutors to their auth users
 
-2. Then apply the gamification migration:
-   ```bash
-   # In Supabase SQL Editor, run the contents of:
-   scripts/add-gamification-tables.sql
-   ```
+### Verification & Debugging
+- **verify-auth-setup.sql** - Diagnostic script for auth setup
+- **verify-complete-setup.sql** - Comprehensive system verification
+- **simple-verification.sql** - Quick health check
+- **debug-403-error.sql** - Debug authentication issues
+- **check-sarah-chen.sql** - Check Sarah Chen test user status
+- **check-rls-policies.sql** - Verify Row Level Security policies
 
-### What Gets Created
+### Testing & Seeding
+- **seed-production.sql** - Seeds production data for demo accounts
+- **test-bonus-system.sql** - Creates test bonus data
+- **test-tier-system.sql** - Tests tier calculations
 
-The migration adds 8 new tables:
-- **tutor_onboarding** - Tracks onboarding wizard progress
-- **gamification_points** - Detailed outcome-based points transactions
-- **tutor_badges** - Enhanced badge tracking system
-- **tutor_tiers** - Performance tier tracking (Standard/Silver/Gold/Elite)
-- **tutor_bonuses** - Monetary bonus calculations and tracking
-- **ai_tool_usage** - AI tool usage and effectiveness metrics
-- **nudge_deliveries** - Behavioral nudge tracking
-- **student_outcomes** - Measurable student outcome metrics
+### Other Scripts
+- **fix-onboarding-foreign-key.sql** - Fixes foreign key issues between auth users and tutors
+- **fix-demo-gamification.sql** - Fixes gamification data for demo user
+- **handle-orphaned-tutors.sql** - Options for handling orphaned records
+- **bypass-onboarding-for-testing.sql** - Skip onboarding for test users
+- **seed-database.ts** - TypeScript seeding script
 
-Note: The migration reuses existing `achievements`, `tutor_achievements`, and `xp_activities` tables.
+## Common Issues and Solutions
 
-## Seed Database Script
+### 403 Errors on Achievements/Bonuses Pages
 
-This script populates your Supabase database with realistic test data.
+If you're getting 403 errors when accessing gamification features:
 
-### Prerequisites
+1. Run the `fix-achievements-403-error.sql` script in your Supabase SQL editor
+2. This will:
+   - Ensure the tutors table has auth_user_id column
+   - Link existing tutors to their auth accounts
+   - Update RLS policies to be more flexible
+   - Create automatic linking for new users
+   - Fix demo user data
 
-1. Ensure you have set up your Supabase project and run the schema from `lib/supabase-schema.sql`
-2. Set up your environment variables in `.env.local`:
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-   ```
+### Verify System Health
 
-### Running the Seed Script
-
-```bash
-# Using npm
-npm run seed
-
-# Or directly with ts-node
-npx ts-node scripts/seed-database.ts
+To check if everything is set up correctly:
+```sql
+-- Run simple-verification.sql for a quick check
+-- Or verify-complete-setup.sql for detailed analysis
 ```
 
-### What Gets Created
+### Debug Specific Users
 
-The script creates:
-- **10 Tutors** with diverse subject specializations
-- **5-20 Students** per tutor with parent contacts
-- **10-50 Sessions** per student (past and future)
-- **Lesson Plans** with activities and assessments
-- **Homework** assignments with submissions
-- **Conversations** and messages between tutors and students
-- **Invoices** with payment records
-- **15 Opportunities** for new students
-- **Achievements** and notifications
+To debug issues for a specific user:
+1. Update the email in `debug-403-error.sql`
+2. Run each query to diagnose the issue
+3. Follow the generated fix commands
 
-### Data Characteristics
+## Production Deployment
 
-- Sessions span from 3 months ago to 2 months in the future
-- 70% of past sessions are marked as completed
-- 40% of sessions have associated homework
-- Invoices are generated monthly for completed sessions
-- Each tutor has 2-6 unlocked achievements
-- Realistic availability schedules for each tutor
-
-### Clearing Data
-
-The script automatically clears all existing data before seeding. This ensures a clean state each time you run it.
-
-### Customization
-
-You can modify the constants at the top of `seed-database.ts` to adjust:
-- Number of tutors/students
-- Subject offerings
-- Session distribution
-- Status weights
-- And more... 
+When deploying to production:
+1. Always run verification scripts first
+2. Apply migrations in order
+3. Test with a demo account before real users 

@@ -76,7 +76,7 @@ export default function DashboardClient({
     <div className="p-6">
       {/* Achievement Notifications */}
       <AchievementNotificationContainer 
-        tutorId={user.id}
+        tutorId={initialTutor.id}
         position="bottom-right"
         showBadges={true}
         showAchievements={true}
@@ -108,7 +108,7 @@ export default function DashboardClient({
               badges: gamificationData.badges,
               nextMilestone: gamificationData.nextMilestone
             }}
-            tutorId={user.id}
+            tutorId={initialTutor.id}
           />
         </div>
       )}

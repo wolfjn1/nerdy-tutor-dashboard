@@ -92,7 +92,7 @@ export default async function DashboardPage() {
   const { data: gamificationPoints } = await supabase
     .from('gamification_points')
     .select('points, reason, created_at')
-    .eq('tutor_id', user.id)
+    .eq('tutor_id', tutor.id)
     .order('created_at', { ascending: false });
 
   const totalPoints = gamificationPoints?.reduce((sum, p) => sum + p.points, 0) || 0;
@@ -112,14 +112,14 @@ export default async function DashboardPage() {
   const { data: tierData } = await supabase
     .from('tutor_tiers')
     .select('current_tier')
-    .eq('tutor_id', user.id)
+    .eq('tutor_id', tutor.id)
     .single();
 
   // Get badges
   const { data: badges } = await supabase
     .from('tutor_badges')
     .select('badge_type, earned_at')
-    .eq('tutor_id', user.id)
+    .eq('tutor_id', tutor.id)
     .order('earned_at', { ascending: false });
 
   // Get recent achievements (combine points and badges)
@@ -150,7 +150,7 @@ export default async function DashboardPage() {
   const { data: recentSessions } = await supabase
     .from('tutoring_sessions')
     .select('session_date')
-    .eq('tutor_id', user.id)
+    .eq('tutor_id', tutor.id)
     .eq('status', 'completed')
     .order('session_date', { ascending: false })
     .limit(30);
@@ -161,7 +161,7 @@ export default async function DashboardPage() {
   const sessionCount = await supabase
     .from('tutoring_sessions')
     .select('id', { count: 'exact' })
-    .eq('tutor_id', user.id)
+    .eq('tutor_id', tutor.id)
     .eq('status', 'completed');
   
   const totalSessions = sessionCount.count || 0;

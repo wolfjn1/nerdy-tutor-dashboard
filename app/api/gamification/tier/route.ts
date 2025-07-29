@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Use TierSystem to get tier progress
-    const tierSystem = new TierSystem();
+    const tierSystem = new TierSystem(supabase);
     const progress = await tierSystem.getTierProgress(tutor.id);
     
     // Get tier benefits

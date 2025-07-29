@@ -83,9 +83,26 @@ const badgeDefinitions = [
 export default function BadgeShowcase({ tutorId }: BadgeShowcaseProps) {
   const [badges, setBadges] = useState<Badge[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchBadges();
+    if (!tutorId) {
+      setError('No tutor ID provided');
+      setLoading(false);
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      console.error('[BadgeShowcase] Query timeout after 5s');
+      setError('Loading timeout - please refresh the page');
+      setLoading(false);
+    }, 5000);
+
+    fetchBadges().finally(() => {
+      clearTimeout(timeoutId);
+    });
+
+    return () => clearTimeout(timeoutId);
   }, [tutorId]);
 
   const fetchBadges = async () => {
@@ -98,7 +115,10 @@ export default function BadgeShowcase({ tutorId }: BadgeShowcaseProps) {
         .select('*')
         .eq('tutor_id', tutorId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('[BadgeShowcase] Query error:', error);
+        throw error;
+      }
 
       // Map badge definitions with earned status
       const allBadges: Badge[] = badgeDefinitions.map(def => {
@@ -116,8 +136,11 @@ export default function BadgeShowcase({ tutorId }: BadgeShowcaseProps) {
       });
 
       setBadges(allBadges);
-    } catch (error) {
-      console.error('Error fetching badges:', error);
+      setError(null);
+    } catch (error: any) {
+      console.error('[BadgeShowcase] Error fetching badges:', error);
+      setError(error.message || 'Failed to load badges');
+      setBadges([]);
     } finally {
       setLoading(false);
     }
@@ -134,6 +157,14 @@ export default function BadgeShowcase({ tutorId }: BadgeShowcaseProps) {
             ))}
           </div>
         </div>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="p-6 text-center text-red-500">
+        <p>{error}</p>
       </Card>
     );
   }

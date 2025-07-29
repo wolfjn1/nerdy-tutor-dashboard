@@ -32,9 +32,26 @@ const achievementIcons: Record<string, React.ReactNode> = {
 export default function AchievementsFeed({ tutorId }: AchievementsFeedProps) {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchAchievements();
+    if (!tutorId) {
+      setError('No tutor ID provided');
+      setLoading(false);
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      console.error('[AchievementsFeed] Query timeout after 5s');
+      setError('Loading timeout - please refresh the page');
+      setLoading(false);
+    }, 5000);
+
+    fetchAchievements().finally(() => {
+      clearTimeout(timeoutId);
+    });
+
+    return () => clearTimeout(timeoutId);
   }, [tutorId]);
 
   const fetchAchievements = async () => {
@@ -49,7 +66,10 @@ export default function AchievementsFeed({ tutorId }: AchievementsFeedProps) {
         .order('created_at', { ascending: false })
         .limit(10);
 
-      if (pointsError) throw pointsError;
+      if (pointsError) {
+        console.error('[AchievementsFeed] Points query error:', pointsError);
+        throw pointsError;
+      }
 
       // Fetch recent badges
       const { data: badgesData, error: badgesError } = await supabase
@@ -59,7 +79,10 @@ export default function AchievementsFeed({ tutorId }: AchievementsFeedProps) {
         .order('earned_at', { ascending: false })
         .limit(5);
 
-      if (badgesError) throw badgesError;
+      if (badgesError) {
+        console.error('[AchievementsFeed] Badges query error:', badgesError);
+        throw badgesError;
+      }
 
       // Combine and format achievements
       const formattedAchievements: Achievement[] = [];
@@ -98,8 +121,11 @@ export default function AchievementsFeed({ tutorId }: AchievementsFeedProps) {
       );
 
       setAchievements(formattedAchievements.slice(0, 10));
-    } catch (error) {
-      console.error('Error fetching achievements:', error);
+      setError(null);
+    } catch (error: any) {
+      console.error('[AchievementsFeed] Error fetching achievements:', error);
+      setError(error.message || 'Failed to load achievements');
+      setAchievements([]);
     } finally {
       setLoading(false);
     }
@@ -184,7 +210,13 @@ export default function AchievementsFeed({ tutorId }: AchievementsFeedProps) {
         Recent Achievements
       </h2>
 
-      {achievements.length === 0 ? (
+      {error && (
+        <div className="text-center py-8 text-red-500">
+          <p>{error}</p>
+        </div>
+      )}
+
+      {achievements.length === 0 && !error ? (
         <div className="text-center py-8">
           <Award className="w-12 h-12 text-gray-400 mx-auto mb-3" />
           <p className="text-sm text-gray-500 dark:text-gray-400">

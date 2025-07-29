@@ -3,15 +3,22 @@
 import { useState, useEffect } from 'react';
 import { TierProgress } from '@/lib/gamification/TierSystem';
 
+// Enhanced TierProgress with additional UI properties
+interface EnhancedTierProgress extends TierProgress {
+  tierBenefits?: string[];
+  currentRateIncrease?: number;
+  nextTierRateIncrease?: number;
+}
+
 interface UseGameificationReturn {
-  stats: TierProgress | null;
+  stats: EnhancedTierProgress | null;
   loading: boolean;
   error: string | null;
   refetch: () => void;
 }
 
 export const useGameification = (): UseGameificationReturn => {
-  const [stats, setStats] = useState<TierProgress | null>(null);
+  const [stats, setStats] = useState<EnhancedTierProgress | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

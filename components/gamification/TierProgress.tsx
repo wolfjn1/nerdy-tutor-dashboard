@@ -75,7 +75,7 @@ export function TierProgress() {
 
   if (!stats) return null;
 
-  const { currentTier, tierProgress } = stats;
+  const { currentTier } = stats;
   const config = tierConfigs[currentTier as TutorTier];
   const Icon = config.icon;
 
@@ -127,10 +127,10 @@ export function TierProgress() {
           </h3>
         </div>
 
-        {tierProgress?.nextTier ? (
+        {stats?.nextTier ? (
           <>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Next: {getTierName(tierProgress.nextTier)} Tier
+                              Next: {getTierName(stats.nextTier)} Tier
             </p>
 
             <div className="space-y-4">
@@ -139,7 +139,7 @@ export function TierProgress() {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     {renderCheckmark(
-                      tierProgress.sessionsToNext === 0,
+                      stats.sessionsToNext === 0,
                       'sessions-check'
                     )}
                     <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -147,10 +147,10 @@ export function TierProgress() {
                     </span>
                   </div>
                   <span className="text-sm font-medium">
-                    {tierProgress.completedSessions}/{tierProgress.completedSessions + (tierProgress.sessionsToNext || 0)} sessions
+                    {stats.completedSessions}/{stats.completedSessions + (stats.sessionsToNext || 0)} sessions
                   </span>
                 </div>
-                {renderProgressBar(tierProgress.sessionsProgress || 0, 'sessions-progress-bar')}
+                {renderProgressBar(stats.sessionsProgress || 0, 'sessions-progress-bar')}
               </div>
 
               {/* Rating Progress */}
@@ -158,7 +158,7 @@ export function TierProgress() {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     {renderCheckmark(
-                      tierProgress.ratingToNext === 0,
+                      stats.ratingToNext === 0,
                       'rating-check'
                     )}
                     <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -166,10 +166,10 @@ export function TierProgress() {
                     </span>
                   </div>
                   <span className="text-sm font-medium">
-                    {tierProgress.averageRating}/{tierProgress.averageRating + (tierProgress.ratingToNext || 0)} rating
+                    {stats.averageRating}/{stats.averageRating + (stats.ratingToNext || 0)} rating
                   </span>
                 </div>
-                {renderProgressBar(tierProgress.ratingProgress || 0, 'rating-progress-bar')}
+                {renderProgressBar(stats.ratingProgress || 0, 'rating-progress-bar')}
               </div>
 
               {/* Retention Progress */}
@@ -177,7 +177,7 @@ export function TierProgress() {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     {renderCheckmark(
-                      tierProgress.retentionToNext === 0,
+                      stats.retentionToNext === 0,
                       'retention-check'
                     )}
                     <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -185,17 +185,17 @@ export function TierProgress() {
                     </span>
                   </div>
                   <span className="text-sm font-medium">
-                    {tierProgress.retentionRate}%/{tierProgress.retentionRate + (tierProgress.retentionToNext || 0)}% retention
+                    {stats.retentionRate}%/{stats.retentionRate + (stats.retentionToNext || 0)}% retention
                   </span>
                 </div>
-                {renderProgressBar(tierProgress.retentionProgress || 0, 'retention-progress-bar')}
+                {renderProgressBar(stats.retentionProgress || 0, 'retention-progress-bar')}
               </div>
             </div>
 
-            {tierProgress.isCloseToPromotion && (
+            {stats.isCloseToPromotion && (
               <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                 <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                  You're close to {getTierName(tierProgress.nextTier)} tier! Keep up the great work!
+                  You're close to {getTierName(stats.nextTier)} tier! Keep up the great work!
                 </p>
               </div>
             )}
@@ -214,9 +214,9 @@ export function TierProgress() {
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Current rate bonus: +{stats.currentRateIncrease}%
             </p>
-            {stats.nextTierRateIncrease !== undefined && tierProgress?.nextTier && (
+            {stats.nextTierRateIncrease !== undefined && stats?.nextTier && (
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {getTierName(tierProgress.nextTier)} tier bonus: +{stats.nextTierRateIncrease}%
+                {getTierName(stats.nextTier)} tier bonus: +{stats.nextTierRateIncrease}%
               </p>
             )}
           </div>

@@ -52,4 +52,11 @@ https://nerdy-tutor-dashboard.netlify.app/api/bonuses/debug
 You should see Sarah's data including the 4 bonuses.
 
 ## If Still Empty
-The components might be using the wrong tutor ID. Check the browser console for any errors or add some debug logging to see what ID is being passed to the components. 
+The components might be using the wrong tutor ID. Check the browser console for any errors or add some debug logging to see what ID is being passed to the components.
+
+## Update (Fixed)
+The issue was that the `useGameification` hook was using `user.id` (auth user ID) instead of the tutor ID. This has been fixed by:
+1. First fetching the tutor record using auth_user_id
+2. Then using the tutor.id for tier data queries
+
+After this fix and running the populate script, all components should display data correctly. 
